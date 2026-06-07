@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Ch.4 Quiz • Cultism, Kidnapping & Armed Banditry • One per page • Instant Feedback</title>
+    <title>Ch.4 Quiz • Cultism, Kidnapping & Armed Banditry • Non-obvious options</title>
     <style>
         * {
             margin: 0;
@@ -279,7 +279,7 @@
     <div class="quiz-header">
         <h1>⚠️ Chapter 4 · Cultism, Kidnapping & Armed Banditry</h1>
         <p>Definitions • History • Types • Causes • Economic & Social Implications</p>
-        <p style="font-size:0.85rem;">⚡ Tap an answer → immediate feedback shows correct answer. 40 questions.</p>
+        <p style="font-size:0.85rem;">⚡ Tap an answer → immediate feedback shows correct answer. Options are designed to be non-obvious.</p>
     </div>
     <div class="progress-container">
         <div class="progress-fill" id="progressFill"></div>
@@ -289,53 +289,47 @@
 </div>
 
 <script>
-    // ---------- 40 QUESTIONS for Chapter 4 (Cultism, Kidnapping, Armed Banditry) ----------
+    // ---------- 40 QUESTIONS for Chapter 4 (with less obvious distractors) ----------
     const QUESTIONS = [
-        // Cultism (1-12)
-        { text: "A 'cult' is defined as a group of individuals who have a deep and partisan belief about some idea which ends up promoting and preserving their collective interest, and they are NOT primarily a:", options: ["Political party", "Religious group", "Social club", "Economic cooperative"], correct: "Religious group" },
-        { text: "Secret cults are often referred to as 'secret' because:", options: ["They have no name", "Their principles and mode of operation are not open to the public", "They only meet at night", "They are illegal"], correct: "Their principles and mode of operation are not open to the public" },
-        { text: "Membership of a cult typically involves:", options: ["Payment of a fee only", "Standard rituals to test qualification and readiness", "Writing an exam", "A public declaration"], correct: "Standard rituals to test qualification and readiness" },
-        { text: "The history of cultism in Nigeria dates back to:", options: ["The early 1960s", "The late 1960s", "The 1970s", "The 1980s"], correct: "The late 1960s" },
-        { text: "The founding fathers of cultism in Nigeria were originally:", options: ["Politicians", "Military officers", "Undergraduates (university students)", "Secondary school students"], correct: "Undergraduates (university students)" },
-        { text: "The original purpose of the first cult in Nigeria was to:", options: ["Fight the government", "Resist victimization, intimidation, harassment, and oppression especially from lecturers", "Promote religious activities", "Engage in robbery"], correct: "Resist victimization, intimidation, harassment, and oppression especially from lecturers" },
-        { text: "The founding fathers of cultism were known to be:", options: ["Weak students", "Brilliant and intelligent students", "Athletes", "Musicians"], correct: "Brilliant and intelligent students" },
-        { text: "The first cult established in Nigeria originally promoted:", options: ["Violence", "Intellectualism, foresight, and character", "Political power", "Wealth accumulation"], correct: "Intellectualism, foresight, and character" },
-        { text: "Cultism began to derail when:", options: ["The government banned it", "Disillusioned members broke away and formed their own, corrupting the original vision", "The founding fathers died", "Schools closed"], correct: "Disillusioned members broke away and formed their own, corrupting the original vision" },
-        { text: "A common event among various cult groups in Nigeria became:", options: ["Collaboration", "Rivalry and reckless violence", "Peaceful dialogue", "Sports competitions"], correct: "Rivalry and reckless violence" },
-        { text: "According to analysts, one reason for the derailment of cultism was:", options: ["Too much government regulation", "Initiation of members who had nothing to do with scholarship or intellectualism", "Lack of funding", "Foreign influence"], correct: "Initiation of members who had nothing to do with scholarship or intellectualism" },
-        { text: "The founding fathers of cultism in Nigeria have contended that present-day cultism is:", options: ["Exactly what they wanted", "Better than before", "Not what they had in mind", "More intellectual"], correct: "Not what they had in mind" },
-        // Evil of Cultism (13-16)
-        { text: "Becoming a member of a secret cult today is akin to belonging to a:", options: ["Religious organization", "Kill squad and anti-social enterprise", "Charity group", "Political party"], correct: "Kill squad and anti-social enterprise" },
-        { text: "Students who join cults often find themselves more engulfed with:", options: ["Their academics", "Activities of the group than their academics", "Sports", "Volunteer work"], correct: "Activities of the group than their academics" },
-        { text: "Membership of cultism in Nigeria is generally:", options: ["Encouraged by families", "Forbidden by the family and society", "Supported by the government", "Legal"], correct: "Forbidden by the family and society" },
-        { text: "Secret cults meet regularly to:", options: ["Study the Bible", "Discuss the situation of their body and plan next steps", "Pray", "Play games"], correct: "Discuss the situation of their body and plan next steps" },
-        // Kidnapping (17-30)
-        { text: "The word 'kidnap' can be referred to as a situation where someone is forcefully, without consent, and illegally taken to:", options: ["A police station", "An undisclosed location other than where they planned to go", "Another country", "A hospital"], correct: "An undisclosed location other than where they planned to go" },
-        { text: "Kidnapping is NOT the same as an arrest because:", options: ["Arrest is always illegal", "An arrest can be forceful yet legal as stipulated by laws", "Kidnapping involves only children", "Arrest requires a warrant"], correct: "An arrest can be forceful yet legal as stipulated by laws" },
-        { text: "Those who engage in kidnapping are called:", options: ["Kidnappees", "Kidnappers", "Abductors general", "Captors"], correct: "Kidnappers" },
-        { text: "The most common type of kidnapping mentioned in the chapter is:", options: ["Kidnapping for ritual purposes", "Kidnapping for political reasons", "Kidnapping for ransom", "Kidnapping for making loud statements"], correct: "Kidnapping for ransom" },
-        { text: "Kidnapping for ransom involves the victim being released only when:", options: ["The police intervene", "The agreed ransom is paid by families, friends, or associates", "The victim escapes", "A court order is issued"], correct: "The agreed ransom is paid by families, friends, or associates" },
-        { text: "According to the chapter, some kidnap victims die in captivity due to:", options: ["Old age", "Inability to keep pace with captors, harsh treatment, or lack of medication", "Natural causes", "Suicide"], correct: "Inability to keep pace with captors, harsh treatment, or lack of medication" },
-        { text: "Investigations reveal that most kidnap cases are the handiwork of:", options: ["Lone criminals", "Well-organized syndicates with network of members", "Foreign agents", "Government officials"], correct: "Well-organized syndicates with network of members" },
-        { text: "The chapter speculates that even local/ordinary artisans may be part of:", options: ["The police force", "The chattel (network of kidnappers)", "Religious groups", "Educational institutions"], correct: "The chattel (network of kidnappers)" },
-        { text: "Kidnapping for ritual purposes, political reasons, and making loud statements are examples of:", options: ["Kidnapping for ransom", "Kidnapping for other purposes", "Justifiable kidnapping", "Legal detention"], correct: "Kidnapping for other purposes" },
-        { text: "The brutality of kidnappers stems from the fact that they want to:", options: ["Show mercy", "Tell the world that they mean business and are out for blood", "Negotiate peacefully", "Avoid attention"], correct: "Tell the world that they mean business and are out for blood" },
-        { text: "Kidnapping has led to foreign investors withdrawing from Nigeria because:", options: ["The economy is weak", "Their personal safety cannot be guaranteed, and they are preferred targets for ransom in hard currency", "They are not needed", "The weather is bad"], correct: "Their personal safety cannot be guaranteed, and they are preferred targets for ransom in hard currency" },
-        { text: "Traveling by road in Nigeria has become a high-risk venture because:", options: ["The roads are too good", "The propensity of being kidnapped enroute is 95% and above", "There are no vehicles", "The government banned travel"], correct: "The propensity of being kidnapped enroute is 95% and above" },
-        { text: "Farmers no longer go to farms for fear of:", options: ["Low prices", "Being kidnapped and having ransom requested from their loved ones", "Flooding", "Pests"], correct: "Being kidnapped and having ransom requested from their loved ones" },
-        { text: "The Chibok school girls kidnapping happened in:", options: ["April 2014", "April 2015", "May 2014", "June 2014"], correct: "April 2014" },
-        // Armed Banditry (31-35)
-        { text: "Armed banditry refers to a set of people who take up arms and unleash terror on other citizens:", options: ["Only during wars", "Without any kind of provocation first", "Only in self-defense", "Only at night"], correct: "Without any kind of provocation first" },
-        { text: "Unlike kidnapping, armed bandits do not have:", options: ["Weapons", "Any specific goal or target", "Members", "Leaders"], correct: "Any specific goal or target" },
-        { text: "Armed bandits' activities are characterized by:", options: ["Peaceful protests", "Violence, destruction, bloodletting, and killing", "Negotiations", "Charity work"], correct: "Violence, destruction, bloodletting, and killing" },
-        { text: "Armed bandits can also be referred to as:", options: ["Freedom fighters", "Extremists who love to terrorize those around them", "Revolutionaries", "Militia"], correct: "Extremists who love to terrorize those around them" },
-        { text: "The chapter states that armed bandits do NOT have any specific goal or target that they want to achieve, which makes them:", options: ["More predictable", "Less dangerous", "More unpredictable and dangerous", "Easier to negotiate with"], correct: "More unpredictable and dangerous" },
-        // Economic and Social Implications (36-40)
-        { text: "Kidnapping has led to high cost of living because:", options: ["Salaries increased", "Prices of food and other necessities have skyrocketed", "Taxes were reduced", "Subsidies increased"], correct: "Prices of food and other necessities have skyrocketed" },
-        { text: "Which of the following is a social implication of kidnapping mentioned in the chapter?", options: ["Increased social gatherings", "People find it very difficult to attend social gatherings as they used to", "More weddings", "Increased tourism"], correct: "People find it very difficult to attend social gatherings as they used to" },
-        { text: "Nigerians now live in fear and suspicion because:", options: ["They enjoy it", "Reports reveal that kidnapping often involves inside help from family or acquaintances", "The government encourages it", "There is no crime"], correct: "Reports reveal that kidnapping often involves inside help from family or acquaintances" },
-        { text: "Kidnapping is described as a very serious issue that bothers on:", options: ["Economic development only", "National security, threatening to break the country up", "Education only", "Healthcare only"], correct: "National security, threatening to break the country up" },
-        { text: "The chapter mentions that pregnant women have been reported to be cut open and their growing fetus killed in the most brutal way ever, specifically in the context of:", options: ["Cult initiation", "Kidnapping and farm attacks", "Political riots", "Religious conflicts"], correct: "Kidnapping and farm attacks" }
+        { text: "A 'cult' is best described as a group whose members share a deep, partisan belief and primarily seek to:", options: ["Promote religious worship and charity", "Protect their collective interests and resist perceived oppression", "Engage in open political debates", "Organize cultural festivals for the public"], correct: "Protect their collective interests and resist perceived oppression" },
+        { text: "Why are secret cults often described as 'secret' in the Nigerian context?", options: ["They operate exclusively at midnight", "Their internal rules and daily activities are hidden from non-members", "They never reveal their names even to each other", "They are officially unrecognized by the government"], correct: "Their internal rules and daily activities are hidden from non-members" },
+        { text: "Which of the following is typically required for membership in a secret cult?", options: ["A written application and interview", "Payment of a large registration fee", "Completion of rigorous rituals to test commitment", "Nomination by a government official"], correct: "Completion of rigorous rituals to test commitment" },
+        { text: "The emergence of cultism in Nigeria can be traced to which period?", options: ["Early 1950s during colonial rule", "Late 1960s among university students", "Mid-1970s after the civil war", "Early 1980s under military regime"], correct: "Late 1960s among university students" },
+        { text: "The original members of the first cult in Nigeria were primarily motivated by the need to:", options: ["Overthrow the government", "Stop perceived victimization and harassment by lecturers", "Promote a particular religion on campus", "Gain control of student union funds"], correct: "Stop perceived victimization and harassment by lecturers" },
+        { text: "Which trait was commonly associated with the founding members of early cult groups in Nigeria?", options: ["Physical strength and fighting skills", "Wealth and family connections", "High academic performance and intelligence", "Political activism and oratory"], correct: "High academic performance and intelligence" },
+        { text: "What core values did the first Nigerian cult originally promote?", options: ["Intellectualism, foresight, and strong character", "Religious devotion and prayer", "Military discipline and hierarchy", "Economic self-sufficiency and trade"], correct: "Intellectualism, foresight, and strong character" },
+        { text: "What event caused cultism to shift away from its original purpose?", options: ["Government banned all student groups", "Founding fathers graduated and left", "Disillusioned breakaway groups corrupted the original vision", "Religious leaders condemned the movement"], correct: "Disillusioned breakaway groups corrupted the original vision" },
+        { text: "A common feature of modern cult rivalry in Nigeria is:", options: ["Public debates and contests", "Collaborative community service", "Frequent violent clashes and revenge killings", "Legal battles in court"], correct: "Frequent violent clashes and revenge killings" },
+        { text: "According to analysts, one major reason for cultism's decline into violence was:", options: ["Lack of funding from alumni", "Admission of members without scholarly or intellectual merit", "Excessive government interference", "Influence of foreign films"], correct: "Admission of members without scholarly or intellectual merit" },
+        { text: "How do the original founders of Nigerian cults view today's cult groups?", options: ["They fully endorse them", "They are indifferent", "They argue that today's groups have betrayed the original ideals", "They have rejoined to reform them"], correct: "They argue that today's groups have betrayed the original ideals" },
+        { text: "Which of the following best describes the nature of modern cults in Nigeria according to the chapter?", options: ["Social welfare organizations", "Anti-social kill squads that promote violence", "Academic discussion circles", "Religious revival movements"], correct: "Anti-social kill squads that promote violence" },
+        { text: "Students who join cults often find their academic performance suffers because:", options: ["Cult activities demand more time and focus than studies", "They are forced to drop out", "Lecturers refuse to teach them", "The school administration punishes them"], correct: "Cult activities demand more time and focus than studies" },
+        { text: "The general attitude of Nigerian families and society toward cult membership is:", options: ["Supportive if the cult is powerful", "Indifferent as long as no trouble occurs", "Strongly forbidden and condemned", "Encouraged for protection"], correct: "Strongly forbidden and condemned" },
+        { text: "What is the primary purpose of regular meetings held by secret cults?", options: ["To plan community development", "To discuss group strategies and assign tasks", "To conduct religious ceremonies", "To study academic materials"], correct: "To discuss group strategies and assign tasks" },
+        { text: "The term 'kidnap' refers to the act of forcefully taking a person to:", options: ["A police station for questioning", "An undisclosed location against their will", "Another country for deportation", "A hospital for medical examination"], correct: "An undisclosed location against their will" },
+        { text: "How does kidnapping differ from a lawful arrest?", options: ["Arrest never involves force", "Kidnapping is always done by strangers", "An arrest can be forceful but still legal under state laws", "Kidnapping only affects minors"], correct: "An arrest can be forceful but still legal under state laws" },
+        { text: "What term is used for individuals who commit kidnapping?", options: ["Detainees", "Kidnappers", "Extortionists", "Captors"], correct: "Kidnappers" },
+        { text: "The most frequently occurring type of kidnapping in Nigeria is:", options: ["Kidnapping for political statements", "Kidnapping for ritual purposes", "Kidnapping for ransom", "Kidnapping for forced marriage"], correct: "Kidnapping for ransom" },
+        { text: "In ransom kidnappings, victims are typically released only after:", options: ["Police intervention", "A court order is obtained", "A negotiated payment is made by relatives or associates", "The victim escapes"], correct: "A negotiated payment is made by relatives or associates" },
+        { text: "Which of the following is cited as a cause of death for kidnap victims in captivity?", options: ["Natural aging", "Inability to keep up with captors or lack of medical care", "Execution by the state", "Starvation due to food shortage"], correct: "Inability to keep up with captors or lack of medical care" },
+        { text: "Investigations reveal that most kidnapping rings in Nigeria are:", options: ["Lone individuals acting alone", "Well-organized syndicates with wide networks", "Spontaneous groups formed online", "Government agents working undercover"], correct: "Well-organized syndicates with wide networks" },
+        { text: "The chapter suggests that even local artisans may sometimes participate in kidnapping as:", options: ["Victims", "Informants or part of the criminal network", "Negotiators", "Undercover police"], correct: "Informants or part of the criminal network" },
+        { text: "Kidnapping for ritual purposes, political reasons, or media attention falls under the category of:", options: ["Kidnapping for ransom", "Kidnapping for other motives", "Justifiable abduction", "State-sanctioned detention"], correct: "Kidnapping for other motives" },
+        { text: "According to the chapter, what drives the extreme brutality of some kidnappers?", options: ["Mental illness", "Desire to instill maximum fear and demonstrate ruthlessness", "Revenge against society", "Lack of education"], correct: "Desire to instill maximum fear and demonstrate ruthlessness" },
+        { text: "Why have many foreign investors left Nigeria according to the chapter?", options: ["High taxes and poor infrastructure", "Inability to guarantee personal safety and fear of being targeted for ransom", "Lack of skilled labour", "Unfavourable exchange rates"], correct: "Inability to guarantee personal safety and fear of being targeted for ransom" },
+        { text: "Road travel in Nigeria is described as high-risk because:", options: ["There are no road signs", "The chance of being kidnapped on the road is extremely high", "Vehicles are poorly maintained", "Drivers are untrained"], correct: "The chance of being kidnapped on the road is extremely high" },
+        { text: "Why are many Nigerian farmers abandoning their farms?", options: ["Low crop prices", "Fear of being kidnapped and having ransom demanded from struggling families", "Lack of fertile land", "Government seizure of land"], correct: "Fear of being kidnapped and having ransom demanded from struggling families" },
+        { text: "The abduction of the Chibok schoolgirls occurred in which year?", options: ["2012", "2013", "2014", "2015"], correct: "2014" },
+        { text: "Armed banditry is characterized by attacks on citizens:", options: ["Only during declared wars", "Without any prior provocation", "Only in self-defence", "Only at night"], correct: "Without any prior provocation" },
+        { text: "A key difference between armed bandits and kidnappers is that bandits often:", options: ["Have clear political demands", "Do not have any specific goal or target", "Release victims without payment", "Operate only in cities"], correct: "Do not have any specific goal or target" },
+        { text: "The activities of armed bandits typically involve:", options: ["Peaceful protests and sit-ins", "Violence, destruction, and killings", "Negotiations with community leaders", "Charitable distributions"], correct: "Violence, destruction, and killings" },
+        { text: "Armed bandits are often described as:", options: ["Freedom fighters", "Extremists who terrorize communities", "Disgruntled workers", "Political dissidents"], correct: "Extremists who terrorize communities" },
+        { text: "Because armed bandits lack a specific target or goal, they are considered:", options: ["Less dangerous than kidnappers", "Easier to negotiate with", "More unpredictable and dangerous", "More likely to surrender"], correct: "More unpredictable and dangerous" },
+        { text: "One economic consequence of kidnapping mentioned is:", options: ["Lower inflation", "Increased agricultural output", "Higher cost of living due to skyrocketing food prices", "Reduced unemployment"], correct: "Higher cost of living due to skyrocketing food prices" },
+        { text: "Which social effect of kidnapping is highlighted in the chapter?", options: ["Increased attendance at parties", "Reluctance to attend social gatherings even when invited", "More community festivals", "Higher tourism rates"], correct: "Reluctance to attend social gatherings even when invited" },
+        { text: "Why do Nigerians now live with heightened fear and suspicion?", options: ["There is no police presence", "Kidnappings often involve inside help from acquaintances or family", "The media exaggerates crime", "The government encourages surveillance"], correct: "Kidnappings often involve inside help from acquaintances or family" },
+        { text: "The chapter describes kidnapping as a threat to:", options: ["Only the economy", "Only education", "National security, potentially destabilizing the country", "Only healthcare"], correct: "National security, potentially destabilizing the country" },
+        { text: "Brutal acts such as pregnant women being cut open on farms are cited in the context of:", options: ["Cult initiation ceremonies", "Kidnapping and farm attacks", "Political riots", "Religious conflicts"], correct: "Kidnapping and farm attacks" }
     ];
 
     const total = QUESTIONS.length;
@@ -481,9 +475,9 @@
         }
         const percent = Math.round((score / total) * 100);
         let msg = "";
-        if (percent >= 85) msg = "🏆 Excellent! You have a strong understanding of cultism, kidnapping, and armed banditry in Nigeria.";
-        else if (percent >= 65) msg = "👍 Good! Review the history of cultism and the economic implications of kidnapping.";
-        else if (percent >= 45) msg = "📘 Fair. Study the sections on the evil of cultism and the Chibok incident.";
+        if (percent >= 85) msg = "🏆 Excellent! You have a strong understanding of cultism, kidnapping, and armed banditry.";
+        else if (percent >= 65) msg = "👍 Good work. Review the history of cults and the economic impacts of kidnapping.";
+        else if (percent >= 45) msg = "📘 Fair. Study the sections on the evolution of cultism and the Chibok incident.";
         else msg = "📚 Re-read Chapter 4 carefully – focus on definitions, types of kidnapping, and the effects on national security.";
 
         let reviewHtml = `<div style="max-height:360px; overflow-y:auto;"><table style="width:100%; border-collapse:collapse;">`;
@@ -527,7 +521,6 @@
         updateProgress();
     }
 
-    // initial render
     renderCurrent();
     updateProgress();
 </script>
