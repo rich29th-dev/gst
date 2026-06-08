@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST 112 — Comprehensive Exam Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #008751;
+    --green-dark: #005c37;
+    --green-light: #00b368;
+    --gold: #c8971a;
+    --gold-light: #f0c040;
+    --white: #fafaf8;
+    --cream: #f4f1e8;
+    --text: #1a1a18;
+    --text-muted: #5a5a52;
+    --border: #d4d0c2;
+    --correct: #1a7a4a;
+    --correct-bg: #e6f4ed;
+    --wrong: #b03030;
+    --wrong-bg: #fce8e8;
+    --shadow: 0 4px 24px rgba(0,60,30,0.12);
+    --radius: 16px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(0,135,81,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(200,151,26,0.06) 0%, transparent 50%);
+  }
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  header {
+    background: var(--green-dark);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,60,30,0.3);
+  }
+  .flag { display: flex; width: 32px; height: 22px; border-radius: 3px; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.2); }
+  .flag-stripe { flex: 1; }
+  .flag-stripe.green { background: #008751; }
+  .flag-stripe.white { background: #fff; }
+  header h1 { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600; color: #fff; }
+  header .subtitle { font-size: 0.7rem; color: rgba(255,255,255,0.65); margin-left: auto; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* HOME */
+  .home-hero {
+    background: var(--green-dark);
+    padding: 40px 24px 48px;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 20px);
+  }
+  .home-hero h2 { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; line-height: 1.15; margin-bottom: 8px; position: relative; }
+  .home-hero h2 em { font-style: italic; color: var(--gold-light); }
+  .home-hero p { font-size: 0.9rem; color: rgba(255,255,255,0.7); position: relative; max-width: 360px; margin: 0 auto; }
+  .exam-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold);
+    color: var(--green-dark);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+    position: relative;
+  }
+
+  .home-content { padding: 28px 20px 40px; max-width: 680px; margin: 0 auto; width: 100%; }
+  .section-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+
+  .chapter-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+  .chapter-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.18s ease;
+    text-align: left;
+  }
+  .chapter-card:hover { border-color: var(--green); box-shadow: var(--shadow); transform: translateY(-1px); }
+  .chapter-card:active { transform: scale(0.99); }
+  .ch-badge {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--green); color: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ch-badge .ch-label { font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; line-height: 1; }
+  .ch-badge .ch-num { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 900; line-height: 1; }
+  .ch-info { flex: 1; min-width: 0; }
+  .ch-title { font-size: 0.85rem; font-weight: 500; line-height: 1.35; color: var(--text); }
+  .ch-count { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+  .ch-arrow { color: var(--border); font-size: 1.1rem; flex-shrink: 0; }
+
+  .all-chapters-card {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    border: none; color: white; border-radius: var(--radius);
+    padding: 20px 24px; cursor: pointer;
+    display: flex; align-items: center; gap: 16px;
+    transition: all 0.18s ease;
+    box-shadow: 0 4px 20px rgba(0,135,81,0.35);
+  }
+  .all-chapters-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,135,81,0.45); }
+  .all-chapters-card:active { transform: scale(0.99); }
+  .all-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+  .all-info { flex: 1; }
+  .all-title { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 700; color: white; }
+  .all-desc { font-size: 0.78rem; color: rgba(255,255,255,0.75); margin-top: 3px; }
+  .all-badge { background: var(--gold); color: var(--green-dark); font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+  .stat-box { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 12px; text-align: center; }
+  .stat-num { font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 900; color: var(--green); line-height: 1; }
+  .stat-label { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 4px; }
+
+  /* QUIZ */
+  .quiz-header {
+    background: white; border-bottom: 1.5px solid var(--border);
+    padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+    position: sticky; top: 60px; z-index: 50;
+  }
+  .back-btn { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: var(--text-muted); font-size: 1.1rem; display: flex; align-items: center; transition: background 0.15s; }
+  .back-btn:hover { background: var(--cream); }
+  .quiz-meta { flex: 1; min-width: 0; }
+  .quiz-chapter-name { font-size: 0.78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .quiz-progress-text { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
+  .score-chip { background: var(--green); color: white; border-radius: 20px; padding: 5px 12px; font-size: 0.78rem; font-weight: 600; flex-shrink: 0; font-family: 'Fraunces', serif; }
+  .progress-bar-wrap { height: 4px; background: var(--border); position: sticky; top: calc(60px + 62px); z-index: 49; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-light)); transition: width 0.4s ease; }
+
+  .quiz-body { flex: 1; padding: 24px 20px 40px; max-width: 680px; margin: 0 auto; width: 100%; }
+  .q-number { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .q-text { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600; line-height: 1.5; color: var(--text); margin-bottom: 24px; }
+
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .option-btn {
+    background: white; border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 14px 18px; cursor: pointer;
+    display: flex; align-items: flex-start; gap: 14px; text-align: left;
+    transition: all 0.15s ease; width: 100%;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--green); background: rgba(0,135,81,0.04); }
+  .option-btn:active:not(:disabled) { transform: scale(0.99); }
+  .option-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--cream); border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.78rem; font-weight: 700; color: var(--text-muted); flex-shrink: 0; transition: all 0.15s;
+  }
+  .opt-text { font-size: 0.88rem; line-height: 1.45; color: var(--text); padding-top: 3px; }
+
+  .option-btn.selected-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option-btn.selected-correct .opt-letter { background: var(--correct); border-color: var(--correct); color: white; }
+  .option-btn.selected-correct .opt-text { color: var(--correct); font-weight: 500; }
+  .option-btn.selected-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option-btn.selected-wrong .opt-letter { background: var(--wrong); border-color: var(--wrong); color: white; }
+  .option-btn.selected-wrong .opt-text { color: var(--wrong); font-weight: 500; }
+  .option-btn.reveal-correct { border-color: var(--correct); background: var(--correct-bg); opacity: 0.75; }
+  .option-btn.reveal-correct .opt-letter { background: var(--correct); border-color: var(--correct); color: white; }
+
+  .feedback-box { border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.85rem; font-weight: 500; display: none; align-items: center; gap: 10px; }
+  .feedback-box.show { display: flex; }
+  .feedback-box.correct { background: var(--correct-bg); color: var(--correct); }
+  .feedback-box.wrong { background: var(--wrong-bg); color: var(--wrong); }
+  .feedback-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .next-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: 12px; padding: 16px; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.18s; display: none; }
+  .next-btn.show { display: block; }
+  .next-btn:hover { background: var(--green-dark); }
+  .next-btn:active { transform: scale(0.99); }
+
+  /* RESULTS */
+  .results-body { flex: 1; padding: 28px 20px 60px; max-width: 680px; margin: 0 auto; width: 100%; }
+  .results-hero { background: var(--green-dark); border-radius: 20px; padding: 32px 24px; text-align: center; color: white; margin-bottom: 24px; position: relative; overflow: hidden; }
+  .results-hero::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 24px); }
+  .results-emoji { font-size: 3rem; margin-bottom: 8px; position: relative; }
+  .results-score-big { font-family: 'Fraunces', serif; font-size: 3.5rem; font-weight: 900; line-height: 1; position: relative; }
+  .results-score-big span { color: var(--gold-light); }
+  .results-out-of { font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 6px; position: relative; }
+  .results-chapter-name { font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 10px; text-transform: uppercase; letter-spacing: 0.07em; position: relative; }
+  .results-grade { border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; text-align: center; }
+  .results-grade .grade-letter { font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 900; }
+  .results-grade .grade-desc { font-size: 0.85rem; margin-top: 4px; font-weight: 500; }
+  .grade-A { background: var(--correct-bg); color: var(--correct); }
+  .grade-B { background: #e8f4ff; color: #1a5fa8; }
+  .grade-C { background: #fff8e0; color: #8a6d00; }
+  .grade-D { background: var(--wrong-bg); color: var(--wrong); }
+  .results-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .result-stat { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 10px; text-align: center; }
+  .result-stat .rs-num { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 900; line-height: 1; }
+  .result-stat .rs-label { font-size: 0.67rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 4px; }
+  .rs-correct { color: var(--correct); }
+  .rs-wrong { color: var(--wrong); }
+  .rs-pct { color: var(--green); }
+  .results-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-primary { background: var(--green); color: white; border: none; border-radius: 12px; padding: 16px; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.18s; }
+  .btn-primary:hover { background: var(--green-dark); }
+  .btn-secondary { background: white; color: var(--text); border: 1.5px solid var(--border); border-radius: 12px; padding: 15px; font-size: 0.95rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.18s; }
+  .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+
+  @keyframes pop-in { from { transform: scale(0.92) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+  .quiz-body .q-text { animation: pop-in 0.25s ease; }
+  .options-list { animation: pop-in 0.3s ease; }
+  @media (max-width: 400px) {
+    .home-hero h2 { font-size: 1.65rem; }
+    .q-text { font-size: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag">
+    <div class="flag-stripe green"></div>
+    <div class="flag-stripe white"></div>
+    <div class="flag-stripe green"></div>
+  </div>
+  <h1>GST 112 Exam Quiz</h1>
+  <span class="subtitle">Comprehensive Exam</span>
+</header>
+
+<!-- HOME -->
+<div id="home-screen" class="screen active">
+  <div class="home-hero">
+    <div class="exam-badge">📋 Comprehensive MCQ Examination</div>
+    <h2>Nigerian Peoples<br><em>& Culture</em></h2>
+    <p>350 exam-style MCQs across 7 chapters. Shuffle mode picks 10 questions from each chapter randomly.</p>
+  </div>
+  <div class="home-content">
+    <div class="section-label" style="margin-bottom:14px">📚 Select a Chapter</div>
+    <div class="chapter-grid" id="chapter-grid"></div>
+    <div class="section-label" style="margin-top:24px; margin-bottom:12px">🌍 Mixed Mode</div>
+    <div class="all-chapters-card" onclick="startAllChapters()">
+      <div class="all-icon">🎲</div>
+      <div class="all-info">
+        <div class="all-title">All Chapters</div>
+        <div class="all-desc">10 random questions from each of the 7 chapters</div>
+      </div>
+      <div class="all-badge">70 Qs</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">350</div><div class="stat-label">Total Questions</div></div>
+      <div class="stat-box"><div class="stat-num">7</div><div class="stat-label">Chapters</div></div>
+      <div class="stat-box"><div class="stat-num">50</div><div class="stat-label">Per Chapter</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">&#8592;</button>
+    <div class="quiz-meta">
+      <div class="quiz-chapter-name" id="quiz-chapter-name">Chapter 1</div>
+      <div class="quiz-progress-text" id="quiz-progress-text">Question 1 of 50</div>
+    </div>
+    <div class="score-chip" id="score-chip">0 / 0</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="quiz-body">
+    <div class="q-number" id="q-number">Question 1</div>
+    <div class="q-text" id="q-text">Loading...</div>
+    <div class="options-list" id="options-list"></div>
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <span id="feedback-text"></span>
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results-screen" class="screen">
+  <div class="results-body">
+    <div class="results-hero">
+      <div class="results-emoji" id="results-emoji">🎉</div>
+      <div class="results-score-big" id="results-score-big"><span>0</span> / 0</div>
+      <div class="results-out-of" id="results-out-of">You answered 0 questions</div>
+      <div class="results-chapter-name" id="results-chapter-name">Chapter 1</div>
+    </div>
+    <div id="results-grade" class="results-grade">
+      <div class="grade-letter" id="grade-letter">A</div>
+      <div class="grade-desc" id="grade-desc">Excellent!</div>
+    </div>
+    <div class="results-stats">
+      <div class="result-stat"><div class="rs-num rs-correct" id="rs-correct">0</div><div class="rs-label">Correct</div></div>
+      <div class="result-stat"><div class="rs-num rs-wrong" id="rs-wrong">0</div><div class="rs-label">Wrong</div></div>
+      <div class="result-stat"><div class="rs-num rs-pct" id="rs-pct">0%</div><div class="rs-label">Score</div></div>
+    </div>
+    <div class="results-actions">
+      <button class="btn-primary" onclick="retryQuiz()">🔁 Retry Same Quiz</button>
+      <button class="btn-secondary" onclick="goHome()">← Back to Chapters</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUIZ_DATA = {"1":{"title":"Historical Perspectives & Cultural Areas of Nigeria","questions":[{"q":"Nigeria is situated between which latitudes and longitudes?","o":["Latitudes 2\u00b0 N and 12\u00b0 N, Longitudes 6\u00b0 E and 12\u00b0 E","Latitudes 4\u00b0 N and 14\u00b0 N, Longitudes 2\u00b0 E and 15\u00b0 E","Latitudes 40\u00b0 N and 140\u00b0 N, Longitudes 30\u00b0 E and 140\u00b0 E","Latitudes 8\u00b0 N and 18\u00b0 N, Longitudes 5\u00b0 E and 10\u00b0 E"],"a":2},{"q":"What is the total land area of Nigeria excluding waterways?","o":["923,768 square kilometres","910,768 square kilometres","13,000 square kilometres","936,768 square kilometres"],"a":1},{"q":"The earliest evidence of civilization in Nigeria was found at which location?","o":["The rocks of Iwo-Eleru near Akure","The caves of Jos Plateau","The banks of River Niger","The hills of Zaria"],"a":0},{"q":"The skeleton discovered at Iwo-Eleru dates back to which period?","o":["5000 BC","12000 BC","9000 BC","3000 BC"],"a":2},{"q":"According to the National Population Commission (August 2012), Nigeria's population was approximately:","o":["120 million","200 million","140 million","167 million"],"a":3},{"q":"The amalgamation of Nigeria occurred in which year?","o":["1900","1861","1914","1960"],"a":2},{"q":"The three major ethnic groups in Nigeria represent approximately what percentage of the population?","o":["50%","60%","70%","80%"],"a":2},{"q":"According to the material, how many cultural groupings and systems exist in Nigeria?","o":["250","300","374","400"],"a":2},{"q":"Which scholar argued that Nigerian peoples had contact with overseas before colonial occupants?","o":["Falola","Onwuejeogwu","Nnoli","Trillo"],"a":2},{"q":"Which characteristic of culture indicates that culture existed before we were born and will continue after?","o":["Culture is dynamic","Culture is integrated","Culture is shared","Culture is learned"],"a":2},{"q":"The process through which culture is acquired on earth through socialization is called:","o":["Indoctrination","Enculturation","Assimilation","Integration"],"a":1},{"q":"Which scholar identified six items in the study of Igbo culture area including ritual and social organisation?","o":["Falola","Onwuejeogwu","Trillo","Nzemeke"],"a":1},{"q":"A culture area refers to:","o":["A region with identical cultural practices","A geographical region where multiple cultures share certain common traits","A zone where only one ethnic group resides","An area with no cultural diversity"],"a":1},{"q":"Which of the following is NOT listed as one of the nine elements of culture according to the material?","o":["Language and Art","War and Religion","Democracy and Governance","Material implements and Environment"],"a":2},{"q":"The six items identified for studying Igbo culture area include all EXCEPT:","o":["Language and Ritual","Social organisation and Economy","Military organisation and Trade","Political organisation and Religion"],"a":2},{"q":"The term describing the combination of social and political factors in the Hausa political structure is:","o":["Socio-political institution","Socio-economic framework","Political hegemony","Cultural synthesis"],"a":0},{"q":"The mythology claiming descent from Bayajida is associated with which ethnic group?","o":["Yoruba","Igbo","Hausa","Bini"],"a":2},{"q":"Bayajida was said to be a refugee prince from which city?","o":["Cairo","Mecca","Baghdad","Istanbul"],"a":2},{"q":"The original seven Hausa states are collectively referred to as:","o":["Hausa Bakwai","Hausa Bokwoi","Hausa States Federation","Hausa Kingdoms"],"a":1},{"q":"Which of the following is NOT among the original seven Hausa states?","o":["Biram and Kano","Zazzau and Gobir","Katsina and Daura","Sokoto and Kebbi"],"a":3},{"q":"The son of Bayajida who had six children that helped found the Hausa states was named:","o":["Bawo","Biram","Abu Yazid","Magira"],"a":0},{"q":"According to the material, the seven Hausa states include all of the following EXCEPT:","o":["Rano","Kebbi","Zamma","Gazora"],"a":1},{"q":"The head of any typical Hausa state is known as:","o":["The Emir","The Sarki of Birnin","The Galadima","The Alkali"],"a":1},{"q":"The title meaning \"ruler of the land\" among the Hausa was:","o":["Sarkin Kasar","Madawaki","Magaji","Dogari"],"a":0},{"q":"The office of Galadima among the Hausa refers to:","o":["Palace administrator","Senior counselor","Guard","Tax collector"],"a":1},{"q":"The Muslim Hausa worshipped natural spirits referred to as:","o":["Jinn","Iskoki","Alusi","Orisa"],"a":1},{"q":"The tax on livestock among the Hausa-Fulani is called:","o":["Zakat","Jizya","Jangali","Kharaj"],"a":2},{"q":"The tax on income among the Islamized Hausa states is known as:","o":["Jangali","Zakat","Ushr","Khums"],"a":1},{"q":"The three most important Hausa rulers at the wake of the 15th century were from:","o":["Kano, Zaria and Katsina","Sokoto, Gwandu and Kebbi","Daura, Biram and Gobir","Rano, Zamma and Gazora"],"a":0},{"q":"The Fulani call themselves by which name?","o":["Peul","Fula","Fulbe","Fellata"],"a":2},{"q":"The Wolof people describe the Fulani as:","o":["Fula","Peul","Fellata","Fulbe"],"a":1},{"q":"The Kanuri people call the Fulani by which name?","o":["Peul","Fula","Fulbe","Fellata"],"a":3},{"q":"The Bambara people refer to the Fulani as:","o":["Peul","Fula","Fulbe","Fellata"],"a":1},{"q":"The two categories of Fulani people are:","o":["Fulani daji and Fulani gida","Fulani nomad and Fulani settler","Fulani Muslim and Fulani traditionalist","Fulani cattle and Fulani farmer"],"a":0},{"q":"The code of behavior that Fulani people adhere to is called:","o":["Pulaaku","Fulanisation","Nomadic code","Cattle ethics"],"a":0},{"q":"According to Pacheco Pereira in 1500, the Yoruba were identified as:","o":["Aku","Lucumi","Oyo","Ife"],"a":1},{"q":"Early missionary accounts of the 19th Century referred to the Yoruba as:","o":["Lucumi","Yoruba","Aku","Nago"],"a":2},{"q":"Sultan Mohammed Bello identified the Yoruba as descending from:","o":["Oduduwa","Nimrod","Oranmiyan","Lamurudu"],"a":1},{"q":"According to Sultan Mohammed Bello's account, Nimrod descended from:","o":["Shem","Japheth","Ham","Canaan"],"a":2},{"q":"Rev. Samuel Johnson traced the origin of the Yoruba to:","o":["Mecca","The East","Egypt","The North"],"a":1},{"q":"According to Oke Oramfe's version, how many Oye (immortals) accompanied Obatala?","o":["Twelve","Fourteen","Fifteen","Sixteen"],"a":3},{"q":"The leader of the messengers sent by the Almighty God according to Oke Oramfe's version was:","o":["Oduduwa","Obatala","Orisanla","Orunmila"],"a":1},{"q":"The site where Oduduwa and his party landed is traditionally known as:","o":["Ile-Ife","Oke Oramfe","Opa Oranmiyan","Oduduwa Temple"],"a":1},{"q":"The Yoruba language belongs to which language family?","o":["Afro-Asiatic","Nilo-Saharan","Niger-Congo","Khoisan"],"a":2},{"q":"In the Yoruba political system, the council of hereditary advisers in Oyo is called:","o":["Ogboni","Oyomesi","Ihu","Baale council"],"a":1},{"q":"The Yoruba cooperative farming labour arrangement called 'aaro' involves:","o":["Individual farming with hired labour","Group farming with shared benefits","Family-based agricultural production","Modern mechanised farming"],"a":1},{"q":"According to the material, the Igbo are grouped into how many sub-cultures?","o":["Three","Four","Five","Six"],"a":2},{"q":"The Nri version of Igbo origin claims that the ancestor Eri descended from:","o":["The ground","The east","The sky","The river"],"a":2},{"q":"In traditional Igbo society, the general assembly for legislative functions was called:","o":["Oha na Eze","Amala Oha","Izu Oha","Umunna meeting"],"a":1},{"q":"The Igbo traditional marriage is known as:","o":["Igba nkwu","Izu nwanyi","Ego nwanyi","Oru nwanyi"],"a":0}]},"2":{"title":"Ethnic Minority Groups in Nigeria & Their Culture","questions":[{"q":"The first Europeans arrived in Benin during whose reign in 1472?","o":["Ozolua","Oba Ewuare","Oba Owodo","Oba Eweka"],"a":1},{"q":"The Portuguese explorer who arrived during Ozolua's reign in 1484 was:","o":["Ruy de Sequeira","Alfonso de Aviero","Vasco da Gama","Ferdinand Magellan"],"a":1},{"q":"According to Egharevba, the Bini people emigrated from which country before settling at Ile-Ife?","o":["Ethiopia","Sudan","Egypt","Mali"],"a":2},{"q":"In Igbafe's version, who was the youngest child of Osanobua?","o":["The king of Ife","The first Oba of Benin","Bini","The founder of Benin"],"a":2},{"q":"According to Igbafe's version, what did the youngest child take to the world on a bird's advice?","o":["A piece of iron","A lump of earth","A snail shell","A cockerel"],"a":2},{"q":"The first period of pre-colonial Bini history is known as the:","o":["Oba era","Ogiso era","Eweka era","Oranmiyan era"],"a":1},{"q":"The first Ogiso was known as:","o":["Ere","Owodo","Igbodo","Ekaladeran"],"a":2},{"q":"Which Ogiso was credited with forming the guild system?","o":["Igbodo","Owodo","Ere","Eweka"],"a":2},{"q":"The last Ogiso was:","o":["Ere","Owodo","Igbodo","Ekaladeran"],"a":1},{"q":"The son of Owodo who was banished was named:","o":["Oranmiyan","Eweka","Ekaladeran","Omonoyan"],"a":2},{"q":"The youngest son of Ekaladeran who established the Eweka dynasty was:","o":["Oranmiyan","Eweka","Ogiso","Oba"],"a":0},{"q":"In Bini society, the nobility was known as:","o":["Ighiotu","Adesotu","Uzama","Eghaebvo"],"a":1},{"q":"The commoner class in Bini society was called:","o":["Adesotu","Ighiotu","Uzama","Oba's subjects"],"a":1},{"q":"The three groups of title holders among the Bini nobility include all EXCEPT:","o":["The Uzama","The Eghaebvo n'Ogbe","The Eghaebvo n'Ore","The Ogboni society"],"a":3},{"q":"The man through whom the Itsekiri kingdom was established was:","o":["Oba Olua","Iginuwa","Olu","Ewuare"],"a":1},{"q":"According to the Itsekiri tradition, Iginuwa was the son and heir apparent of which Oba?","o":["Oba Ewuare","Oba Ozolua","Oba Olua","Oba Eweka"],"a":2},{"q":"The Itsekiri kingdom is ruled by the:","o":["Oba","Olu","Obi","Eze"],"a":1},{"q":"The Urhobo people who argue they are product of Benin immigrants include all EXCEPT:","o":["Uwherun","Agbon","Oogun","Aghara"],"a":3},{"q":"According to some Urhobo traditions, the Urhobo people originated from which group?","o":["The Bini","The Ijaw","The Yoruba","The Igbo"],"a":1},{"q":"Each Urhobo village was headed by a ruler called:","o":["Oba","Ovie","Olu","Obi"],"a":1},{"q":"The traditional major Ijaw states included all of the following EXCEPT:","o":["Bonny","Kalabari","Opobo","Warri"],"a":3},{"q":"The \"House System\" characterizes which ethnic group's society?","o":["Urhobo","Itsekiri","Ijaw","Bini"],"a":2},{"q":"The Jukun people raided Hausaland and Bornu in which centuries according to the Kano Chronicle?","o":["14th and 15th centuries","15th and 16th centuries","16th and 17th centuries","17th and 18th centuries"],"a":2},{"q":"According to Bohannan (1953), the Tiv are classified as the largest single ethnic group in which basin?","o":["The Niger basin","The Benue basin","The middle Benue basin","The Sokoto basin"],"a":2},{"q":"The southern and eastern portions of Tiv country are also called:","o":["Ityough Kiteragh","Tivland","Swem territory","Benue valley"],"a":0},{"q":"According to Tiv oral tradition, the founding father of the Tiv ethnic group was named:","o":["Tiv","Tombor","Swem","Mbavessen"],"a":0},{"q":"The name of the family group among the Tiv was:","o":["Swem","Tombor","Mbavessen","Ityough"],"a":1},{"q":"The head of a unit among the Tiv was called:","o":["Swem","Tombor","Mbavessen","Elder"],"a":2},{"q":"The \"West African yam belt\" includes which groups?","o":["The Igbo, Yoruba and Hausa","The Nupe, Koto and Tiv","The Bini, Itsekiri and Urhobo","The Jukun, Tiv and Idoma"],"a":1},{"q":"Among the Tiv, God is known as:","o":["Ashili","Aondo","Katakuru","Soko"],"a":1},{"q":"Among the Nupe, God is called:","o":["Shekoki","Soko","Owo","Shido"],"a":1},{"q":"Among the Jukun, God is known as:","o":["Owo","Chido","Hinegba","Agwatana"],"a":1},{"q":"In Tiv ethnic group, only which gender is believed to be witches?","o":["Women only","Men only","Children only","Elders only"],"a":1},{"q":"Among the Nupe and Gwari, witches are almost invariably:","o":["Men","Women","Children","Elders"],"a":1},{"q":"The Bini kingdom's succession to the throne was by:","o":["Election by nobles","Primogeniture","Appointment by the Uzama","Rotation among royal houses"],"a":1},{"q":"The Oba of Benin was regarded as:","o":["Only a civil head","Only a religious head","A divine person summing up the whole race","A ceremonial figurehead"],"a":2},{"q":"The Esan call God by which name?","o":["Osanobua","Osenebua","Oghena","Olorun"],"a":1},{"q":"The Etsako call God:","o":["Osenebua","Osanobua","Oghena","Chukwu"],"a":2},{"q":"In Edoland, deities are referred to as:","o":["Orisa","Alusi","Ebo","Iskoki"],"a":2},{"q":"According to the material, in the Ife area, how many deities are said to exist?","o":["1001","1500","2001","2500"],"a":2},{"q":"How many days in the Ife calendar year are free from official religious activities?","o":["15 days","20 days","25 days","30 days"],"a":2},{"q":"The powerful Yoruba deity associated with thunder and lightning is:","o":["Ogun","Sango","Sopono","Olokun"],"a":1},{"q":"The powerful Igbo deity associated with the earth is:","o":["Amadaiaha","Idemili","Ana or Ani","Igwe"],"a":2},{"q":"Which ethnic group's traditional institution was modeled after the Benin Kingdom's Palace and titles?","o":["Yoruba","Igbo","Itsekiri","Tiv"],"a":2},{"q":"The Ibibio and Efik apprenticeship system is deeply tied to:","o":["Farming and hunting","Maritime activities and fishing","Trading and merchandising","Blacksmithing and metalwork"],"a":1},{"q":"According to the material, what percentage of Nigeria's population comprises ethnic minority groups?","o":["10%","20%","30%","40%"],"a":2},{"q":"Groups numbering more than one million members each besides the three major ethnic groups include:","o":["The Itsekiri, Urhobo and Ijaw","The Kanuri, Tiv and Ibibio","The Jukun, Nupe and Tiv","The Bini, Esan and Etsako"],"a":1},{"q":"The Bini palace chiefs are known as:","o":["Uzama","Eghaebvo n'Ogbe","Eghaebvo n'Ore","Ighiotu"],"a":1},{"q":"The Bini town chiefs are called:","o":["Uzama","Eghaebvo n'Ogbe","Eghaebvo n'Ore","Oba's councillors"],"a":2},{"q":"According to the material, Nigerian cultures represent about what fraction of cultures in Africa?","o":["One-half","One-third","One-quarter","One-fifth"],"a":1}]},"3":{"title":"Indigenous Languages in Nigeria","questions":[{"q":"Which feature of language indicates that no human group anywhere in the world lacks language?","o":["Language is relative","Language is transparent","Language is universal","Language is dynamic"],"a":2},{"q":"The feature of language that indicates each culture has its own peculiar language is called:","o":["Language is universal","Language is relative","Language is transparent","Language is encoded"],"a":1},{"q":"The feature of language that makes it open to everyone who exists in a particular culture is:","o":["Language is universal","Language is relative","Language is transparent","Language is learned"],"a":2},{"q":"According to Edogiawerie (2016), the industrial revolution created the impression that which language is the global language?","o":["French","Spanish","English","Portuguese"],"a":2},{"q":"The notion that English is the universal language emerged during which era?","o":["The Dark Ages","The Renaissance era","The rationalist or industrial revolution era","The post-colonial era"],"a":2},{"q":"According to Ukagba and Edogiawerie (2013), the industrial revolution occurred around which centuries?","o":["12th and 13th centuries","13th and 14th centuries","14th and 15th centuries","15th and 16th centuries"],"a":3},{"q":"Indigenous language is also popularly known as:","o":["Vernacular language","Official language","Local language","National language"],"a":2},{"q":"The reality that language does not pre-date man but man created language to communicate is strengthened by:","o":["The universality of language","The transparency of language","The relativity of language","The concept of indigenous language"],"a":3},{"q":"Solipsism in the context of language refers to:","o":["The inability to learn new languages","The inability to communicate and share thoughts","The ability to speak multiple languages","The death of indigenous languages"],"a":1},{"q":"Indigenous language is described as possessing which dual nature?","o":["Closed and open","Written and oral","Formal and informal","Sacred and secular"],"a":0},{"q":"Indigenous language is closed to:","o":["Those who do not belong to the culture where it is spoken","Those who are illiterate","Those who live in urban areas","Those under 18 years of age"],"a":0},{"q":"According to Odiagbe (2002), families who relocate from their places of origin often:","o":["Refuse to learn new indigenous languages","Come to learn and speak the indigenous language of their new settlement","Force their children to speak only their mother tongue","Abandon all forms of indigenous communication"],"a":1},{"q":"Research has revealed that children relocate faster than their parents because:","o":["They are more intelligent","They have high propensity to interact with friends and peers","They attend formal language classes","They are forced by their parents"],"a":1},{"q":"The quality of being \"encoded\" and \"decoded\" in indigenous language refers to:","o":["Writing and reading","Speaking and listening","Understanding, communication and monologue","Translating and interpreting"],"a":2},{"q":"When people say \"I nor defy hear your language,\" they are actually saying:","o":["They are deaf","The speaker is speaking too softly","They do not understand what the speaker is saying","The speaker's language is offensive"],"a":2},{"q":"Receiving information from indigenous language is known as:","o":["Decoding","Encoding","Translating","Interpreting"],"a":1},{"q":"Processing and interpreting the contents of indigenous language involves:","o":["Encoding","Decoding","Transcoding","Recoding"],"a":1},{"q":"According to the material, Nigeria is known to have how many indigenous languages?","o":["374","450","521","600"],"a":2},{"q":"How many indigenous languages in Nigeria are recognized as official?","o":["One","Two","Three","Four"],"a":2},{"q":"The three officially recognized indigenous languages in Nigeria are:","o":["Yoruba, Hausa and Bini","Yoruba, Hausa and Igbo","Hausa, Igbo and Fulani","Igbo, Yoruba and Tiv"],"a":1},{"q":"According to the material, indigenous languages are rapidly dying due to:","o":["Lack of native speakers","Negative orientation about non-English languages","Government prohibition","Lack of written form"],"a":1},{"q":"Contemporary Nigeria employs the proficiency in which language to profile individual competence?","o":["French","Arabic","English","Indigenous languages"],"a":2},{"q":"Which scholar discussed the relativity features of language as providing rational justification for indigenous language exposition?","o":["Edogiawerie","Odiagbe","Ukagba","Nzemeke"],"a":0},{"q":"The types of language mentioned in the material include all EXCEPT:","o":["Sign language","Signal language","Computer language","Symbolic language"],"a":2},{"q":"The oral type of language is the focus of which chapter's discursive?","o":["Chapter 1","Chapter 2","Chapter 3","Chapter 4"],"a":2},{"q":"According to the material, language translates to:","o":["The intelligence level of a people","How a group of people perceive the world","The economic status of a society","The political organization of a community"],"a":1},{"q":"The reality of indigenous language strengthens the contention that:","o":["Language pre-dates man","Man pre-dates language","Language and man emerged simultaneously","Language is divinely given"],"a":1},{"q":"The enterprise of encoding and decoding indigenous language ends up in the requirement of:","o":["A grammar book","A dictionary","A translator","A teacher"],"a":2},{"q":"Indigenous language holds how a culture:","o":["Conducts trade with others","Sees his world and interacts with it","Fights wars and makes peace","Builds its political institutions"],"a":1},{"q":"According to the material, indigenous language holds the preservation of all EXCEPT:","o":["Culture and tradition","Heritage and religious disposition","Political boundaries","The wisdom and intelligence of a people"],"a":2},{"q":"The problem of indigenous language is identified as:","o":["Lack of grammatical structure","Lack of frequent and consistent usage","Lack of native speakers","Lack of written form"],"a":1},{"q":"According to the material, Africa has no official or simple language via which it can:","o":["Conduct international trade","Express itself to the world","Educate its citizens","Govern its territories"],"a":1},{"q":"People who engage in frequent use of their indigenous language are often interpreted as:","o":["Highly educated","Uncivilized and unintelligent","Culturally proud","Nationalistic"],"a":1},{"q":"The Benin man understands to a large extent which neighbouring language?","o":["Yoruba","Igbo","Esan","Hausa"],"a":2},{"q":"The openness of indigenous language rest opportunity for:","o":["Native speakers only","Government officials only","Others to learn without hinderances","Academic researchers only"],"a":2},{"q":"Language is described in the material as a tool that demeans:","o":["Communication","Solipsism","Translation","Education"],"a":1},{"q":"The statement \"language is a universal phenomenon even among lesser creatures\" suggests that:","o":["Only humans have complex language","Animals and plants have their own indigenous language","Language is unique to human beings","Lesser creatures cannot communicate"],"a":1},{"q":"According to the material, which language is erroneously believed to be Nigeria's official language?","o":["Yoruba","Hausa","Igbo","English"],"a":3},{"q":"Indigenous language refers to the means through which people who share certain things in common:","o":["Conduct religious ceremonies","Interact with one another","Govern themselves","Conduct economic transactions"],"a":1},{"q":"The material states that language is an intangible tool that is:","o":["Optional to human existence","Inevitable to human existence","Secondary to human existence","Supplementary to human existence"],"a":1},{"q":"According to the material, a child of Yoruba roots speaking fluent Igbo language is:","o":["Unusual and culturally inappropriate","Not out of place due to relocation and interaction","A sign of loss of cultural identity","Only possible through formal education"],"a":1},{"q":"The material identifies that indigenous language possesses the characteristic of being encoded and decoded, showing that language strongly has to do with:","o":["Grammar and syntax","Vocabulary and lexicon","Understanding, communication and monologue","Writing and reading"],"a":2},{"q":"According to Edogiawerie (2016), indigenous language is often peculiar to a group of people who share certain traits including all EXCEPT:","o":["Origin and traditions","Heritage and religion","Political system","Dressing and dancing"],"a":2},{"q":"The material states that indigenous language goes a long way in telling how such people:","o":["View, interpret and respond to the reality-world around them","Conduct warfare against their neighbours","Build their economic structures","Develop their political institutions"],"a":0},{"q":"According to the material, which statement about indigenous language is accurate?","o":["Indigenous language has no place in formal engagements in Nigeria","Indigenous language is the medium of instruction in Nigerian universities","Indigenous language is preferred over English in government business","Indigenous language is mandatory for political office holders"],"a":0},{"q":"The reality of both Mr. A from Mbiano and Mr. B from Ijebu Ode being stranded if they visit each other's regions illustrates:","o":["The universality of language","The relativity of language","The transparency of language","The dynamic nature of language"],"a":1},{"q":"The material suggests that the negative orientation about indigenous languages has led to:","o":["Increased government support for local languages","Rapid dying away of indigenous languages","Revival of traditional linguistic practices","Integration of indigenous languages into formal curriculum"],"a":1},{"q":"According to the material, indigenous language does not have any place or recognition as far as formal engagements are concerned because:","o":["Indigenous languages are inferior","English is erroneously believed to be Nigeria's official language","Indigenous languages lack grammar","The constitution prohibits indigenous languages"],"a":1},{"q":"The material states that when people popularly say \"I nor defy hear your language,\" they are not meaning that they are deaf but rather that:","o":["The speaker is mumbling","They cannot encode and decode the sounds","The language is too complex","The speaker has an accent"],"a":1},{"q":"The two Nigerians from different regions aged over 60 who can speak only their indigenous languages would be classified as having which type of language experience?","o":["Bilingual","Monolingual","Polyglot","Multilingual"],"a":1}]},"4":{"title":"Cultism, Kidnapping & Armed Banditry","questions":[{"q":"A group of individuals who have deep and partisan beliefs promoting their collective interest but are not a religious group is called:","o":["A political party","A cult","A trade union","A cooperative society"],"a":1},{"q":"Secret cults are infamously referred to as:","o":["Secret societies","Secret cult","Underground organizations","Hidden brotherhoods"],"a":1},{"q":"The history of cultism in Nigeria dates back to:","o":["The early 60s","The late 60s","The early 70s","The late 70s"],"a":1},{"q":"The founding fathers of cultism in Nigeria were known to be:","o":["Politicians and activists","Brilliant and intelligent students","Military personnel","Religious leaders"],"a":1},{"q":"The initial body of cultism promoted which three qualities?","o":["Wealth, power and influence","Intellectualism, foresight and character","Strength, courage and loyalty","Discipline, obedience and respect"],"a":1},{"q":"Cultism began to derail when disillusioned members began to:","o":["Report other members to authorities","Break away and form their own groups","Abandon cult activities entirely","Become religious leaders"],"a":1},{"q":"The material states that cult rivalry in Nigeria assumed a worrisome magnitude due to:","o":["Political interference","Reckless and senseless killing to prove superiority","Government sponsorship","Religious differences"],"a":1},{"q":"According to critics, one reason for the derailment of cultism was:","o":["Government crackdown","Initiation of members not connected to scholarship or intellectualism","Lack of funding","Religious opposition"],"a":1},{"q":"The founding fathers of cultism contend that present-day cultism:","o":["Is exactly what they envisioned","Is not what they had in mind","Has improved significantly","Has become more intellectual"],"a":1},{"q":"Becoming a member of a secret cult today is akin to belonging to a:","o":["Professional association","Kill squad","Social club","Study group"],"a":1},{"q":"Membership in cultism is forbidden by:","o":["Only the government","Only religious institutions","The family and society writ large","Only educational institutions"],"a":2},{"q":"According to the material, kidnapping for ransom is described as:","o":["The least common type of kidnapping","The most common type of kidnapping","Only practiced internationally","No longer practiced in Nigeria"],"a":1},{"q":"The word \"kidnap\" refers to a situation where someone is forcefully taken without:","o":["Prior notice","Their consent","Police involvement","Witnesses"],"a":1},{"q":"Kidnapping is different from arrest because arrest can be:","o":["Forceful yet legal","Voluntary","Negotiated","Temporary"],"a":0},{"q":"Those who are engaged in kidnapping are known as:","o":["Captors","Kidnappers","Abductors","Detainers"],"a":1},{"q":"The victims of kidnapping are popularly known as:","o":["Captives","Prisoners","Kidnappees","Hostages"],"a":2},{"q":"The two basic kinds of kidnapping mentioned are kidnapping for ransom and kidnapping for:","o":["Religious purposes","Other purposes","Political asylum","Media attention"],"a":1},{"q":"Kidnapping for ritual purposes falls under which category?","o":["Kidnapping for ransom","Kidnapping for other purposes","Kidnapping for political asylum","Kidnapping for media attention"],"a":1},{"q":"The operational method of kidnappers is to open communication with victims' families and:","o":["Demand immediate release","Bargain until an amount is agreed upon","Release the victim unconditionally","Contact the police"],"a":1},{"q":"According to the material, numerous reports indicate that victims die in captivity due to all EXCEPT:","o":["Inability to keep pace with captors","Harsh treatment and hygienic conditions","Lack of medications during detention","Government rescue attempts"],"a":3},{"q":"The material describes kidnappers as:","o":["Negotiable and reasonable","Brutal, heartless and callous","Professional and organized","Religious and principled"],"a":1},{"q":"Investigations contend that most kidnap cases are the handiwork of:","o":["Isolated individuals","Well-organized syndicates","Foreign agents","Political opponents"],"a":1},{"q":"The Chibok school girls kidnapping occurred in which year?","o":["2012","2013","2014","2015"],"a":2},{"q":"How many Chibok school girls were kidnapped according to the material?","o":["150","200","Over 250","300"],"a":2},{"q":"According to the material, as of 2025, how many years after the Chibok kidnapping have some girls still not been found?","o":["9 years","10 years","11 years","12 years"],"a":2},{"q":"The Chibok kidnapping was perpetrated by which terrorist group?","o":["Al-Qaeda","ISIS","Boko Haram","Al-Shabaab"],"a":2},{"q":"The material states that kidnapping has led to high cost of living because:","o":["Government increased taxes","Prices of food and other necessities have skyrocketed","International sanctions were imposed","Currency was devalued"],"a":1},{"q":"According to the material, farmers no longer go to farms due to fear of:","o":["Crop failure","Kidnapping and possible brutality","Government regulations","Lack of tools"],"a":1},{"q":"Armed banditry refers to a set of people who:","o":["Protest peacefully against government policies","Take up arms and unleash terror without provocation","Campaign for political change","Defend their communities from invaders"],"a":1},{"q":"Unlike kidnapping, armed bandits:","o":["Always demand ransom","Do not have any specific goal or target","Only operate at night","Target only government officials"],"a":1},{"q":"The material states that traveling by road in Nigeria has what percentage risk of being kidnapped?","o":["75% and above","85% and above","95% and above","99% and above"],"a":2},{"q":"According to the material, foreign investors have withdrawn from Nigeria because:","o":["The economy is unstable","Their personal safety cannot be guaranteed","There are no markets","The government is corrupt"],"a":1},{"q":"The material states that foreign investors' skin colour makes them preferred targets because kidnappers perceive that:","o":["They are easier to catch","Ransom for their release comes in hard currency","They cannot identify their captors","They will not report to police"],"a":1},{"q":"According to the material, citizens have been kidnapped even in:","o":["Their homes","The church","Government buildings","Police stations"],"a":1},{"q":"The material reports that cases of kidnapping often involve:","o":["Random attacks on strangers","Deep level of inside help giving attackers full knowledge","Only international criminal networks","Government conspiracy"],"a":1},{"q":"Cultism is defined in the material as a select group of people who isolate themselves because they share the notion that:","o":["They are superior to others","They wouldn't want to be trampled upon by oppressors","They have special spiritual powers","They need to protect their wealth"],"a":1},{"q":"Membership of a cult is NOT open to:","o":["University graduates only","Every Tom, Dick and Harry","Men only","Those above 18 years only"],"a":1},{"q":"The reason membership is restricted is that:","o":["The confraternity can and must not be profaned","Only rich people can join","Only politicians can join","Only first-born sons can join"],"a":0},{"q":"Membership of a cult involves:","o":["Payment of annual fees","Standard rituals to test qualification","Academic excellence only","Government approval"],"a":1},{"q":"The material states that cultism and the Mafia are:","o":["Exactly the same","Not the same in any way","Variations of the same concept","Both legal organizations"],"a":1},{"q":"The nexus between cultism and Mafiarism is that:","o":["Both are legal in Nigeria","Members are extremely partisan about their beliefs","Both originated in universities","Both are religious organizations"],"a":1},{"q":"According to the material, cultism became proliferated when:","o":["The government legalized it","Membership became open to \"everyone\"","It spread to other countries","Religious bodies adopted it"],"a":1},{"q":"The material states that reckless violence became the only way to resolve issues among rival cult groups because:","o":["There was no legal system","Rivalry became common and groups wanted to flex muscles","The government encouraged it","Religious differences emerged"],"a":1},{"q":"The brutality of kidnappers is interpreted as stemming from the fact that they want to:","o":["Terrorize the government","Tell the world they mean business and are out for blood","Gain political power","Convert victims to their cause"],"a":1},{"q":"The material states that the activities of kidnapping have led to:","o":["Increased foreign investment","Economic challenges for individuals and government","Reduction in crime rates","Improved international relations"],"a":1},{"q":"According to the material, social gatherings have become:","o":["Safer than ever before","Places where kidnap victims can be easily accessed","Protected by international laws","Attended only by government officials"],"a":1},{"q":"The material states that Nigerians now live in fear and suspicion because:","o":["The government is corrupt","People no longer trust each other even among family members","The economy is failing","There is no electricity"],"a":1},{"q":"Kidnapping is described as a very serious issue that bothers on:","o":["National security","Educational policy","Agricultural development","Environmental protection"],"a":0},{"q":"The material states that many cultists are so overwhelmed with group activities that they:","o":["Become more successful academically","Give less attention to their academics","Graduate with honours","Become university lecturers"],"a":1},{"q":"The founding fathers of cultism used which yardstick for membership?","o":["Wealth and social status","Scholarship and intellectualism","Physical strength and courage","Family connections and lineage"],"a":1}]},"5":{"title":"Indigenous Apprenticeship Systems in Nigeria","questions":[{"q":"The indigenous apprenticeship systems in Nigeria are described as:","o":["State-controlled and centralized","Decentralized and community-based","Foreign-imported and modern","Religious and ceremonial"],"a":1},{"q":"The apprenticeship process in Nigeria can last anywhere from:","o":["1 to 5 years","2 to 8 years","3 to 10 years","5 to 15 years"],"a":2},{"q":"The length of apprenticeship is determined by:","o":["The wealth of the master","The complexity of the trade and readiness of the apprentice","Government regulations","The age of the apprentice"],"a":1},{"q":"The end goal of the apprenticeship system is:","o":["To become employed in government","To become self-reliant and contribute to the local economy","To emigrate to other countries","To acquire formal education"],"a":1},{"q":"Indigenous apprenticeships are usually:","o":["Very expensive with high fees","Free or involve minimal costs","Funded by government grants","Paid for by international organizations"],"a":1},{"q":"The Igbo apprenticeship system is unique for its emphasis on:","o":["Agriculture and farming","Entrepreneurship and self-reliance","Religious education","Military training"],"a":1},{"q":"The \"Onye Oji\" system is a distinctive feature of which ethnic group's apprenticeship model?","o":["Yoruba","Hausa-Fulani","Igbo","Ibibio and Efik"],"a":2},{"q":"After completing the Onye Oji apprenticeship, the apprentice is often provided with:","o":["A certificate of completion","Capital or financial support to start their own business","A government job","Land for farming"],"a":1},{"q":"The Yoruba apprenticeship system is heavily based on:","o":["Agricultural traditions","Mercantile traditions","Fishing traditions","Military traditions"],"a":1},{"q":"The Yoruba apprenticeship emphasizes both technical skill and:","o":["Religious piety","Business acumen","Political awareness","Physical strength"],"a":1},{"q":"According to the material, many successful entrepreneurs in Nigeria's fashion and construction industries attribute their success to:","o":["Formal university education","The Yoruba apprenticeship system","Government training programs","Foreign education"],"a":1},{"q":"The production of \"Aso Ebi\" for social events is particularly associated with which apprenticeship trade?","o":["Blacksmithing","Tailoring and fashion design","Leatherworking","Pottery"],"a":1},{"q":"The Hausa and Fulani apprenticeship system is centered on all EXCEPT:","o":["Agriculture","Craftsmanship","Maritime activities","Trade"],"a":2},{"q":"In the Hausa-Fulani apprenticeship system, apprentices often balance learning trade skills with:","o":["Religious education (Islamic practices)","Formal western education","Military training","Political activism"],"a":0},{"q":"The famous market that serves as a hub for trade apprenticeship in northern Nigeria is:","o":["Onitsha Market","Kano Market","Lagos Market","Aba Market"],"a":1},{"q":"In regions like Kano, young apprentices learn blacksmithing to produce all EXCEPT:","o":["Tools","Weapons","Computers","Ornamental objects"],"a":2},{"q":"The Ibibio and Efik apprenticeship system is deeply tied to:","o":["Desert trade routes","Maritime activities and fishing","Mountain agriculture","Forest hunting"],"a":1},{"q":"According to the material, the apprenticeship system preserves:","o":["Only economic practices","Practical knowledge and skills passed down through generations","Only religious traditions","Only political systems"],"a":1},{"q":"The material states that through apprenticeship, individuals gain hands-on experience that equips them to:","o":["Depend on government handouts","Start their own businesses or find employment","Leave the country permanently","Abandon traditional practices"],"a":1},{"q":"Indigenous apprenticeship systems enable education and skill acquisition to reach:","o":["Only urban areas","Even the most remote areas","Only government officials","Only university graduates"],"a":1},{"q":"According to the material, the apprenticeship system fosters which social aspect?","o":["Political awareness","Social ties, networks and community bonds","Religious conversion","International relations"],"a":1},{"q":"One challenge facing indigenous apprenticeship systems is:","o":["Too much government regulation","Inadequate regulation leading to potential exploitation","Excessive funding","Too many modern skills"],"a":1},{"q":"The material states that indigenous apprenticeship systems sometimes fail to integrate:","o":["Traditional knowledge","Modern technologies and techniques","Local customs","Cultural values"],"a":1},{"q":"According to the material, globalization and urbanization have:","o":["Strengthened all traditional trades","Altered the demand for certain trades","Eliminated all apprenticeship systems","Had no effect on apprenticeship"],"a":1},{"q":"In many parts of Nigeria, the material identifies which challenge in apprenticeship systems?","o":["Religious discrimination","Gender disparity","Age restrictions","Language barriers"],"a":1},{"q":"Women in some apprenticeship systems are often:","o":["Given preference over men","Excluded from certain trades or confined to \"women's work\"","Paid higher wages than men","Allowed to become masters immediately"],"a":1},{"q":"According to Akinmoladun and Ajayi (2015), apprenticeships are often structured as:","o":["Classroom-based learning","One-on-one mentoring arrangements","Online training programs","Group seminars"],"a":1},{"q":"The material states that many apprentices lack access to all EXCEPT:","o":["Tools","Raw materials","Formal education certificates","Financial resources"],"a":2},{"q":"Palm oil production apprenticeship in rural Igbo communities teaches the entire process from harvesting to:","o":["Exportation only","Processing and marketing","Industrial manufacturing","International distribution"],"a":1},{"q":"In the Ibibio and Efik communities, pottery and woodwork items are highly valued in:","o":["International markets only","The local economy","Government procurement only","Religious institutions only"],"a":1},{"q":"The material suggests that policymakers, traditional leaders, and local communities must collaborate to ensure the apprenticeship system:","o":["Is completely replaced by formal education","Evolves in response to changing needs","Remains unchanged forever","Is abolished"],"a":1},{"q":"According to the material, apprentices in the commercial sector acquire knowledge in all EXCEPT:","o":["Managing retail businesses","Wholesale trading","Market dynamics","Religious ceremonies"],"a":3},{"q":"The apprenticeship system is described as promoting:","o":["Dependency on foreign aid","Skill acquisition, self-reliance, and entrepreneurship","Government control of all businesses","Elimination of traditional crafts"],"a":1},{"q":"In the Yoruba apprenticeship system, apprentices are taught ethical principles such as:","o":["Competition and rivalry","Honesty, hard work, and respect for authority","Profit maximization only","Political activism"],"a":1},{"q":"The Igbo apprenticeship typically lasts for:","o":["1 to 3 years","3 to 7 years","7 to 10 years","10 to 15 years"],"a":1},{"q":"According to the material, the typical Yoruba apprenticeship lasts:","o":["1 to 5 years","3 to 7 years","5 to 10 years","7 to 12 years"],"a":1},{"q":"The apprenticeship system's role in reducing unemployment is described as:","o":["Insignificant","Filling a vital gap left by the formal education system","Causing more unemployment","Irrelevant to youth employment"],"a":1},{"q":"The material states that the specific structure and practices of apprenticeship systems vary significantly across regions, reflecting each group's:","o":["Religious affiliation only","Distinct cultural and economic contexts","Political party preference","Colonial history"],"a":1},{"q":"In the Igbo apprenticeship system, there is usually a formal contract between master and apprentice that specifies:","o":["Only the duration of training","The terms of training and post-completion expectations","Only the payment amount","Only the location of training"],"a":1},{"q":"According to the material, the Yoruba apprenticeship system is most visible in urban and peri-urban centers such as:","o":["Only Lagos","Lagos, Ibadan, and Oyo","Only Ibadan","Kano and Kaduna"],"a":1},{"q":"The material states that many Nigerian apprentices become successful entrepreneurs due to the apprenticeship system often:","o":["Discouraging independent business","Encouraging business ownership","Requiring government employment","Mandating cooperative societies"],"a":1},{"q":"According to the material, the informal sector of apprenticeship provides an alternative route to skill development, filling a gap left by:","o":["Religious institutions","The formal education system","Family training","International organizations"],"a":1},{"q":"The apprenticeship system's ability to preserve local knowledge is described as:","o":["Unimportant for development","Crucial for preserving practical knowledge and skills","A hindrance to modernization","Only relevant to historical research"],"a":1},{"q":"The material identifies that many apprentices in rural areas lack all EXCEPT:","o":["Access to tools","Raw materials","Government certificates","Financial resources to establish businesses"],"a":2},{"q":"According to the material, the decentralization of education through apprenticeship means it does NOT require:","o":["Skilled masters","Large-scale infrastructure","Practical training","Community participation"],"a":1},{"q":"The material suggests that for social justice to be achieved in apprenticeship, there is need for:","o":["Complete government takeover","More inclusive and adaptive systems","Elimination of traditional masters","Foreign management"],"a":1},{"q":"According to Olusola (2017), fashion design and tailoring in many Nigerian communities are described as:","o":["Hobbies rather than economic activities","Crucial economic activities","Declining professions","Imported trades"],"a":1},{"q":"The apprenticeship system's promotion of financial independence means apprentices can generate income:","o":["Only through their families","Independently of their family or society","Only through government programs","Only after five years"],"a":1},{"q":"The material states that the apprenticeship system builds social capital through:","o":["Formal classroom education","Relationships within a community","International exchange programs","Online networking"],"a":1},{"q":"According to the material, the future of apprenticeship systems requires that they retain their cultural and practical value while:","o":["Rejecting all modern technologies","Integrating new technologies","Becoming completely formalized","Eliminating traditional trades"],"a":1}]},"6":{"title":"Individual Norms & Values in Nigeria","questions":[{"q":"According to simply psychology, norms are defined as:","o":["Fundamental beliefs that guide individual behavior","Accepted standards or rules that prescribe how individuals should behave","Legal statutes enacted by government","Religious commandments"],"a":1},{"q":"Norms that are explicit include:","o":["Customs and traditions","Laws and regulation","Greeting patterns","Family obligations"],"a":1},{"q":"According to simply psychology, values are defined as:","o":["Rules that prescribe behavior","Fundamental beliefs that guide individuals in determining what is desirable","Legal rights of citizens","Economic principles"],"a":1},{"q":"In many Nigerian ethnic groups, one of the most important norms is:","o":["Wealth accumulation","Respect for elders","Political participation","Educational achievement"],"a":1},{"q":"Elders are considered the custodians of:","o":["Political power","Wisdom, culture, and tradition","Economic resources","Military strength"],"a":1},{"q":"In Nigerian society, the concept of familial responsibility goes beyond blood relations to include:","o":["Only government officials","Close friends, neighbours, and distant relatives","Only religious leaders","Only political allies"],"a":1},{"q":"The traditional belief that \"a stranger is a friend\" reflects which Nigerian norm?","o":["Respect for elders","Hospitality","Social solidarity","Religious faith"],"a":1},{"q":"The spirit of social solidarity is especially evident in rural settings through:","o":["Government programs","Communal labour and mutual aid","Religious ceremonies","Political rallies"],"a":1},{"q":"The popular phrase \"man must hustle\" captures the national ethos of:","o":["Laziness and dependency","Striving and surviving against odds","Government dependency","Religious devotion"],"a":1},{"q":"The Yoruba traditional leadership system includes all EXCEPT:","o":["Kings (Obas)","Chiefs","Military rulers","Councils of elders"],"a":2},{"q":"The Igbo concept of chi refers to:","o":["Community leadership","Personal god emphasizing destiny and personal effort","Ancestral worship","Political authority"],"a":1},{"q":"The Igbo political system is described as having:","o":["Centralized monarchy","Democratic community structures with decision-making involving elders","Military dictatorship","Theocratic rule"],"a":1},{"q":"The Hausa-Fulani social behavior is guided by:","o":["Traditional Yoruba customs","Islamic law (Sharia)","Igbo democratic principles","British common law"],"a":1},{"q":"The term \"Citizen\" etymologically derives from the Latin word which means:","o":["Member of government","Membership of a society","Free person","Voter"],"a":1},{"q":"In ancient Greece, citizens were those born into or classified within the penumbra of:","o":["The working class","The ruling class of the Athenians or Aristocratic class","The merchant class","The religious class"],"a":1},{"q":"According to Oxford Advanced Learners Dictionary, a citizen is a person who has full rights as a member of a country:","o":["Only by birth","Either by birth or by being given such rights","Only by naturalization","Only by marriage"],"a":1},{"q":"According to A.K. Chaturvedi, a citizen is a person enjoying full political and civil rights and owing specified duties to the state because of:","o":["Wealth or property ownership","Birth in its territory or nationality of parents","Religious affiliation","Educational qualifications"],"a":1},{"q":"The concept of citizenship was universalized by which two documents?","o":["The Magna Carta and the English Bill of Rights","The 1789 Declaration of the Right of Man and the 1776 American Declaration of Independence","The Geneva Convention and the Universal Declaration of Human Rights","The Treaty of Westphalia and the Congress of Vienna"],"a":1},{"q":"Citizenship is related to which type of laws?","o":["International law only","Domestic or municipal laws","Religious laws only","Customary laws only"],"a":1},{"q":"Nationality is related to which type of law?","o":["Domestic law","International law","Municipal law","Criminal law"],"a":1},{"q":"Citizenship by birth where either parents or grandparents are indigenous members is known as:","o":["Jus Soli","Jus sanguinis","Jus gentium","Jus civile"],"a":1},{"q":"Citizenship by Descent or Law of the Land/Place is referred to in Latin as:","o":["Jus sanguinis","Jus Soli","Jus naturale","Jus divinum"],"a":1},{"q":"The US 14th Constitutional Amendment addresses which type of citizenship?","o":["Citizenship by naturalization","Citizenship by birth within territorial jurisdiction","Citizenship by marriage","Citizenship by descent"],"a":1},{"q":"Any person born in a registered ship automatically becomes citizen of:","o":["Their parents' country","The state where the ship is registered","The country of their birth location","No country"],"a":1},{"q":"According to the 1979 constitution of Nigeria, which condition involves renouncing previous citizenship?","o":["Residency requirement","Oath of Allegiance","Moral character test","Language requirement"],"a":1},{"q":"The residency requirement for naturalization in Nigeria is:","o":["5 consecutive years","10 consecutive years","15 consecutive years","20 consecutive years"],"a":2},{"q":"According to the material, an applicant for naturalization in Nigeria must present evidence of acceptance by:","o":["The federal government","The immediate community and assimilation into its norms","The international community","Their country of origin"],"a":1},{"q":"Loss of citizenship by getting married to another national is called:","o":["De-naturalization","By marriage","Expatriation","Renunciation"],"a":1},{"q":"The revocation of previously granted legal recognition is called:","o":["By marriage","De-naturalization","Expatriation","Collective naturalization"],"a":1},{"q":"In Nigeria, a naturalized citizen loses citizenship status if within how many years of acquisition they are imprisoned for more than 3 years?","o":["5 years","7 years","10 years","15 years"],"a":1},{"q":"Voluntary renouncement of citizenship status is called:","o":["De-naturalization","By marriage","Expatriation","Derivative naturalization"],"a":2},{"q":"Rights are defined as:","o":["Duties owed to the state","Entitlements or justified claims","Taxes paid to government","Laws enacted by parliament"],"a":1},{"q":"Moral rights are those which can be demonstrated as justifiable by relation to:","o":["Government policy","Common good","Individual wealth","International treaties"],"a":1},{"q":"Legal rights are described as:","o":["Moral principles","Constitutional rights recognized by the state","Religious commandments","Customary practices"],"a":1},{"q":"The bilateral relationship between state and citizens where rights and duties are exchanged is known in Latin as:","o":["Modus vivendi","Quid pro quo","Status quo","Sui generis"],"a":1},{"q":"Obedience to the laws of the land is an example of:","o":["Rights","Duty","Privilege","Entitlement"],"a":1},{"q":"Exercising voting rights is an example of:","o":["Duty","Obligation","Right only","Privilege only"],"a":1},{"q":"According to the material, citizens should protect the environment and natural resources as part of:","o":["Legal rights","Environmental stewardship as civic responsibility","Political obligations","Religious duties"],"a":1},{"q":"The material states that for citizens to live their best lives, the state must provide a platform for rights to be realized, representing the:","o":["Individual good","Communitas commutatum","Private interest","Personal wealth"],"a":1},{"q":"Engaging in civil society organizations such as NGOs is described as participation in:","o":["Government","Civil society","Religious activities","Political parties"],"a":1},{"q":"According to the material, promoting citizenship and civic responsibility is vital for the functioning of:","o":["Monarchy","Democracy","Dictatorship","Oligarchy"],"a":1},{"q":"The material states that when rights are violated, redress can be sought in:","o":["Religious institutions","The law court","Traditional councils","Family meetings"],"a":1},{"q":"The fundamental rights of citizens are described as:","o":["Moral rights","Legal rights","Natural rights","Divine rights"],"a":1},{"q":"One of the fundamental human rights mentioned is:","o":["Right to wealth","Right to life","Right to property ownership only","Right to political office"],"a":1},{"q":"According to the material, the state represents the communitas commutatum, which refers to:","o":["Individual interests","The give and take relationship","Religious authority","Military power"],"a":1},{"q":"Kinship obligations in Nigerian society include all EXCEPT:","o":["Assisting in times of need","Providing financial support","Sharing resources","Avoiding all relatives"],"a":3},{"q":"The material describes Nigeria as a nation with:","o":["Unity without diversity","Diversity without unity","Unity in diversity","Neither unity nor diversity"],"a":2},{"q":"According to the material, social solidarity in urban areas is seen through:","o":["Government programs only","Social organizations and associations that provide support for members","Religious institutions only","Political parties only"],"a":1},{"q":"The material states that a person's reputation and trustworthiness are vital and often determine:","o":["Only marriage prospects","Social status and influence","Only employment opportunities","Only religious standing"],"a":1},{"q":"The material identifies that after independence, Nigeria still experiences oppression, but now it is:","o":["Foreign-controlled","Indigenously masterminded","Religiously motivated","Economically driven"],"a":1}]},"7":{"title":"Social Justice & National Development","questions":[{"q":"According to Rawls (1971), social justice concerns:","o":["Economic growth only","Fair and equitable distribution of resources, opportunities and privileges","Military strength","Religious observance"],"a":1},{"q":"Which international bodies have consistently frowned at social injustice according to the material?","o":["World Bank and IMF","United Nations International Declaration of Human Rights and Amnesty International","World Trade Organization and WHO","UNESCO and UNICEF"],"a":1},{"q":"The inability to maintain social justice affects which aspect of development?","o":["Only economic development","Individual psychosocial development resulting in insecurity and underdevelopment","Only political development","Only social development"],"a":1},{"q":"According to Greek conception, justice has a wider connotation covering:","o":["Only judicial meaning","Legal, administrative and ethical meaning","Only administrative meaning","Only ethical meaning"],"a":1},{"q":"According to Gboyega, national development embodies all attempts to improve:","o":["Only economic growth","The coordination of human exercise in all ramifications","Only political stability","Only religious harmony"],"a":1},{"q":"According to Naomi, development involves all EXCEPT:","o":["Economic growth","Equitable distribution","Military expansion","Provision of health care and education"],"a":2},{"q":"Economists measure development using GDP and:","o":["Only military spending","Social indicators like good housing, accessible roads, and electricity","Only political freedom","Only religious participation"],"a":1},{"q":"Plato sees justice as part of human virtue that makes man good, alongside:","o":["Wealth, power and influence","Wisdom, courage and temperance","Strength, beauty and intelligence","Faith, hope and charity"],"a":1},{"q":"According to Chief Obafemi Awolowo, man is described as:","o":["A passive observer of development","The sole creative, propulsive and dynamic force, the prime mover","An obstacle to development","A beneficiary only, not a participant"],"a":1},{"q":"The constitution of the Federal Republic of Nigeria provides for fundamental human rights in which chapter?","o":["Chapter 2","Chapter 4","Chapter 6","Chapter 8"],"a":1},{"q":"Which of the following is NOT listed as a fundamental human right in the material?","o":["Right to life","Right to personal liberty","Right to free university education","Right to fair hearing"],"a":2},{"q":"The right to freedom of thought, conscience and religion is included in which category?","o":["Economic rights","Fundamental human rights","Political rights only","Social rights only"],"a":1},{"q":"The sharp divide between developing and developed countries is attributed to:","o":["Geographic location","Issue of social injustice","Population size","Natural resources"],"a":1},{"q":"According to the material, without access to which right is it impossible to ensure realization of any other right?","o":["Right to property","Access to justice","Right to education","Right to work"],"a":1},{"q":"The seven themes of Catholic social teaching include all EXCEPT:","o":["Primacy of the common good","Dignity of work","Call to family and community","Individual wealth accumulation"],"a":3},{"q":"The importance of social justice includes assigning rights and duties which enable people to receive:","o":["Only political benefits","Basic benefits and burdens of cooperation","Only economic advantages","Only social privileges"],"a":1},{"q":"According to the material, full employment for all citizens is a parameter for measuring:","o":["Economic growth only","Social justice in Nigeria","Political stability only","Religious harmony only"],"a":1},{"q":"The history of class struggles between oppressor and oppressed was articulated by:","o":["Plato and Aristotle","Marx and Engels","Rawls and Nozick","Weber and Durkheim"],"a":1},{"q":"In ancient Rome, the social classes included all EXCEPT:","o":["Patricians","Plebeians","Proletarians","Knights"],"a":2},{"q":"In modern capitalism, the bourgeoisie refers to:","o":["Those who have no means of production","Those who own the means of production","The working class","The slave class"],"a":1},{"q":"The proletarian in capitalist society refers to:","o":["The wealthy class","Those who have no means of production and sell their labour for wages","The land-owning class","The political class"],"a":1},{"q":"The Aba Women's Riot occurred in which year?","o":["1918","1929","1945","1947"],"a":1},{"q":"The general strike in Nigeria as a struggle against British colonizers took place in:","o":["1916","1929","1945","1947"],"a":2},{"q":"At the Enugu Colliery, how many Nigerian miners were shot dead by police in 1947?","o":["11","15","21","31"],"a":2},{"q":"The three constitutions put in place between 1960 and 1979 were the 1960 independence, 1963 Republic, and:","o":["1975 military constitution","1979 presidential constitution","1976 constitution","1978 draft constitution"],"a":1},{"q":"The amended 1999 constitution is described as an improvement of which constitution?","o":["1960 constitution","1963 constitution","1979 constitution","1989 constitution"],"a":2},{"q":"According to the material, there is glaring disparity in school enrolment between:","o":["East and West","North and South","Urban and rural only","Christian and Muslim only"],"a":1},{"q":"The Willinck Commission was instituted to address:","o":["Economic problems","Feeling of marginalization by minority groups","Religious conflicts","Educational challenges"],"a":1},{"q":"The Oputa Panel examined instances of human rights abuses from 1st January 1984 to:","o":["28 May 1999","28 May 1998","28 May 2000","28 May 2001"],"a":0},{"q":"According to Max Weber, law is defined as:","o":["A set of moral principles","A system of rules backed by force and enforced by a central authority","Divine commandments","Customary practices only"],"a":1},{"q":"Legal positivists such as John Austin define law as:","o":["Rules based on morality","Rules created and enforced by a legitimate authority","Divine law only","International treaties only"],"a":1},{"q":"Natural law theorists argue that law should reflect:","o":["Only government will","Inherent moral principles discoverable through reason","Only economic interests","Only political convenience"],"a":1},{"q":"Which legal philosopher is associated with natural law theory?","o":["John Austin","H.L.A. Hart","St. Thomas Aquinas","Max Weber"],"a":2},{"q":"Public law governs the relationship between:","o":["Private individuals only","Individuals and the state","Corporations only","International organizations only"],"a":1},{"q":"Constitutional law governs the structure and functioning of:","o":["Religious institutions","Government institutions and relationships between state and individuals","Private businesses","International organizations"],"a":1},{"q":"Criminal law defines offenses against:","o":["Private individuals only","The state","International bodies","Religious institutions"],"a":1},{"q":"Private law governs relationships between:","o":["Government and citizens","Private individuals and entities","States and nations","Religious and secular bodies"],"a":1},{"q":"Contract law deals with:","o":["Criminal offenses","Agreements between individuals or organizations and the obligations they create","Constitutional matters","Administrative regulations"],"a":1},{"q":"Tort law addresses:","o":["Criminal punishments","Civil wrongs that cause harm and provides remedies","Constitutional violations","International disputes"],"a":1},{"q":"Substantive law outlines:","o":["Court procedures only","Rights and duties of individuals, offenses and punishments","Filing procedures only","Evidence rules only"],"a":1},{"q":"Procedural law concerns:","o":["Defining criminal offenses","Methods and procedures for enforcing legal rights","Constitutional rights only","International treaties only"],"a":1},{"q":"Common law originated in:","o":["France","Germany","England","Rome"],"a":2},{"q":"Civil law systems are primarily based on:","o":["Judicial precedent","Written statutes and codes","Customary practices only","Religious law only"],"a":1},{"q":"Legal realism focuses on:","o":["Abstract legal rules only","The real-world application of law influenced by judges' actions and biases","Divine law only","International law only"],"a":1},{"q":"The most outstanding proponent of legal realism was:","o":["John Austin","H.L.A. Hart","Justice Oliver Wendell Holmes","St. Thomas Aquinas"],"a":2},{"q":"Critical Legal Studies argues that law is:","o":["Objective and neutral","Shaped by social, political and economic forces","Divinely inspired","Universally applicable"],"a":1},{"q":"The Historical school of law views law as:","o":["An artificial formulation","An outgrowth from the history of society","Divinely revealed","Universally constant"],"a":1},{"q":"The Historical school believes that what binds the people of a particular society together?","o":["Constitution","Spirit of the people","Monarch","Legal code"],"a":1},{"q":"According to the Historical school, for law to be valid, it must accord with:","o":["International standards","The history and way of life of the people","Foreign legal systems","Modern technology"],"a":1},{"q":"According to John Rawls' conception of justice as fairness, distribution of goods should be arranged to ensure fairness for:","o":["The wealthy class only","All, especially the least advantaged","The political class only","The majority tribe only"],"a":1}]}};
+
+const CHAPTER_TITLES = {
+  1: "Historical Perspectives & Cultural Areas",
+  2: "Ethnic Minority Groups & Their Culture",
+  3: "Indigenous Languages in Nigeria",
+  4: "Cultism, Kidnapping & Armed Banditry",
+  5: "Indigenous Apprenticeship Systems",
+  6: "Individual Norms & Values in Nigeria",
+  7: "Social Justice & National Development"
+};
+
+const OPTION_LABELS = ['A', 'B', 'C', 'D'];
+
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let currentChapterLabel = '';
+let lastChapterMode = null;
+let answered = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(arr, n) { return shuffle(arr).slice(0, n); }
+
+function randomizeOptions(q) {
+  const indices = shuffle([0, 1, 2, 3]);
+  return { q: q.q, o: indices.map(i => q.o[i]), a: indices.indexOf(q.a) };
+}
+
+function buildHome() {
+  const grid = document.getElementById('chapter-grid');
+  grid.innerHTML = '';
+  for (let i = 1; i <= 7; i++) {
+    const ch = QUIZ_DATA[String(i)];
+    const card = document.createElement('div');
+    card.className = 'chapter-card';
+    card.onclick = () => startChapter(i);
+    card.innerHTML = `
+      <div class="ch-badge"><span class="ch-label">Ch.</span><span class="ch-num">${i}</span></div>
+      <div class="ch-info">
+        <div class="ch-title">${CHAPTER_TITLES[i]}</div>
+        <div class="ch-count">${ch.questions.length} questions</div>
+      </div>
+      <span class="ch-arrow">›</span>`;
+    grid.appendChild(card);
+  }
+}
+
+function startChapter(chNum) {
+  const ch = QUIZ_DATA[String(chNum)];
+  lastChapterMode = { type: 'chapter', num: chNum };
+  currentChapterLabel = `Chapter ${chNum} — ${CHAPTER_TITLES[chNum]}`;
+  beginQuiz(shuffle(ch.questions.map(q => randomizeOptions(q))), currentChapterLabel);
+}
+
+function startAllChapters() {
+  let allQs = [];
+  for (let i = 1; i <= 7; i++) {
+    const ch = QUIZ_DATA[String(i)];
+    allQs = allQs.concat(pickRandom(ch.questions, 10).map(q => randomizeOptions(q)));
+  }
+  lastChapterMode = { type: 'all' };
+  currentChapterLabel = 'All Chapters — Mixed Mode';
+  beginQuiz(shuffle(allQs), currentChapterLabel);
+}
+
+function beginQuiz(questions, label) {
+  currentQuestions = questions;
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+  showScreen('quiz-screen');
+  document.getElementById('quiz-chapter-name').textContent = label;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+  answered = false;
+
+  document.getElementById('q-number').textContent = `Question ${currentIndex + 1} of ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('quiz-progress-text').textContent = `Question ${currentIndex + 1} of ${total}`;
+  document.getElementById('score-chip').textContent = `${score} / ${currentIndex}`;
+  document.getElementById('progress-bar').style.width = `${(currentIndex / total) * 100}%`;
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').className = 'next-btn';
+
+  const optList = document.getElementById('options-list');
+  optList.innerHTML = '';
+  q.o.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.onclick = () => selectOption(idx);
+    btn.innerHTML = `<div class="opt-letter">${OPTION_LABELS[idx]}</div><div class="opt-text">${opt}</div>`;
+    optList.appendChild(btn);
+  });
+  window.scrollTo(0, 0);
+}
+
+function selectOption(selectedIdx) {
+  if (answered) return;
+  answered = true;
+  const q = currentQuestions[currentIndex];
+  const correct = q.a;
+  const isCorrect = selectedIdx === correct;
+  if (isCorrect) score++;
+
+  const buttons = document.getElementById('options-list').querySelectorAll('.option-btn');
+  buttons.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === selectedIdx && isCorrect) btn.classList.add('selected-correct');
+    else if (idx === selectedIdx && !isCorrect) btn.classList.add('selected-wrong');
+    else if (idx === correct && !isCorrect) btn.classList.add('reveal-correct');
+  });
+
+  const fb = document.getElementById('feedback-box');
+  if (isCorrect) {
+    fb.className = 'feedback-box show correct';
+    document.getElementById('feedback-icon').textContent = '✓';
+    document.getElementById('feedback-text').textContent = 'Correct! Well done.';
+  } else {
+    fb.className = 'feedback-box show wrong';
+    document.getElementById('feedback-icon').textContent = '✗';
+    document.getElementById('feedback-text').textContent = `Incorrect. Correct answer: ${OPTION_LABELS[correct]}) ${q.o[correct]}`;
+  }
+
+  document.getElementById('score-chip').textContent = `${score} / ${currentIndex + 1}`;
+  const isLast = currentIndex === currentQuestions.length - 1;
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.className = 'next-btn show';
+  nextBtn.textContent = isLast ? 'View Results →' : 'Next Question →';
+}
+
+function nextQuestion() {
+  if (currentIndex === currentQuestions.length - 1) showResults();
+  else { currentIndex++; renderQuestion(); }
+}
+
+function showResults() {
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+  const wrong = total - score;
+  document.getElementById('results-score-big').innerHTML = `<span>${score}</span> / ${total}`;
+  document.getElementById('results-out-of').textContent = `You answered ${total} questions`;
+  document.getElementById('results-chapter-name').textContent = currentChapterLabel;
+  document.getElementById('rs-correct').textContent = score;
+  document.getElementById('rs-wrong').textContent = wrong;
+  document.getElementById('rs-pct').textContent = `${pct}%`;
+
+  let grade, desc, emoji, gradeClass;
+  if (pct >= 70) { grade = 'A'; desc = 'Excellent! Outstanding performance!'; emoji = '🏆'; gradeClass = 'grade-A'; }
+  else if (pct >= 60) { grade = 'B'; desc = 'Good job! Above average.'; emoji = '🎉'; gradeClass = 'grade-B'; }
+  else if (pct >= 50) { grade = 'C'; desc = 'Fair. Keep studying!'; emoji = '📖'; gradeClass = 'grade-C'; }
+  else { grade = 'D'; desc = 'Below average. Review the chapter again.'; emoji = '💪'; gradeClass = 'grade-D'; }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('grade-letter').textContent = grade;
+  document.getElementById('grade-desc').textContent = desc;
+  document.getElementById('results-grade').className = `results-grade ${gradeClass}`;
+  document.getElementById('progress-bar').style.width = '100%';
+  showScreen('results-screen');
+  window.scrollTo(0, 0);
+}
+
+function retryQuiz() {
+  if (!lastChapterMode) { goHome(); return; }
+  if (lastChapterMode.type === 'chapter') startChapter(lastChapterMode.num);
+  else startAllChapters();
+}
+
+function goHome() { showScreen('home-screen'); window.scrollTo(0, 0); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+buildHome();
+</script>
+</body>
+</html>
