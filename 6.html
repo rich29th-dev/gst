@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Ch.1&2 • 30 Random Questions from Bank of 130 • Randomized Options</title>
+    <title>Ch.6 Quiz • Norms & Values • 30/60 Random • Randomized Options</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -181,179 +181,94 @@
 <body>
 <div class="quiz-card">
     <div class="quiz-header">
-        <h1>📚 Chapters 1 & 2 · Major & Minority Groups</h1>
-        <p>Bank of 130 questions • 30 random each time • Options randomized</p>
-        <p style="font-size:0.85rem;">Refresh page for a new set</p>
+        <h1>🇳🇬 Chapter 6 · Norms, Values & Citizenship</h1>
+        <p>Bank of 60 questions • 30 random each time • Options randomized</p>
+        <p style="font-size:0.85rem;">Refresh or click Restart for a new set</p>
     </div>
     <div class="progress-container"><div class="progress-fill" id="progressFill"></div></div>
     <div class="quiz-content" id="quizContent"></div>
-    <footer>Based on Nigerian Peoples & Culture – Chapters 1 & 2</footer>
+    <footer>Based on "Nigerian Peoples & Culture" – Chapter 6 (Individual Norms and Values)</footer>
 </div>
 
 <script>
-    // ---------- QUESTION BANK: 130 questions covering Chapters 1 & 2 ----------
-    // Each question object: { text, options (array), correct }
-    // Options and correct are as originally intended; later we will shuffle options.
+    // ---------- QUESTION BANK: 60 questions for Chapter 6 ----------
+    // Topics: norms vs values, Nigerian core values, ethnic norms, citizenship acquisition, civic responsibilities, etc.
     const QUESTION_BANK = [
-        // Chapter 1 – General / Geography / Early history (10 questions)
-        { text: "Where was the earliest evidence of civilization in Nigeria found?", options: ["Near the city of Kano", "Inside a rock shelter close to Akure", "Along the banks of the Niger River", "In the ancient kingdom of Nri"], correct: "Inside a rock shelter close to Akure" },
-        { text: "Approximately what percentage of Nigeria's population do the three largest ethnic groups represent?", options: ["About 50 percent", "Around 70 percent", "Nearly 85 percent", "Just over 40 percent"], correct: "Around 70 percent" },
-        { text: "Which of the following is NOT one of the three major ethnic groups in Nigeria?", options: ["Yoruba", "Hausa-Fulani", "Igbo", "Bini"], correct: "Bini" },
-        { text: "The Iwo Eleru skeleton, dating back to 9000 BC, was found in which present-day state?", options: ["Oyo", "Ondo", "Osun", "Edo"], correct: "Ondo" },
-        { text: "What is the total land area of Nigeria (excluding waterways)?", options: ["923,768 sq km", "910,768 sq km", "900,000 sq km", "950,000 sq km"], correct: "910,768 sq km" },
-        { text: "Nigeria is bounded in the north by which country?", options: ["Benin", "Niger", "Chad", "Cameroon"], correct: "Niger" },
-        { text: "The amalgamation of Nigeria into a single colony occurred in which year?", options: ["1900", "1914", "1922", "1960"], correct: "1914" },
-        { text: "The population of Nigeria was estimated at about 167 million in which year according to the chapter?", options: ["2005", "2008", "2012", "2015"], correct: "2012" },
-        { text: "Which body of water forms Nigeria's southern border?", options: ["Gulf of Guinea", "Atlantic Ocean", "Lake Chad", "Niger Delta"], correct: "Atlantic Ocean" },
-        { text: "The rock shelter containing the 9000 BC skeleton is called:", options: ["Iwo Eleru", "Oke Oramfe", "Birnin Kudu", "Rop Rock"], correct: "Iwo Eleru" },
+        // Definitions and basic concepts (8 questions)
+        { text: "What are 'norms' in a social context?", options: ["Fundamental beliefs about what is desirable", "Accepted standards or rules that prescribe behavior", "Legal statutes passed by government", "Religious commandments"], correct: "Accepted standards or rules that prescribe behavior" },
+        { text: "What are 'values' in a social context?", options: ["Rules enforced by police", "Fundamental beliefs that guide what is desirable or morally right", "Customs that vary by region", "Economic principles of trade"], correct: "Fundamental beliefs that guide what is desirable or morally right" },
+        { text: "Which of the following is an example of an explicit norm?", options: ["Queuing in public", "Respecting elders", "A law or regulation", "Maintaining personal space"], correct: "A law or regulation" },
+        { text: "Which of the following is an example of an implicit norm?", options: ["Constitution", "Traffic law", "Custom and tradition", "Criminal code"], correct: "Custom and tradition" },
+        { text: "The concept of 'norms and values' forms the backbone of any society by:", options: ["Enforcing strict punishments", "Guiding behavior and promoting cohesion", "Replacing religious institutions", "Encouraging individualism"], correct: "Guiding behavior and promoting cohesion" },
+        { text: "Which of the following is NOT a common value upheld across cultures according to the chapter?", options: ["Honesty", "Integrity", "Respect for others", "Material wealth accumulation"], correct: "Material wealth accumulation" },
+        { text: "Norms help to reduce uncertainty and facilitate social coordination by:", options: ["Setting clear expectations about appropriate behavior", "Eliminating all individual choices", "Mandating uniform dress codes", "Prohibiting all forms of disagreement"], correct: "Setting clear expectations about appropriate behavior" },
+        { text: "Values serve as the basis for:", options: ["Evaluating actions, attitudes and behaviors", "Calculating economic profit", "Determining weather patterns", "Mapping geographical boundaries"], correct: "Evaluating actions, attitudes and behaviors" },
 
-        // Hausa (Chapter 1) – 15 questions
-        { text: "According to oral tradition, which refugee prince is said to have founded the seven Hausa states?", options: ["Oduduwa", "Bayajida", "Oranmiyan", "Eri"], correct: "Bayajida" },
-        { text: "What was the name of the well in Daura that Bayajida helped to clear of a snake?", options: ["Rijiyar Sarki", "Kusugu well", "Matsiga pond", "Gidan Rumfa"], correct: "Kusugu well" },
-        { text: "What are the seven original Hausa states collectively called?", options: ["Hausa Bakwai", "Banza Bakwai", "Yedi Hausa", "Hausa Bokwoi"], correct: "Hausa Bakwai" },
-        { text: "What was the title of the head of a typical Hausa state?", options: ["Emir", "Sarki", "Alkali", "Galadima"], correct: "Sarki" },
-        { text: "Which Islamic legal system began to take shape in Hausa land after the 14th-15th centuries?", options: ["Common law", "Sharia law", "Canon law", "Customary law"], correct: "Sharia law" },
-        { text: "What term refers to the tax on livestock in the Hausa Islamic fiscal system?", options: ["Zakat", "Jangali", "Kharaj", "Jizya"], correct: "Jangali" },
-        { text: "Pagan Hausa traditionally worshipped natural spirits known as:", options: ["Alusi", "Iskoki", "Orisa", "Ebo"], correct: "Iskoki" },
-        { text: "Which of the following was NOT one of the original seven Hausa states?", options: ["Biram", "Kano", "Katsina", "Sokoto"], correct: "Sokoto" },
-        { text: "The office of 'Galadima' in Hausa land is associated with the influence of:", options: ["Christianity", "Islam", "Traditional religion", "British colonialism"], correct: "Islam" },
-        { text: "Who was the ruler that led the Sokoto Jihad of 1804?", options: ["Sultan Mohammed Bello", "Usman dan Fodio", "Bayajida", "Mai Dunama"], correct: "Usman dan Fodio" },
-        { text: "The title 'Alkali' in Hausa administration refers to:", options: ["Tax collector", "Judge", "Army commander", "Palace guard"], correct: "Judge" },
-        { text: "Which Hausa state was known as Zazzau?", options: ["Kano", "Zaria", "Katsina", "Gobir"], correct: "Zaria" },
-        { text: "The Hausa people are predominantly found in which part of Nigeria?", options: ["South-East", "South-West", "North-West", "North-East"], correct: "North-West" },
-        { text: "According to the legend, Bayajida first married the daughter of which king?", options: ["King of Daura", "Mai of Kanem-Bornu", "Sultan of Sokoto", "Oba of Benin"], correct: "Mai of Kanem-Bornu" },
-        { text: "The son of Bayajida and the Queen of Daura was named:", options: ["Bawo", "Biram", "Kano", "Zazzau"], correct: "Bawo" },
+        // Core Nigerian norms and values (10 questions)
+        { text: "One of the most important norms in many Nigerian ethnic groups is:", options: ["Respect for elders", "Competition among youth", "Isolation of women", "Disregard for visitors"], correct: "Respect for elders" },
+        { text: "Elders are considered the custodians of what in Nigerian society?", options: ["Political power only", "Wisdom, culture, and tradition", "Military strength", "Foreign relations"], correct: "Wisdom, culture, and tradition" },
+        { text: "Family in Nigerian society is considered the:", options: ["Foundation of social structure", "Least important institution", "Only religious body", "Primary economic unit only"], correct: "Foundation of social structure" },
+        { text: "The extended family in Nigeria is crucial for maintaining:", options: ["Isolation from neighbors", "Social cohesion and mutual support", "Strict class divisions", "Political opposition"], correct: "Social cohesion and mutual support" },
+        { text: "Hospitality in Nigerian culture is demonstrated by:", options: ["Charging visitors high fees", "Making guests feel welcome and well cared for", "Avoiding any contact with strangers", "Reporting visitors to authorities"], correct: "Making guests feel welcome and well cared for" },
+        { text: "The traditional belief that 'a stranger is a friend' reflects which Nigerian value?", options: ["Competition", "Hospitality", "Individualism", "Rigidity"], correct: "Hospitality" },
+        { text: "Nigerians often place the welfare of the community above the individual, especially in:", options: ["Urban business centers", "Rural settings with communal labor", "Government offices", "Private schools"], correct: "Rural settings with communal labor" },
+        { text: "Which two religions are the dominant faiths in Nigeria alongside traditional religions?", options: ["Buddhism and Hinduism", "Islam and Christianity", "Judaism and Zoroastrianism", "Shinto and Taoism"], correct: "Islam and Christianity" },
+        { text: "The popular phrase 'man must hustle' captures the Nigerian ethos of:", options: ["Laziness", "Striving and surviving against odds", "Corruption", "Foreign dependency"], correct: "Striving and surviving against odds" },
+        { text: "Despite institutional challenges, which value remains cherished in interpersonal relationships?", options: ["Deceit", "Honesty and trustworthiness", "Aggression", "Isolation"], correct: "Honesty and trustworthiness" },
 
-        // Fulani (Chapter 1) – 8 questions
-        { text: "What code of behavior do the Fulani strive to maintain wherever they go?", options: ["Pulaaku", "Omoluabi", "Onye Oji", "Harambee"], correct: "Pulaaku" },
-        { text: "The Fulani are mainly known for which primary occupation?", options: ["Farming", "Cattle herding", "Trading", "Fishing"], correct: "Cattle herding" },
-        { text: "What is the name the Fulani call themselves?", options: ["Peul", "Fula", "Fulbe", "Fellata"], correct: "Fulbe" },
-        { text: "Which category of Fulani has maintained a nomadic way of life?", options: ["Fulanin gida", "Fulani daji", "Fulani Bororo", "Fulani Torobe"], correct: "Fulani daji" },
-        { text: "The sedentary Fulani are known as:", options: ["Fulani daji", "Fulanin gida", "Fulani Wodaabe", "Fulani Sokoto"], correct: "Fulanin gida" },
-        { text: "The Fulani originated from which highland region?", options: ["Cameroon highlands", "Futa Jalon", "Jos Plateau", "Ethiopian highlands"], correct: "Futa Jalon" },
-        { text: "Which of the following is NOT a name for the Fulani?", options: ["Peul", "Fula", "Fellata", "Beriberi"], correct: "Beriberi" },
-        { text: "The code of 'pulaaku' requires all EXCEPT:", options: ["Shyness", "Bravery", "Cattle ownership", "Merchant trade"], correct: "Merchant trade" },
+        // Ethnic specific norms (Yoruba, Igbo, Hausa-Fulani) – 10 questions
+        { text: "The Yoruba of Southwestern Nigeria emphasize age, seniority, and:", options: ["Competitive individualism", "Communal values and respect", "Strict gender segregation", "Nomadic lifestyle"], correct: "Communal values and respect" },
+        { text: "Yoruba traditional leadership includes kings known as:", options: ["Emirs", "Obas", "Ogisos", "Alkalai"], correct: "Obas" },
+        { text: "Among the Yoruba, respectful greetings often involve:", options: ["Physical gestures and deferential language", "Avoiding eye contact", "Shouting loudly", "Silence"], correct: "Physical gestures and deferential language" },
+        { text: "The Igbo of Southeastern Nigeria place high value on individual achievement and:", options: ["Self-reliance", "Absolute monarchy", "Foreign rule", "Collective farming only"], correct: "Self-reliance" },
+        { text: "The Igbo concept of 'chi' refers to:", options: ["Village assembly", "Personal god emphasizing destiny and effort", "Religious sacrifice", "Harvest festival"], correct: "Personal god emphasizing destiny and effort" },
+        { text: "Igbo traditional political structures are described as:", options: ["Centralized empires", "Democratic community structures with elders and town unions", "Feudal hierarchies", "Military dictatorships"], correct: "Democratic community structures with elders and town unions" },
+        { text: "The Hausa-Fulani of Northern Nigeria are known for their structured societal hierarchy and strong:", options: ["Christian values", "Islamic values guided by Sharia", "Traditional animist practices", "Secular humanism"], correct: "Islamic values guided by Sharia" },
+        { text: "Traditional leaders among the Hausa-Fulani such as Emirs play significant roles in:", options: ["Only religious matters", "Community governance and social behavior", "International trade", "Military conquest only"], correct: "Community governance and social behavior" },
+        { text: "Polygamy among the Hausa-Fulani is:", options: ["Forbidden by all laws", "Culturally and religiously accepted within defined moral bounds", "Only for the poor", "Only for royalty"], correct: "Culturally and religiously accepted within defined moral bounds" },
+        { text: "Among the Yoruba, the council of chiefs that checks the Oba's power includes the:", options: ["Oyomesi", "Uzama", "Tombor", "Ogboni only"], correct: "Oyomesi" },
 
-        // Yoruba (Chapter 1) – 16 questions
-        { text: "Which town is considered the spiritual motherland of the Yoruba people?", options: ["Oyo", "Ife", "Ilesa", "Ogbomoso"], correct: "Ife" },
-        { text: "According to one myth, who descended from heaven to create the earth at Ile-Ife?", options: ["Sango", "Obatala", "Oduduwa", "Ogun"], correct: "Oduduwa" },
-        { text: "What is the council of hereditary advisers in Oyo called?", options: ["Ogboni", "Oyomesi", "Iwarefa", "Eso"], correct: "Oyomesi" },
-        { text: "In Yoruba political system, the Oba's powers were checked by all EXCEPT:", options: ["Council of chiefs", "Ogboni society", "Ifa divination", "The army general"], correct: "The army general" },
-        { text: "Yoruba marriage is exogamous, meaning it involves:", options: ["Marriage within the same lineage", "Two previously unrelated families", "Only first cousins", "Only royalty"], correct: "Two previously unrelated families" },
-        { text: "Which Yoruba deity is associated with thunder and lightning?", options: ["Ogun", "Sango", "Obatala", "Olokun"], correct: "Sango" },
-        { text: "What is the name of the Yoruba system of cooperative farming labor?", options: ["Owe", "Aaro", "Isobo", "Egbe"], correct: "Aaro" },
-        { text: "The Oyo Empire developed a more complex military and political system than which earlier Yoruba center?", options: ["Owu", "Ife", "Ijebu", "Egba"], correct: "Ife" },
-        { text: "Oduduwa's first point of arrival on earth is called:", options: ["Oke Ora", "Oke Oramfe", "Oke Igeti", "Oke Isokun"], correct: "Oke Oramfe" },
-        { text: "Which Yoruba group is known for the title 'Alaafin'?", options: ["Ife", "Oyo", "Egba", "Ijebu"], correct: "Oyo" },
-        { text: "The Yoruba language belongs to which language family?", options: ["Afro-Asiatic", "Niger-Congo", "Nilo-Saharan", "Khoisan"], correct: "Niger-Congo" },
-        { text: "According to Rev. Samuel Johnson, the Yoruba originated from:", options: ["Mecca", "Egypt", "Benin", "Sudan"], correct: "Egypt" },
-        { text: "Which Yoruba deity is associated with iron and warfare?", options: ["Sango", "Ogun", "Obatala", "Orunmila"], correct: "Ogun" },
-        { text: "The Ifa divination system is associated with which orisa?", options: ["Obatala", "Orunmila", "Sango", "Ogun"], correct: "Orunmila" },
-        { text: "In Yoruba tradition, a village head is called:", options: ["Oba", "Baale", "Oloye", "Ijoye"], correct: "Baale" },
-        { text: "The Ogboni society in Yoruba land served as:", options: ["Military force", "Religious cult and check on Oba's power", "Trading guild", "Age grade"], correct: "Religious cult and check on Oba's power" },
+        // Citizenship and acquisition (15 questions)
+        { text: "The term 'citizen' etymologically derives from the Latin word 'civitas' meaning:", options: ["Freedom", "Membership of a society", "Voting right", "Tax payment"], correct: "Membership of a society" },
+        { text: "In ancient Greece, citizens were those who belonged to the:", options: ["Slave class", "Ruling or aristocratic class", "Merchant class", "Foreign resident class"], correct: "Ruling or aristocratic class" },
+        { text: "In ancient Athens, which group was considered incapable of reasoning and equated with inanimate objects?", options: ["Philosopher kings", "Guardians", "Proletariats and servants", "Warriors"], correct: "Proletariats and servants" },
+        { text: "A citizen of a country is recognized by the fundamental laws and enjoys:", options: ["Only the right to vote", "Full rights and privileges provided by such laws", "Exemption from taxes", "Right to ignore all laws"], correct: "Full rights and privileges provided by such laws" },
+        { text: "The 1789 Declaration of the Rights of Man was by which assembly?", options: ["American Congress", "French National Assembly", "British Parliament", "German Reichstag"], correct: "French National Assembly" },
+        { text: "The 1776 American Declaration of Independence helped to universalize the concept of:", options: ["Monarchy", "Citizenship", "Slavery", "Colonialism"], correct: "Citizenship" },
+        { text: "Citizenship is the totality of all rights and privileges accorded to members of a:", options: ["Family", "State", "Religious group", "Ethnic clan"], correct: "State" },
+        { text: "Which term is often used interchangeably with 'citizenship' but relates to international law?", options: ["Residency", "Nationality", "Voter registration", "Tax status"], correct: "Nationality" },
+        { text: "One way to acquire citizenship is by birth under the principle 'jus sanguinis', which means:", options: ["Law of the soil", "Law of blood (descent)", "Law of marriage", "Law of naturalization"], correct: "Law of blood (descent)" },
+        { text: "A person born in Nigeria after independence either of whose parents is a Nigerian citizen is automatically:", options: ["A permanent resident", "A citizen of Nigeria", "A foreign national", "A stateless person"], correct: "A citizen of Nigeria" },
+        { text: "The principle 'jus soli' means citizenship by:", options: ["Descent", "Place of birth (law of the land)", "Marriage", "Naturalization"], correct: "Place of birth (law of the land)" },
+        { text: "Under US law, a person born in a registered ship becomes citizen of the state where the ship is:", options: ["Registered", "Built", "Docked", "Flagged"], correct: "Registered" },
+        { text: "Naturalization is the process of acquiring citizenship:", options: ["By birth", "By legal process", "By inheritance", "By divine right"], correct: "By legal process" },
+        { text: "In Nigeria, one requirement for naturalization is residency for a consecutive period of:", options: ["5 years", "10 years", "15 years", "20 years"], correct: "15 years" },
+        { text: "Derivative naturalization occurs when a child or spouse acquires citizenship by virtue of:", options: ["Parents' or spouse's naturalization", "Birth on foreign soil", "Independent application", "Court order"], correct: "Parents' or spouse's naturalization" },
 
-        // Igbo (Chapter 1) – 15 questions
-        { text: "How is the traditional Igbo political system best described?", options: ["Centralized monarchy", "Acephalous or segmentary", "Theocratic rule", "Feudal hierarchy"], correct: "Acephalous or segmentary" },
-        { text: "What was the name of the general assembly in traditional Igbo society?", options: ["Amala Oha", "Otu Ofo", "Umuada", "Izu"], correct: "Amala Oha" },
-        { text: "Which title holders in Igbo land were recognized based on individual capability rather than birth?", options: ["Oba and Olu", "Ozo, Nze, and Ezeji", "Sarki and Galadima", "Uzama and Eghaebvo"], correct: "Ozo, Nze, and Ezeji" },
-        { text: "What is the staff of authority among the Igbo called?", options: ["Ofo", "Ada", "Nza", "Omu"], correct: "Ofo" },
-        { text: "The Nri version of Igbo origin claims that ancestor Eri descended from the sky and sailed down which river?", options: ["Niger", "Anambra", "Cross River", "Benue"], correct: "Anambra" },
-        { text: "In Igbo tradition, the naming ceremony is usually performed on which day after birth?", options: ["7th day", "14th day", "28th day", "30th day"], correct: "28th day" },
-        { text: "The Igbo traditional marriage is known as:", options: ["Igba nkwu", "Idu ugo", "Nri ego", "Otu ebo"], correct: "Igba nkwu" },
-        { text: "The Arochukwu town is significant in Igbo spirituality as:", options: ["Center of iron smelting", "Spiritual and oracular center", "Political capital", "Trade hub"], correct: "Spiritual and oracular center" },
-        { text: "Which archaeological site revealed sophisticated Igbo bronze work?", options: ["Igbo Ukwu", "Nok", "Ife", "Benin"], correct: "Igbo Ukwu" },
-        { text: "The Igbo title 'Ezeji' is given to:", options: ["A great warrior", "A successful yam farmer", "A religious leader", "A master blacksmith"], correct: "A successful yam farmer" },
-        { text: "In traditional Igbo society, the age grade system performed functions EXCEPT:", options: ["Community labor", "Judicial duties", "Military defense", "Royal succession"], correct: "Royal succession" },
-        { text: "The Igbo traditional religion includes deities known as:", options: ["Orisa", "Alusi", "Iskoki", "Ebo"], correct: "Alusi" },
-        { text: "Which female leader was an official member of the council of chiefs in Yoruba land, but in Igbo land women's leadership was through?", options: ["Omu", "Iyalode", "Umuada", "Oba"], correct: "Umuada" },
-        { text: "The Igbo word 'Chi' refers to:", options: ["Personal god", "Ancestor", "Village deity", "King"], correct: "Personal god" },
-        { text: "The Igbo Ukwu art culture is known for:", options: ["Terra cotta", "Bronze and copper works", "Wood carving", "Leather work"], correct: "Bronze and copper works" },
+        // Termination of citizenship and civic responsibility (10 questions)
+        { text: "A person can lose citizenship by marriage to another national; this is known as termination:", options: ["By expatriation", "By marriage", "By de-naturalization", "By renunciation"], correct: "By marriage" },
+        { text: "De-naturalization refers to:", options: ["Voluntary renouncement", "Revocation or cancellation of previously granted citizenship", "Automatic loss at age 18", "Loss by marriage"], correct: "Revocation or cancellation of previously granted citizenship" },
+        { text: "In Nigeria, a naturalized citizen can lose citizenship if within 7 years they are sentenced to imprisonment for more than:", options: ["1 year", "2 years", "3 years", "5 years"], correct: "3 years" },
+        { text: "Expatriation as a method of termination means:", options: ["Involuntary removal", "Voluntary renouncement of citizenship status", "Loss by marriage", "Loss by crime"], correct: "Voluntary renouncement of citizenship status" },
+        { text: "Civic responsibility encompasses the duties and obligations that citizens have towards their:", options: ["Society and government", "Only their family", "Foreign nations", "Religious institutions"], correct: "Society and government" },
+        { text: "Which of the following is a civic duty?", options: ["Obeying the laws of the land", "Choosing a favorite sports team", "Traveling abroad", "Changing one's name"], correct: "Obeying the laws of the land" },
+        { text: "Payment of taxes is considered a:", options: ["Optional contribution", "Civic duty", "Voluntary donation", "Religious tithe"], correct: "Civic duty" },
+        { text: "Exercising voting rights is an example of a civic:", options: ["Duty", "Obligation (contributing to success of government)", "Privilege only", "Crime"], correct: "Obligation (contributing to success of government)" },
+        { text: "Community engagement as a civic responsibility includes:", options: ["Isolation from neighbors", "Volunteering and participating in community development", "Avoiding public meetings", "Refusing to help others"], correct: "Volunteering and participating in community development" },
+        { text: "Environmental stewardship as a civic responsibility means:", options: ["Ignoring pollution", "Taking care of the environment and natural resources", "Only planting trees", "Only recycling paper"], correct: "Taking care of the environment and natural resources" },
 
-        // Bini (Edo) – Chapter 2 (12 questions)
-        { text: "The Portuguese explorer Ruy de Sequeira arrived in Benin during whose reign?", options: ["Oba Ozolua", "Oba Ewuare", "Oba Ovonramwen", "Oba Erediauwa"], correct: "Oba Ewuare" },
-        { text: "What is the name of the first period of pre-colonial Bini history?", options: ["Ogiso era", "Eweka dynasty", "Uzama era", "Oba period"], correct: "Ogiso era" },
-        { text: "Who was the last Ogiso of Benin?", options: ["Ere", "Igbodo", "Owodo", "Ekaladeran"], correct: "Owodo" },
-        { text: "In Bini society, the nobility class is called:", options: ["Ighiotu", "Adesotu", "Uzama", "Eghaebvo"], correct: "Adesotu" },
-        { text: "What did the youngest child of Osanobua use to create land?", options: ["A snail shell", "A calabash", "An iron rod", "A wooden staff"], correct: "A snail shell" },
-        { text: "Which Ogiso is credited with forming the guild system in Benin?", options: ["Igbodo", "Ere", "Owodo", "Oranmiyan"], correct: "Ere" },
-        { text: "Who established the Eweka dynasty in Benin?", options: ["Ekaladeran", "Oranmiyan", "Oba Ewuare", "Iginuwa"], correct: "Oranmiyan" },
-        { text: "What were the professional groups of common people in Benin called?", options: ["Adesotu", "Guilds", "Age sets", "Wards"], correct: "Guilds" },
-        { text: "The Bini Supreme God is called:", options: ["Osanobua", "Olorun", "Chukwu", "Aondo"], correct: "Osanobua" },
-        { text: "The three groups of nobility title holders in Benin include all EXCEPT:", options: ["Uzama", "Eghaebvo n' Ogbe", "Eghaebvo n' Ore", "Ogboni"], correct: "Ogboni" },
-        { text: "The commoner class in Benin was known as:", options: ["Adesotu", "Ighiotu", "Omo N'Oba", "Eghaebvo"], correct: "Ighiotu" },
-        { text: "Benin was the first in West Africa to exchange ambassadors with which European country?", options: ["England", "Portugal", "France", "Holland"], correct: "Portugal" },
-
-        // Itsekiri (Chapter 2) – 6 questions
-        { text: "Who founded the Itsekiri kingdom?", options: ["Oba Olua", "Iginuwa", "Oranmiyan", "Ere"], correct: "Iginuwa" },
-        { text: "The traditional ruler of the Itsekiri is called:", options: ["Oba", "Olu", "Ovie", "Olofin"], correct: "Olu" },
-        { text: "The Itsekiri political system was modeled after which kingdom?", options: ["Oyo", "Benin", "Hausa", "Igbo"], correct: "Benin" },
-        { text: "Why was Iginuwa sent away from Benin?", options: ["He committed a crime", "He gave disastrous advice and became unpopular", "He wanted independence", "He lost a war"], correct: "He gave disastrous advice and became unpopular" },
-        { text: "The Itsekiri people are located primarily in which state?", options: ["Edo", "Delta", "Rivers", "Bayelsa"], correct: "Delta" },
-        { text: "The Olu of Itsekiri corresponds to which Benin title?", options: ["Oba", "Ogiso", "Uzama", "Eghaebvo"], correct: "Oba" },
-
-        // Urhobo (Chapter 2) – 8 questions
-        { text: "The traditional ruler of an Urhobo village is known as:", options: ["Oba", "Olu", "Ovie", "Eze"], correct: "Ovie" },
-        { text: "One version of Urhobo origin traces them to which group?", options: ["Benin", "Ijaw", "Yoruba", "Igbo"], correct: "Ijaw" },
-        { text: "Another version of Urhobo origin traces them to immigrants from:", options: ["Benin", "Ife", "Igbo land", "Nupe"], correct: "Benin" },
-        { text: "Urhobo adult males were divided into age sets corresponding to:", options: ["Farmers, warriors, priests", "Youth, middle age, elders", "Traders, fishermen, craftsmen", "Commoners, nobles, royals"], correct: "Youth, middle age, elders" },
-        { text: "The Urhobo people are found mainly in which state?", options: ["Edo", "Delta", "Rivers", "Bayelsa"], correct: "Delta" },
-        { text: "Which Urhobo subgroup argues they are product of Benin immigrants?", options: ["Ughelli", "Agbon", "Okpe", "Isoko"], correct: "Agbon" },
-        { text: "The Urhobo traditional political structure was similar to that of:", options: ["Benin Kingdom", "Igbo village system", "Hausa emirate", "Yoruba Oyo"], correct: "Benin Kingdom" },
-        { text: "Unlike the Itsekiri, the Urhobo are described as:", options: ["Centralized", "Fragmented", "Nomadic", "Coastal"], correct: "Fragmented" },
-
-        // Ijaw (Chapter 2) – 8 questions
-        { text: "What political structure characterized traditional Ijaw societies?", options: ["House System", "Age grade system", "Emirate system", "Oba system"], correct: "House System" },
-        { text: "Which of these is a major traditional Ijaw state?", options: ["Kano", "Bonny", "Oyo", "Sokoto"], correct: "Bonny" },
-        { text: "Why did the Ijaw not develop a centralized state according to scholars?", options: ["They preferred monarchy", "Scattered small fishing settlements in creeks", "Influence of Islam", "Colonial interference"], correct: "Scattered small fishing settlements in creeks" },
-        { text: "Which Ijaw state is known alongside Bonny, Kalabari, and Opobo?", options: ["Brass-Nemba", "Warri", "Okrika", "Nembe"], correct: "Brass-Nemba" },
-        { text: "The Ijaw people are primarily located in which region?", options: ["Niger Delta", "Sokoto", "Benue", "Plateau"], correct: "Niger Delta" },
-        { text: "The 'House System' in Ijaw society was based on:", options: ["Royal lineage", "Family or canoe house", "Religious affiliation", "Military rank"], correct: "Family or canoe house" },
-        { text: "Which of the following is NOT an Ijaw state?", options: ["Kalabari", "Opobo", "Brass", "Warri"], correct: "Warri" },
-        { text: "Ijaw traditional economy centered on:", options: ["Farming", "Fishing and trading", "Mining", "Herding"], correct: "Fishing and trading" },
-
-        // Jukun (Chapter 2) – 6 questions
-        { text: "According to the Kano Chronicle, in which centuries did the Jukun raid Hausaland?", options: ["12th-13th", "14th-15th", "16th-17th", "18th-19th"], correct: "16th-17th" },
-        { text: "The Jukun supreme deity is called:", options: ["Aondo", "Shido or Chido", "Osanobua", "Chukwu"], correct: "Shido or Chido" },
-        { text: "The most authentic written source about Jukun history is the:", options: ["Bornu Chronicle", "Kano Chronicle", "Yoruba Oriki", "Benin oral tradition"], correct: "Kano Chronicle" },
-        { text: "The Jukun people are mainly found in which present-day state?", options: ["Taraba", "Benue", "Plateau", "Nassarawa"], correct: "Taraba" },
-        { text: "The Jukun are known for their strong belief in:", options: ["Christianity", "Witchcraft and magic", "Islam", "Ancestor worship only"], correct: "Witchcraft and magic" },
-        { text: "The Jukun were already in existence before which century?", options: ["14th", "15th", "16th", "17th"], correct: "16th" },
-
-        // Tiv (Chapter 2) – 12 questions
-        { text: "The Tiv people are the largest single ethnic group in which basin?", options: ["Lake Chad basin", "Middle Benue basin", "Niger Delta basin", "Sokoto basin"], correct: "Middle Benue basin" },
-        { text: "The largest recognized family group among the Tiv is known as:", options: ["Mbavessen", "Tombor", "Ityough", "Swem"], correct: "Tombor" },
-        { text: "In Tiv traditional belief, witchcraft is believed to be practiced by:", options: ["Only women", "Only men", "Both genders", "Elders only"], correct: "Only men" },
-        { text: "What is the name of the Supreme God among the Tiv?", options: ["Aondo", "Soko", "Katakuru", "Ashili"], correct: "Aondo" },
-        { text: "The head of a Tiv family unit is called:", options: ["Oba", "Mbavessen", "Sarki", "Ovie"], correct: "Mbavessen" },
-        { text: "Among the Nupe and Gwari, witches are almost invariably:", options: ["Men", "Women", "Children", "Chiefs"], correct: "Women" },
-        { text: "The Tiv people are found mainly in which state?", options: ["Taraba", "Benue", "Plateau", "Niger"], correct: "Benue" },
-        { text: "According to Tiv tradition, the founding father Tiv came from:", options: ["Swem", "Egypt", "Bornu", "Sokoto"], correct: "Swem" },
-        { text: "The Tiv refer to an elder as:", options: ["Tombor", "Mbavessen", "Ityough", "Kpav"], correct: "Mbavessen" },
-        { text: "The Tiv migration to their present location occurred between which centuries?", options: ["14th-15th", "16th-17th", "18th-19th", "12th-13th"], correct: "16th-17th" },
-        { text: "The Tiv are known for cultivating which crop as part of the 'West African yam belt'?", options: ["Cassava", "Yam", "Guinea corn", "Millet"], correct: "Yam" },
-        { text: "Land ownership among the Tiv is:", options: ["Individual", "Community or lineage", "State controlled", "Royal property"], correct: "Community or lineage" },
-
-        // Cross / Mixed from both chapters – 14 additional to reach 130
-        { text: "Which ethnic group is known for the 'Onye Oji' system of apprenticeship?", options: ["Yoruba", "Igbo", "Hausa", "Bini"], correct: "Igbo" },
-        { text: "The 'Guinea Savanna' region is described as representing the best hope for what in Nigeria?", options: ["Economic growth", "Religious tolerance", "Political stability", "Educational advancement"], correct: "Religious tolerance" },
-        { text: "Which ethnic group's traditional religion includes deities such as Sango, Ogun, and Obatala?", options: ["Igbo", "Yoruba", "Hausa", "Bini"], correct: "Yoruba" },
-        { text: "The 'West African yam belt' includes the Nupe, Koto, and which group?", options: ["Igbo", "Tiv", "Yoruba", "Ijaw"], correct: "Tiv" },
-        { text: "The concept of 'Chi' as a personal god is found among which group?", options: ["Yoruba", "Igbo", "Hausa", "Bini"], correct: "Igbo" },
-        { text: "Which group has the title 'Alaafin' for its king?", options: ["Ife", "Oyo", "Benin", "Igbo"], correct: "Oyo" },
-        { text: "The 'Ogboni' society served as a check on royal power among the:", options: ["Igbo", "Yoruba", "Hausa", "Bini"], correct: "Yoruba" },
-        { text: "The 'Uzama' title holders were part of which kingdom's nobility?", options: ["Oyo", "Benin", "Igbo", "Hausa"], correct: "Benin" },
-        { text: "Which group's traditional political system is described as 'acephalous'?", options: ["Yoruba", "Igbo", "Hausa", "Bini"], correct: "Igbo" },
-        { text: "The 'Sarki' was the ruler of which ethnic group?", options: ["Yoruba", "Hausa", "Igbo", "Bini"], correct: "Hausa" },
-        { text: "The 'Olu' is the traditional ruler of which group?", options: ["Urhobo", "Itsekiri", "Ijaw", "Bini"], correct: "Itsekiri" },
-        { text: "The 'Ovie' is the traditional ruler of which group?", options: ["Itsekiri", "Urhobo", "Ijaw", "Bini"], correct: "Urhobo" },
-        { text: "The 'Ogiso' rulers belonged to which kingdom?", options: ["Oyo", "Benin", "Igbo", "Hausa"], correct: "Benin" },
-        { text: "The 'Pulaaku' code of conduct is associated with which group?", options: ["Hausa", "Fulani", "Tuareg", "Kanuri"], correct: "Fulani" }
+        // Additional mixed/conceptual (7 questions to reach 60)
+        { text: "The kind of relationship between state and citizen where rights and duties are exchanged is called:", options: ["Quid pro quo", "Caveat emptor", "Modus vivendi", "Status quo"], correct: "Quid pro quo" },
+        { text: "Moral rights are those which can be demonstrated as justifiable by relation to:", options: ["Legal statutes", "Common good whether recognized or not", "Government decree", "International treaties"], correct: "Common good whether recognized or not" },
+        { text: "Legal rights are constitutional rights that are:", options: ["Optional to follow", "Documented, abided by all, and justiciable in court", "Only for the wealthy", "Temporary"], correct: "Documented, abided by all, and justiciable in court" },
+        { text: "One of the fundamental human rights in Nigeria is:", options: ["Right to free housing", "Right to life", "Right to free travel abroad", "Right to unlimited wealth"], correct: "Right to life" },
+        { text: "Duties include all EXCEPT:", options: ["Obedience to laws", "Payment of taxes", "Non-interference with others' rights", "Avoiding all forms of work"], correct: "Avoiding all forms of work" },
+        { text: "Obligations include:", options: ["Exercising voting rights", "Paying no attention to government", "Breaking laws", "Leaving the country"], correct: "Exercising voting rights" },
+        { text: "Promoting citizenship and civic responsibility is vital for:", options: ["Weakening democracy", "Functioning of democracy and development of a healthy society", "Creating dictatorships", "Encouraging anarchy"], correct: "Functioning of democracy and development of a healthy society" }
     ];
 
-    // Ensure we have at least 130 questions
-    console.assert(QUESTION_BANK.length >= 130, `Only ${QUESTION_BANK.length} questions, need 130`);
-    // Trim to exactly 130 if more (should be exactly 130 as built)
-    const FINAL_BANK = QUESTION_BANK.slice(0, 130);
+    // Ensure at least 60 questions (we have exactly 60 as built)
+    console.assert(QUESTION_BANK.length === 60, `Question bank has ${QUESTION_BANK.length} questions, expected 60.`);
 
     // Helper: shuffle array (Fisher-Yates)
     function shuffleArray(arr) {
@@ -370,11 +285,10 @@
         return shuffled.slice(0, count);
     }
 
-    // For a given question, randomize the order of its options and update correct accordingly
+    // For a given question, randomize the order of its options and update the correct answer accordingly
     function randomizeOptionsOrder(question) {
         const originalOptions = [...question.options];
         const correctAnswer = question.correct;
-        // Create array of objects with option and a flag
         let optList = originalOptions.map(opt => ({ text: opt, isCorrect: opt === correctAnswer }));
         // Shuffle
         for (let i = optList.length - 1; i > 0; i--) {
@@ -382,7 +296,6 @@
             [optList[i], optList[j]] = [optList[j], optList[i]];
         }
         const newOptions = optList.map(item => item.text);
-        // Find new correct text
         const newCorrect = optList.find(item => item.isCorrect).text;
         return {
             text: question.text,
@@ -397,7 +310,7 @@
     let userAnswers = [];
     let answerLocked = [];
     let quizFinished = false;
-    let totalQuestionsSelected = 30;
+    const totalQuestionsSelected = 30;
 
     const quizContainer = document.getElementById('quizContent');
     const progressFill = document.getElementById('progressFill');
@@ -508,22 +421,22 @@
         }
         const percent = Math.round((score / totalQuestionsSelected) * 100);
         let msg = "";
-        if (percent >= 85) msg = "🏆 Excellent! You know Nigeria's ethnic groups well.";
-        else if (percent >= 65) msg = "👍 Good. Review the origin stories and political systems.";
-        else if (percent >= 45) msg = "📘 Fair. Focus on the seven Hausa states, Yoruba checks, Igbo acephalous system, and minority groups.";
-        else msg = "📚 Re-read Chapters 1 and 2 – pay attention to specific names, titles, and cultural details.";
+        if (percent >= 85) msg = "🏆 Excellent! You have a strong grasp of Nigerian norms, values, and citizenship.";
+        else if (percent >= 65) msg = "👍 Good. Review the differences between norms/values and the methods of citizenship acquisition.";
+        else if (percent >= 45) msg = "📘 Fair. Focus on ethnic-specific values and the meaning of 'jus sanguinis' and 'jus soli'.";
+        else msg = "📚 Re-read Chapter 6 carefully – definitions, core values, citizenship rules, and civic responsibilities.";
 
         let reviewHtml = `<div style="max-height:360px; overflow-y:auto;"><table style="width:100%; border-collapse:collapse;">`;
         for (let d of details) {
             const sym = d.isCorrect ? "✅" : "❌";
             reviewHtml += `<tr style="border-bottom:1px solid #ddd;">
                 <td style="padding:6px;">${sym} <strong>Q${d.num}</strong></td>
-                <td style="padding:6px;">${escapeHtml(d.text.substring(0,80))}...<\/td>
-                <td style="padding:6px; color:${d.isCorrect ? '#1f6d39' : '#b33'}">${escapeHtml(d.user)}<\/td>
-                <td style="padding:6px; color:#2b5e3b;">✓ ${escapeHtml(d.correct)}<\/td>
-            <\/tr>`;
+                <td style="padding:6px;">${escapeHtml(d.text.substring(0,80))}...</td>
+                <td style="padding:6px; color:${d.isCorrect ? '#1f6d39' : '#b33'}">${escapeHtml(d.user)}</td>
+                <td style="padding:6px; color:#2b5e3b;">✓ ${escapeHtml(d.correct)}</td>
+            </tr>`;
         }
-        reviewHtml += `<\/table><\/div>`;
+        reviewHtml += `</table></div>`;
 
         quizContainer.innerHTML = `
             <div style="text-align:center; padding:20px;">
@@ -543,7 +456,7 @@
 
     function initNewQuiz() {
         // Select 30 random questions from bank
-        const rawSelected = selectRandomQuestions(FINAL_BANK, 30);
+        const rawSelected = selectRandomQuestions(QUESTION_BANK, 30);
         // For each selected question, randomize option order
         currentQuestions = rawSelected.map(q => randomizeOptionsOrder(q));
         currentIndex = 0;
