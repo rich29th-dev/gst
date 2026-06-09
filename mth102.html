@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTH 102 Quiz — Revision 2025</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  :root {
+    --bg:#0d0f14;--surface:#161820;--card:#1e2130;--border:#2a2d3e;
+    --accent:#6c63ff;--accent2:#ff6b6b;--success:#43e97b;--warning:#ffd166;
+    --text:#e8e9f0;--muted:#7b7f99;--radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100;}
+  .logo-badge{background:var(--accent);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:13px;padding:6px 12px;border-radius:6px;letter-spacing:.05em;}
+  header h1{font-size:18px;font-weight:600;}
+  header p{font-size:13px;color:var(--muted);margin-left:auto;}
+  .view{display:none;} .view.active{display:block;}
+  #home{padding:48px 32px;max-width:960px;margin:0 auto;}
+  .home-hero{text-align:center;margin-bottom:56px;}
+  .home-hero h2{font-size:40px;font-weight:700;line-height:1.2;margin-bottom:12px;}
+  .home-hero h2 span{color:var(--accent);}
+  .home-hero p{color:var(--muted);font-size:16px;}
+  .topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+  .topic-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s;position:relative;overflow:hidden;}
+  .topic-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,var(--accent));opacity:0;transition:opacity .15s;}
+  .topic-card:hover{transform:translateY(-3px);border-color:var(--tc,var(--accent));box-shadow:0 8px 32px rgba(108,99,255,.12);}
+  .topic-card:hover::before{opacity:1;}
+  .topic-icon{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;margin-bottom:12px;}
+  .topic-card h3{font-size:17px;font-weight:600;margin-bottom:6px;}
+  .topic-card p{font-size:13px;color:var(--muted);margin-bottom:16px;}
+  .topic-meta{display:flex;gap:8px;flex-wrap:wrap;}
+  .badge{background:rgba(108,99,255,.15);color:var(--accent);font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;}
+  #topic-view{padding:40px 32px;max-width:960px;margin:0 auto;}
+  .back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:14px;display:flex;align-items:center;gap:6px;margin-bottom:32px;transition:border-color .15s,color .15s;}
+  .back-btn:hover{border-color:var(--accent);color:var(--text);}
+  .topic-header{margin-bottom:32px;}
+  .topic-header .eyebrow{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+  .topic-header h2{font-size:28px;font-weight:700;margin-bottom:6px;}
+  .topic-header p{color:var(--muted);}
+  .subparts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+  .subpart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;transition:transform .15s,border-color .15s;text-align:center;}
+  .subpart-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+  .subpart-num{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:var(--accent);line-height:1;margin-bottom:8px;}
+  .subpart-card h4{font-size:14px;font-weight:600;margin-bottom:4px;}
+  .subpart-card p{font-size:12px;color:var(--muted);}
+  .subpart-score{margin-top:10px;font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--success);display:none;}
+  .subpart-score.visible{display:block;}
+  #quiz-view{padding:32px;max-width:700px;margin:0 auto;}
+  .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+  .quiz-title{font-size:15px;color:var(--muted);}
+  .quiz-progress-text{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text);}
+  .progress-bar-wrap{background:var(--border);border-radius:4px;height:4px;margin-bottom:32px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#a18cff);border-radius:4px;transition:width .4s ease;}
+  .question-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin-bottom:20px;}
+  .question-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:14px;}
+  .question-text{font-size:17px;font-weight:500;line-height:1.55;margin-bottom:24px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option-btn{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:14px 18px;text-align:left;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:15px;display:flex;align-items:flex-start;gap:12px;transition:border-color .1s,background .1s;line-height:1.4;}
+  .option-btn:not(.disabled):hover{border-color:var(--accent);background:rgba(108,99,255,.08);}
+  .option-letter{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--muted);min-width:20px;padding-top:1px;flex-shrink:0;}
+  .option-btn.correct{border-color:var(--success);background:rgba(67,233,123,.08);}
+  .option-btn.correct .option-letter{color:var(--success);}
+  .option-btn.wrong{border-color:var(--accent2);background:rgba(255,107,107,.08);}
+  .option-btn.wrong .option-letter{color:var(--accent2);}
+  .option-btn.disabled{cursor:default;pointer-events:none;}
+  .feedback-box{display:none;border-radius:8px;padding:14px 18px;font-size:14px;margin-top:14px;}
+  .feedback-box.show{display:block;}
+  .feedback-box.correct-fb{background:rgba(67,233,123,.1);border:1px solid rgba(67,233,123,.3);color:var(--success);}
+  .feedback-box.wrong-fb{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.3);color:var(--accent2);}
+  .feedback-box strong{display:block;margin-bottom:4px;font-size:15px;}
+  .next-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:14px 28px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:20px;display:none;transition:opacity .15s,transform .15s;}
+  .next-btn.visible{display:block;}
+  .next-btn:hover{opacity:.9;transform:translateY(-1px);}
+  #results-view{padding:48px 32px;max-width:700px;margin:0 auto;text-align:center;}
+  .result-icon{font-size:60px;margin-bottom:16px;}
+  .result-score{font-family:'JetBrains Mono',monospace;font-size:68px;font-weight:700;line-height:1;margin-bottom:8px;}
+  .result-score.high{color:var(--success);}
+  .result-score.mid{color:var(--warning);}
+  .result-score.low{color:var(--accent2);}
+  .result-label{font-size:20px;font-weight:600;margin-bottom:6px;}
+  .result-sub{color:var(--muted);margin-bottom:36px;font-size:15px;}
+  .stats-row{display:flex;gap:16px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
+  .stat-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 20px;text-align:center;}
+  .stat-chip .val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;display:block;}
+  .stat-chip .key{font-size:12px;color:var(--muted);margin-top:2px;}
+  .stat-chip.green .val{color:var(--success);}
+  .stat-chip.red .val{color:var(--accent2);}
+  .result-breakdown{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:left;margin-bottom:32px;}
+  .result-breakdown h3{font-size:13px;color:var(--muted);margin-bottom:16px;text-transform:uppercase;letter-spacing:.08em;}
+  .breakdown-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px;}
+  .breakdown-item:last-child{border-bottom:none;}
+  .breakdown-q{color:var(--muted);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .breakdown-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .breakdown-dot.ok{background:var(--success);}
+  .breakdown-dot.fail{background:var(--accent2);}
+  .result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .15s;}
+  .btn-primary:hover{opacity:.85;}
+  .btn-secondary{background:none;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:12px 24px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:border-color .15s;}
+  .btn-secondary:hover{border-color:var(--accent);}
+  @media(max-width:600px){header{padding:14px 16px;}#home,#topic-view,#quiz-view,#results-view{padding:24px 16px;}.home-hero h2{font-size:26px;}.question-text{font-size:15px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">MTH 102</div>
+  <h1>Revision Quiz</h1>
+  <p>2025 Edition · 174 Questions</p>
+</header>
+
+<div id="home" class="view active">
+  <div class="home-hero">
+    <h2>Test your <span>Mathematics</span> knowledge</h2>
+    <p>Pick a topic, choose a subpart, and challenge yourself with 10 questions at a time.</p>
+  </div>
+  <div class="topics-grid" id="topics-grid"></div>
+</div>
+
+<div id="topic-view" class="view">
+  <button class="back-btn" onclick="showHome()">← Back to Topics</button>
+  <div class="topic-header">
+    <div class="eyebrow" id="tv-eyebrow">Topic</div>
+    <h2 id="tv-title"></h2>
+    <p id="tv-desc"></p>
+  </div>
+  <div class="subparts-grid" id="subparts-grid"></div>
+</div>
+
+<div id="quiz-view" class="view">
+  <div class="quiz-header">
+    <span class="quiz-title" id="quiz-label"></span>
+    <span class="quiz-progress-text" id="quiz-progress"></span>
+  </div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  <div class="question-card">
+    <div class="question-num" id="q-num"></div>
+    <div class="question-text" id="q-text"></div>
+    <div class="options" id="q-options"></div>
+    <div class="feedback-box" id="feedback"></div>
+  </div>
+  <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<div id="results-view" class="view">
+  <div class="result-icon" id="result-icon"></div>
+  <div class="result-score" id="result-score"></div>
+  <div class="result-label" id="result-label"></div>
+  <div class="result-sub" id="result-sub"></div>
+  <div class="stats-row">
+    <div class="stat-chip green"><span class="val" id="stat-correct"></span><div class="key">Correct</div></div>
+    <div class="stat-chip red"><span class="val" id="stat-wrong"></span><div class="key">Wrong</div></div>
+    <div class="stat-chip"><span class="val" id="stat-total"></span><div class="key">Total</div></div>
+  </div>
+  <div class="result-breakdown" id="result-breakdown">
+    <h3>Question Breakdown</h3>
+    <div id="breakdown-list"></div>
+  </div>
+  <div class="result-actions">
+    <button class="btn-primary" onclick="retryQuiz()">Retry This Set</button>
+    <button class="btn-secondary" onclick="backToSubparts()">Choose Another Set</button>
+    <button class="btn-secondary" onclick="showHome()">Back to Topics</button>
+  </div>
+</div>
+
+<script>
+// Q1-174 fully mapped from PDF, grouped by topic & subpart of 10
+const topics = [
+  {
+    id:"functions", icon:"f(x)", title:"Functions & Relations",
+    desc:"Domain, range, mappings, types of functions, evaluating functions",
+    color:"#6c63ff",
+    subparts:[
+      { label:"Part A", title:"Evaluating Functions",
+        questions:[
+          {q:"If f(x) = 15x − 7, find f(8) − f(−5)", o:["81","56","37","195"], c:3},
+          {q:"Given that f(x) = x² − 7x + 5, find f(3)", o:["7","14","−7","−14"], c:2},
+          {q:"Given that f(x) = x³ − 7x² − 3, find f(−3)", o:["7","14","−7","−14"], c:2},
+          {q:"Evaluate f(x) = 5x − 3 for x = −7", o:["32","18","−38","−32"], c:2},
+          {q:"If f(x) = 3x³ + 2x² − 7x − 6, find f(−3)", o:["12","24","48","36"], c:2},
+          {q:"Evaluate f(x) = 8x − 6 for x = −7", o:["−62","50","61","58"], c:0},
+          {q:"If f(x) = 2x³ − 3x² + 7x − 5, find f(−2)", o:["−36","47","−47","36"], c:2},
+          {q:"If f(x) = x², what is f(3)?", o:["6","9","12","15"], c:1},
+          {q:"If f(x) = 5x, what is f(3)?", o:["8","10","15","18"], c:2},
+          {q:"If f(x) = x² − 2x + 1, find f(1)", o:["0","1","2","−1"], c:0},
+        ]
+      },
+      { label:"Part B", title:"Domain & Range",
+        questions:[
+          {q:"A domain is a list of all the ___ values of a relation or function", o:["X","Y","Z","odd"], c:0},
+          {q:"What is the domain of this function: (0,1),(2,3),(−1,3),(4,5)?", o:["{0,2,−1,4}","{3}","{0,2}","{1,3,5}"], c:0},
+          {q:"The x values of the ordered pair is called:", o:["Range","Relation","Domain","Function"], c:2},
+          {q:"What is the range of this function: (−3,−2),(5,0),(0,1),(−1,4),(4,5),(2,5)?", o:["(−3,0,4,5)","(−5,−2,0,1,4,5)","(−3,−1,0,2,4,5)","(−2,0,1,−5,4)"], c:3},
+          {q:"The domain of a function is:", o:["The set of outputs","The y-values","The set of inputs","The maximum value"], c:2},
+          {q:"The range of a function is:", o:["The x-values","The set of all possible outputs","The domain","The variables"], c:1},
+          {q:"What is the domain of f(x) = 1/x?", o:["All real numbers except 0","x > 0","x < 0","All real numbers"], c:0},
+          {q:"What is the range of f(x) = x² for x ∈ ℝ?", o:["ℝ","x ≥ 0","x ≤ 0","x ≠ 0"], c:1},
+          {q:"What is the domain of f(x) = √(x − 1)?", o:["x ≥ 1","x ≤ 1","x > 1","x ≠ 1"], c:0},
+          {q:"Domain of f(x) = 1/√(x − 4):", o:["x ≥ 4","x > 4","x ≤ 4","x < 4"], c:1},
+        ]
+      },
+      { label:"Part C", title:"Types of Mappings",
+        questions:[
+          {q:"Which of this is not a type of mapping?", o:["One to one","Many to many","Zero to many","One to many"], c:2},
+          {q:"Which of the following is a function?", o:["{(3,7),(3,6),(5,3)}","{(1,2),(−1,3),(−1,8)}","{(1,2),(2,2),(3,4)}","{(1,1),(1,2),(1,3)}"], c:2},
+          {q:"A mapping in which every object in the domain has a unique image in the codomain is called:", o:["One to many","Many to many","One to one","Many to one"], c:2},
+          {q:"Which of the following is a function?", o:["{(2,7),(3,7),(2,8)}","{(a,1),(a,2),(a,3)}","{(1,2),(−1,3),(−1,8)}","{(a,2),(b,3),(c,1)}"], c:3},
+          {q:"A relation that maps every input to a unique output is called:", o:["Onto mapping","One to many mapping","Many to one mapping","One to one mapping"], c:3},
+          {q:"A relation where the domain is a set of individual points is referred to as:", o:["Continuous relation","Discrete relation","Orthogonal relation","Diagonal relation"], c:1},
+          {q:"A relation that every output has an input is called:", o:["One to one mapping","One to many mapping","Onto mapping","Many to one mapping"], c:3},
+          {q:"Which of the following is a function? A.{(1,2),(2,3),(1,4)} B.{(2,3),(3,4),(4,5)} C.{(1,2),(2,2),(2,3)} D.{(5,6),(6,5),(5,7)}", o:["{(1,2),(2,3),(1,4)}","{(2,3),(3,4),(4,5)}","{(1,2),(2,2),(2,3)}","{(5,6),(6,5),(5,7)}"], c:1},
+          {q:"Which of these is not a function? A. y = x + 2  B. y = √x  C. x = y²  D. y = |x|", o:["y = x + 2","y = √x","x = y²","y = |x|"], c:2},
+          {q:"Function is best defined as:", o:["Any formula","A set of inputs","A relation with one output per input","A graph"], c:2},
+        ]
+      },
+      { label:"Part D", title:"Composition & Inverses",
+        questions:[
+          {q:"Find the inverse of the function f(x) = 2x − 3", o:["(x+3)/2","(x−3)/2","5x − 2","(3x+2)/3"], c:0},
+          {q:"What is the inverse of f(x) = 2x + 3?", o:["x = 2y + 3","y = (x − 3)/2","y = (x + 3)/2","y = 2x − 3"], c:1},
+          {q:"The inverse of f(x) = x/2 is:", o:["x/2","2x","x²","x + 2"], c:1},
+          {q:"If f(x) = 2x + 1 and g(x) = x − 3, what is f(g(x))?", o:["2x − 5","2x + 1","2x − 1","2x − 3"], c:0},
+          {q:"What is g(f(x)) if f(x) = x + 1 and g(x) = x²?", o:["x² + 1","x² + 2","(x + 1)²","x² − 1"], c:2},
+          {q:"Which of these is the composition (f ∘ g)(x)?", o:["f(x) × g(x)","f(g(x))","g(f(x))","f(x) + g(x)"], c:1},
+          {q:"If f(x) = x − 2 and g(x) = 3x, what is (f ∘ g)(x)?", o:["3x − 2","3x − 6","x − 6","x − 2"], c:1},
+          {q:"If f(x) = x² and g(x) = x + 2, find (f ∘ g)(x)", o:["x² + 2","(x + 2)²","x + 4","x² + 4"], c:1},
+          {q:"What is f(g(1)) if f(x) = x² and g(x) = x + 3?", o:["4","16","9","25"], c:1},
+          {q:"If f(x) = x + 3 and g(x) = 2x, what is f(g(2))?", o:["6","7","8","9"], c:1},
+        ]
+      },
+      { label:"Part E", title:"Function Properties",
+        questions:[
+          {q:"The graph of a function passes the:", o:["Horizontal Line Test","Vertical Line Test","Slant Test","Derivative Test"], c:1},
+          {q:"Which function is even?", o:["f(x) = x","f(x) = x³","f(x) = x²","f(x) = x + 1"], c:2},
+          {q:"An odd function satisfies:", o:["f(x) = f(−x)","f(−x) = −f(x)","f(x) = x²","f(−x) = f(x)"], c:1},
+          {q:"F(x) = x³ is:", o:["Even","Odd","Neither","Periodic"], c:1},
+          {q:"Which of the following is one-to-one?", o:["y = x²","y = |x|","y = 2x + 1","y = x² − 4"], c:2},
+          {q:"Which of these is not one-to-one?", o:["f(x) = x + 1","f(x) = x³","f(x) = √x","f(x) = x²"], c:3},
+          {q:"A function f is injective if:", o:["Every x has one y","Every y has one x","Different inputs yield different outputs","Not defined at x = 0"], c:2},
+          {q:"A function f is surjective if:", o:["Every x has one y","Every y has one x","The range = codomain","f(0) = 0"], c:2},
+          {q:"The identity function is:", o:["f(x) = x²","f(x) = x","f(x) = 1/x","f(x) = 0"], c:1},
+          {q:"A function is onto if:", o:["Each input maps to a unique output","Each output has a pre-image","It is linear","It is one-to-one"], c:1},
+        ]
+      },
+      { label:"Part F", title:"More Function Evaluations",
+        questions:[
+          {q:"What is f(f(x)) if f(x) = x + 1?", o:["x + 1","x + 2","x + 3","x"], c:1},
+          {q:"What is f(f(1)) if f(x) = 2x?", o:["4","2","1","8"], c:0},
+          {q:"What is the result of (f + g)(x) if f(x) = 2x and g(x) = x + 3?", o:["3x + 3","3x","x + 3","2x + x + 3"], c:0},
+          {q:"What is f(2) if f(x) = (x − 1)²?", o:["0","1","2","3"], c:1},
+          {q:"What is f(2) if f(x) = x² − 4x + 3?", o:["0","1","2","3"], c:1},
+          {q:"What is the output of f(x) = x³ when x = −2?", o:["−6","−4","−8","8"], c:2},
+          {q:"If f(x) = 4 − x, what is f(1)?", o:["3","2","5","1"], c:0},
+          {q:"What is f(3) if f(x) = x² + 2x?", o:["15","12","13","14"], c:0},
+          {q:"What is the value of f(2) + f(3) if f(x) = x²?", o:["12","13","14","15"], c:1},
+          {q:"What is f(4) if f(x) = 3x − 2?", o:["10","9","11","12"], c:0},
+        ]
+      },
+      { label:"Part G", title:"Domain & Range Advanced",
+        questions:[
+          {q:"What is the domain of f(x) = ln(x)?", o:["x > 0","x ≠ 0","x < 0","x ∈ ℝ"], c:0},
+          {q:"f(x) = 5 is a:", o:["Constant function","Linear function","Cubic function","Rational function"], c:0},
+          {q:"What is the range of f(x) = 1/(x − 1)?", o:["x ≠ 1","y ≠ 0","x > 1","y > 0"], c:1},
+          {q:"Domain of f(x) = 1/(x² − 4) is:", o:["x ≠ ±2","x ≠ 2","x ≠ 0","x ≠ −2"], c:0},
+          {q:"The range of f(x) = |x − 2| is:", o:["x ≥ 0","y ≥ 0","x ≥ 2","y > 2"], c:1},
+          {q:"Range of f(x) = 2 − x²:", o:["x ≥ −2","y ≤ 2","y ≥ 2","x ≤ 2"], c:1},
+          {q:"If f(x) = x² + 1, what is the range?", o:["x ≥ 0","y ≥ 1","y ≤ 1","All real numbers"], c:1},
+          {q:"What is the range of f(x) = 3x + 2 for x ∈ ℝ?", o:["x ≥ 2","x ∈ ℝ","x > 2","x ≤ 2"], c:1},
+          {q:"If f(x) = √(x + 2), what is its domain?", o:["x ≥ −2","x > −2","x ≤ 2","x ∈ ℝ"], c:0},
+          {q:"What is the range of f(x) = x² for x ∈ {−3, −2, −1, 0}?", o:["{1,2,3,4}","{0,1,4,9}","{−9,−4,−1,0}","{1,2,3,9}"], c:1},
+        ]
+      },
+      { label:"Part H", title:"Mixed Functions",
+        questions:[
+          {q:"A function has an inverse only if it is:", o:["Constant","Increasing","One-to-one","Onto"], c:2},
+          {q:"Which of these is a rational function?", o:["f(x) = x + 1","f(x) = 1/x","f(x) = x²","f(x) = √x"], c:1},
+          {q:"Which is an example of a quadratic function?", o:["f(x) = x","f(x) = x²","f(x) = 1/x","f(x) = x + 3"], c:1},
+          {q:"A function is called quadratic when:", o:["It has power 1","It has power 2","It has a fraction","It is linear"], c:1},
+          {q:"Which function is not defined at x = 0?", o:["f(x) = x²","f(x) = 1/x","f(x) = √x","f(x) = x + 1"], c:1},
+          {q:"The function f(x) = √x is defined for:", o:["x > 0","x ≥ 0","x ≠ 0","x < 0"], c:1},
+          {q:"f(x) = x² is defined for:", o:["x > 0","x < 0","x ∈ ℝ","x ≥ 1"], c:2},
+          {q:"If f(x) = |x|, what is f(−3)?", o:["−3","0","3","1"], c:2},
+          {q:"If f(x) = |x|, then f(−3) =", o:["−3","0","3","Undefined"], c:0},
+          {q:"A function maps:", o:["Many inputs to one output","One input to one output","One output to many inputs","Many outputs to one input"], c:1},
+        ]
+      },
+      { label:"Part I", title:"Composite & Remaining",
+        questions:[
+          {q:"Which of these is a piecewise function?", o:["f(x) = x²","f(x) = |x|","f(x) = x if x>0, −x if x≤0","f(x) = 2x"], c:2},
+          {q:"Which function is not continuous?", o:["f(x) = x + 1","f(x) = 1/x","f(x) = x²","f(x) = √x"], c:1},
+          {q:"The domain of f(x) = 1/(x − 2) is:", o:["x ≠ 2","x ≠ 0","x > 2","x < 2"], c:0},
+          {q:"Which of the following is not part of the domain of f(x) = √(x − 4)?", o:["4","5","6","3"], c:3},
+          {q:"What is f(0) if f(x) = x³ + 2x?", o:["0","2","−1","1"], c:0},
+          {q:"If f(x) = 2x + 1 and g(x) = x − 2, find f(g(3))", o:["2","4","3","8"], c:1},
+          {q:"What is the domain of all polynomial functions?", o:["All real numbers","All positive integers","All negative numbers","x > 0"], c:0},
+          {q:"Which of these could be the range of f(x) = x − 5 for x ∈ {5,6,7}?", o:["{0,1,2}","{1,2,3}","{−1,0,1}","{5,6,7}"], c:0},
+          {q:"What is the domain of f(x) = √x?", o:["x ≥ 0","x > 0","All real numbers","x < 0"], c:0},
+          {q:"If f(x) = x + 3 and g(x) = 2x, what is f(g(2))?", o:["6","7","8","9"], c:1},
+        ]
+      },
+    ]
+  },
+  {
+    id:"limits", icon:"lim", title:"Limits & Continuity",
+    desc:"Evaluating limits, L'Hôpital's rule, continuity, types of discontinuity",
+    color:"#ff6b6b",
+    subparts:[
+      { label:"Part A", title:"Evaluating Limits",
+        questions:[
+          {q:"Evaluate lim(x² − 25)/(x − 5) as x → 5", o:["Undefined","−10","10","5"], c:2},
+          {q:"Evaluate f(x) = 3x² − 6x + 12 as x → 10", o:["175","262","186","252"], c:3},
+          {q:"Evaluate the limit f(x) = x² − 5x + 6 as x → 3", o:["1","2","3","0"], c:3},
+          {q:"Evaluate lim (x² − 4x − 5)/(2x² − 1) as x → ∞", o:["Undefined","4","6","1/2"], c:3},
+          {q:"limₓ→∞ (x + 1)/x is:", o:["1","0","∞","−1"], c:0},
+          {q:"The limit limₓ→0 x·ln(x) is:", o:["0","∞","−∞","Does not exist"], c:0},
+          {q:"Find limit: limₓ→0 (x² + x)/x", o:["0","1","x + 1","1"], c:3},
+          {q:"What is the limit of (x³ − 8)/(x − 2) as x → 2?", o:["0","4","8","12"], c:3},
+          {q:"Evaluate lim 3x³ − 2x² − 7x as x → 2", o:["4","2","−2","0"], c:1},
+          {q:"limₓ→0 (√(1 + x) − 1)/x =", o:["0","1","1/2","∞"], c:2},
+        ]
+      },
+      { label:"Part B", title:"Limit Theorems & Methods",
+        questions:[
+          {q:"Which of these is not a method of evaluating limits?", o:["Direct substitution","The h method","By orthogonal method","The L'Hôpital method"], c:2},
+          {q:"Evaluate lim (x − 5)/(x² − 25)", o:["−1/10","−1/5","0","1/10"], c:3},
+          {q:"limₓ→2⁻ f(x) = 1 and limₓ→2⁺ f(x) = 3, then limₓ→2 f(x) is:", o:["1","3","2","Does not exist"], c:3},
+          {q:"For what value of x is (9x − 7)/(2x − 5) not defined?", o:["2/5","−2","5/2","3"], c:2},
+          {q:"For what value of x is (3x − 7)/(2x + 5) equal to zero?", o:["3/7","3","7/3","−7"], c:2},
+          {q:"What value of k makes (x² − 7x + 12)/(x − 3) not defined?", o:["−4","2/5","3","4"], c:2},
+          {q:"What value of x makes (x + 4)/(x² − 5x + 6) equal to zero?", o:["−4","2/3","3","undefined"], c:0},
+          {q:"A cubic polynomial has at most how many turning points?", o:["3","2","1","0"], c:1},
+          {q:"Which function is continuous but not differentiable at x = 0?", o:["x²","|x|","sin x","eˣ"], c:1},
+          {q:"The graph of f(x) = x³ is:", o:["Discontinuous","Non-differentiable","Continuous and smooth","Piecewise"], c:2},
+        ]
+      },
+      { label:"Part C", title:"Continuity",
+        questions:[
+          {q:"A function is continuous at a point if:", o:["It is defined there","Limit exists there","Limit = function value","All of the above"], c:3},
+          {q:"Which of the following functions is not continuous at x = 0?", o:["f(x) = 1/x","f(x) = x²","f(x) = sin x","f(x) = eˣ"], c:0},
+          {q:"limₓ→0 f(x) exists only if:", o:["f is increasing","f is decreasing","Left and right limits are equal","None"], c:2},
+          {q:"The function f(x) = |x| is:", o:["Continuous everywhere","Not continuous at 0","Discontinuous everywhere","Differentiable everywhere"], c:0},
+          {q:"Discontinuity occurs at x = 0 in:", o:["f(x) = x²","f(x) = sin x","f(x) = 1/x","f(x) = eˣ"], c:2},
+          {q:"Which of the following is a removable discontinuity?", o:["f(x) = sin(1/x)","f(x) = 1/x","f(x) = (x² − 1)/(x − 1)","f(x) = ln x"], c:2},
+          {q:"A step function is:", o:["Continuous","Uniformly continuous","Discontinuous","Constant"], c:2},
+          {q:"A function is continuous in [a, b] if:", o:["Continuous at each point in [a,b]","Continuous from right at a, left at b","Both a and b","None"], c:2},
+          {q:"The graph of a continuous function is:", o:["A broken curve","Has gaps","A smooth curve without breaks","Has jumps"], c:2},
+          {q:"Function f(x) = tan x is discontinuous at:", o:["x = 0","x = π/2","x = π","x = 3π/2"], c:1},
+        ]
+      },
+    ]
+  },
+  {
+    id:"differentiation", icon:"d/dx", title:"Differentiation",
+    desc:"Basic rules, product/chain/quotient rules, higher-order derivatives",
+    color:"#43e97b",
+    subparts:[
+      { label:"Part A", title:"Basic Differentiation Rules",
+        questions:[
+          {q:"Differentiate (2x + 6)(7x − 4)", o:["28x + 34","4x − 13","28x − 34","13x − 4"], c:0},
+          {q:"Differentiate sin 9x", o:["9cos 9x","cos 9x","9 sin 9x","9 cos x"], c:0},
+          {q:"If y = (4x − 3)², find dy/dx when x = 7", o:["300","200","250","220"], c:1},
+          {q:"If y = −sin(5x − 4), find dy/dx", o:["cos(5x − 4)","5 sin(5x − 4)","5x − 4","5cos(5x − 4)"], c:3},
+          {q:"Which of these is NOT a method of differentiation?", o:["Mechanics rule","Product rule","Quotient rule","Chain rule"], c:0},
+          {q:"Differentiate the function x⁵ − 3x⁴ + 7x² − 9 three times", o:["20x³ − 36x² + 14","60x³ − 36x²","60x² − 72x","120x − 36"], c:2},
+          {q:"Differentiate Cos 5x", o:["5 sin(5x)","cos(5x)","sin(5x)","−5 sin(5x)"], c:3},
+          {q:"If y = x² − 7x + 5, find dy/dx", o:["2x + 7","x − 7","2x − 7","7x − 2"], c:2},
+          {q:"Differentiation and integration form the central core of:", o:["Medicine","Polynomial","Calculus","Temperature"], c:2},
+          {q:"Which of these is not a method of Integration?", o:["Integration by part","Integration by substitution","Integration by partial fraction","Integration by formula"], c:3},
+        ]
+      },
+      { label:"Part B", title:"Higher Derivatives & Rules",
+        questions:[
+          {q:"If y = 3x⁴ − 7x + 5, find d²y/dx²", o:["36x²","12x³ + 6","36x² + 6","36x"], c:0},
+          {q:"If y = x³ − 7x² + 9x − 2, find d²y/dx² when x = 5", o:["14","16","18","7"], c:1},
+          {q:"If f(x) = 9x³ − 11x² + 7x − 6, find f′(5)", o:["675","572","558","715"], c:1},
+          {q:"If y = 3x⁴ + 6x − 9, find d²y/dx² when x = 4", o:["288","576","144","432"], c:1},
+          {q:"Differentiate y = x tan x", o:["x sec²(x) + tan(x)","tan(x) + x","sec²(x)","x + tan x"], c:0},
+          {q:"Differentiate y = x sin x", o:["x cos x + sin x","x cos x","sin x","cos x + sin x"], c:0},
+          {q:"In differentiation from first principle, delta x means:", o:["A large change in x","A ratio of x","A small increment or change in x","The derivative"], c:2},
+          {q:"Given the function Y = f(x), the point at which dy/dx = 0 is called:", o:["A turning point","A zero point","A stationary point","An inflection only"], c:2},
+          {q:"Integrate (3x² + 4x − 3) dx", o:["x³ + 2x² − 3x","3x³ + 2x − 3 + C","x³ + 2x² − 3x + C","x² + 4x + C"], c:2},
+          {q:"Integrate (x − 3)² dx", o:["x³/3 − 3x² + 9x + C","x³/3 + 3x² − 9x + C","x³/3 − 9x + C","x² − 6x + C"], c:0},
+        ]
+      },
+      { label:"Part C", title:"Applied Differentiation",
+        questions:[
+          {q:"If y = x² − 7x + 5, find f(7)", o:["62","21","5","12"], c:2},
+          {q:"If 7(x − 1) = 2(x + 3), find x", o:["1","2","13/5","3"], c:2},
+          {q:"If x = −5, find the value of (6x − 11) − (7x + 8)", o:["−14","14","−12","12"], c:0},
+          {q:"Evaluate 12x − 3xy when x = 9 and y = −7", o:["200","297","150","350"], c:1},
+          {q:"If f(x) = 3x⁴ + 7x − 11, find f(3)", o:["10","253","240","300"], c:1},
+          {q:"If f(x) = 3x⁴ + 7x − 11, find f(−3)", o:["32","−32","211","−211"], c:2},
+          {q:"What is cos x / sin x?", o:["tan x","sec x","cot x","sin x"], c:2},
+          {q:"Solve for r: if 30r + 20 − 10r = −40", o:["4","−3","3","−4"], c:1},
+          {q:"Evaluate x³ − 2xy² + y³ given x = −2 and y = −3", o:["−53","53","−35","35"], c:0},
+          {q:"Differentiate y = (2x − 7)³ twice — what is the result?", o:["6(2x − 7)²","12(2x − 7)","24(2x − 7)","6(2x − 7)"], c:1},
+        ]
+      },
+    ]
+  },
+  {
+    id:"polynomials", icon:"xⁿ", title:"Polynomials & Algebra",
+    desc:"Polynomial basics, factoring, roots, algebraic identities, solving equations",
+    color:"#ffd166",
+    subparts:[
+      { label:"Part A", title:"Polynomial Basics",
+        questions:[
+          {q:"Degree of the polynomial f(x) = x⁵ − 3x³ + 2x + 7 is:", o:["3","5","7","2"], c:1},
+          {q:"A polynomial is called quadratic if its degree is:", o:["1","2","3","0"], c:1},
+          {q:"Leading coefficient of f(x) = −2x³ + x − 1 is:", o:["−2","1","−1","3"], c:0},
+          {q:"If f(x) = x² + 3x + 2, then f(1) is:", o:["6","3","4","5"], c:0},
+          {q:"If x = 2 is a root of f(x) = x² − 4x + 4, then f(2) =", o:["0","2","4","1"], c:0},
+          {q:"Zeros of f(x) = x² − 5x + 6 are:", o:["1, 6","−2, −3","2, 3","3, 5"], c:2},
+          {q:"If (x − 3) is a factor of f(x) = x² − 6x + 9, then f(3) =", o:["9","0","6","3"], c:1},
+          {q:"Remainder when f(x) = x² + x + 1 is divided by x − 1 is:", o:["0","1","2","3"], c:3},
+          {q:"Factor completely: x² − 1", o:["(x + 1)²","(x − 1)(x + 1)","(x − 1)²","None"], c:1},
+          {q:"A polynomial with real coefficients and degree 3 can have at most:", o:["1 real root","2 real roots","3 real roots","4 real roots"], c:2},
+        ]
+      },
+      { label:"Part B", title:"Solving & Factoring",
+        questions:[
+          {q:"Solve: x² − 5x + 6 = 0", o:["x = 2, 3","x = −2, −3","x = 1, 6","x = 3, 6"], c:0},
+          {q:"Factor: x³ − 8", o:["(x − 2)(x² + 2x + 4)","(x + 2)(x² − 2x + 4)","(x − 2)(x² − 2x + 4)","None"], c:0},
+          {q:"Solve: (x − 3)(x + 2) = 0", o:["x = 3, −2","x = −3, 2","x = 3, 2","x = −3, −2"], c:0},
+          {q:"Find the discriminant of x² − 6x + 9", o:["0","36","81","−9"], c:0},
+          {q:"Solve for x: 2x² − 8 = 0", o:["x = 2, −2","x = 4, −4","x = 1, −1","x = 0"], c:0},
+          {q:"If a² − b² = 0, then:", o:["a = b","a = −b","a = ±b","None of these"], c:2},
+          {q:"If x + 1/x = 5, then x² + 1/x² =", o:["25","23","21","15"], c:1},
+          {q:"If x² + y² = 25 and xy = 12, then (x + y)² =", o:["49","37","61","31"], c:0},
+          {q:"If a + b = 7 and ab = 10, then a² + b² =", o:["49","39","29","19"], c:2},
+          {q:"If (x + y)² = 36 and xy = 5, find x² + y²", o:["26","36","56","28"], c:0},
+        ]
+      },
+      { label:"Part C", title:"Algebraic Identities & Misc",
+        questions:[
+          {q:"Rationalize: 1/(√2 + 1)", o:["√2 − 1","1 − √2","2 − √2","None"], c:0},
+          {q:"What value of x is the expression (x + 4)/(x² − 5x + 6) equal to zero?", o:["−4","2/3","3","undefined"], c:0},
+          {q:"What value of k is (x² − 7x + 12)/(x − 3) not defined?", o:["−4","2/5","3","4"], c:2},
+          {q:"Evaluate x³ − 2xy² + y³ with x = −2 and y = −3", o:["−53","53","−35","35"], c:0},
+          {q:"If 7(x − 1) = 2(x + 3), find x", o:["1","2","13/5","5/3"], c:2},
+          {q:"If x = −5, find (6x − 11) − (7x + 8)", o:["−14","14","−12","12"], c:0},
+          {q:"Evaluate 12x − 3xy when x = 9 and y = −7", o:["200","297","210","315"], c:1},
+          {q:"Solve: x² − 5x + 6 = 0 (choose all roots)", o:["x = 2, 3","x = −2, −3","x = 1, 6","x = 3, 5"], c:0},
+          {q:"If f(x) = 3x⁴ + 7x − 11, find f(3)", o:["10","253","240","300"], c:1},
+          {q:"If f(x) = 3x⁴ + 7x − 11, find f(−3)", o:["32","−32","211","−211"], c:2},
+        ]
+      },
+    ]
+  },
+];
+
+// ===== STATE =====
+let currentTopicIdx=null, currentSubpartIdx=0, currentQuestions=[], currentQIdx=0, score=0, answers=[], answered=false;
+const scoreStore={};
+
+function init(){
+  const grid=document.getElementById('topics-grid');
+  grid.innerHTML='';
+  topics.forEach((t,ti)=>{
+    const total=t.subparts.reduce((s,p)=>s+p.questions.length,0);
+    const card=document.createElement('div');
+    card.className='topic-card';
+    card.style.setProperty('--tc',t.color);
+    card.innerHTML=`<div class="topic-icon" style="color:${t.color}">${t.icon}</div><h3>${t.title}</h3><p>${t.desc}</p><div class="topic-meta"><span class="badge" style="background:${t.color}22;color:${t.color}">${t.subparts.length} parts</span><span class="badge" style="background:${t.color}22;color:${t.color}">${total} questions</span></div>`;
+    card.onclick=()=>showTopic(ti);
+    grid.appendChild(card);
+  });
+}
+
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showHome(){showView('home');}
+
+function showTopic(ti){
+  currentTopicIdx=ti;
+  const t=topics[ti];
+  document.getElementById('tv-eyebrow').textContent='Topic '+(ti+1);
+  document.getElementById('tv-title').textContent=t.title;
+  document.getElementById('tv-desc').textContent=t.desc;
+  const grid=document.getElementById('subparts-grid');
+  grid.innerHTML='';
+  t.subparts.forEach((sp,si)=>{
+    const key=t.id+'_'+si;
+    const stored=scoreStore[key];
+    const card=document.createElement('div');
+    card.className='subpart-card';
+    card.innerHTML=`<div class="subpart-num" style="color:${t.color}">${si+1}</div><h4>${sp.label}: ${sp.title}</h4><p>${sp.questions.length} questions</p><div class="subpart-score ${stored?'visible':''}" id="ss_${key}">${stored?stored.score+'/'+stored.total+' last attempt':''}</div>`;
+    card.onclick=()=>startQuiz(si);
+    grid.appendChild(card);
+  });
+  showView('topic-view');
+}
+
+function backToSubparts(){showTopic(currentTopicIdx);}
+
+function startQuiz(si){
+  currentSubpartIdx=si;
+  const sp=topics[currentTopicIdx].subparts[si];
+  currentQuestions=[...sp.questions];
+  currentQIdx=0; score=0; answers=[]; answered=false;
+  document.getElementById('quiz-label').textContent=topics[currentTopicIdx].title+' · '+sp.label;
+  showView('quiz-view');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q=currentQuestions[currentQIdx];
+  const total=currentQuestions.length;
+  answered=false;
+  document.getElementById('q-num').textContent='Question '+(currentQIdx+1)+' of '+total;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('quiz-progress').textContent=(currentQIdx+1)+' / '+total;
+  document.getElementById('progress-fill').style.width=(currentQIdx/total*100)+'%';
+  const fb=document.getElementById('feedback');
+  fb.className='feedback-box'; fb.innerHTML='';
+  const nb=document.getElementById('next-btn');
+  nb.classList.remove('visible');
+  nb.textContent=currentQIdx<total-1?'Next Question →':'See Results';
+  const opts=document.getElementById('q-options');
+  opts.innerHTML='';
+  ['A','B','C','D'].forEach((letter,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=`<span class="option-letter">${letter}</span><span>${q.o[i]}</span>`;
+    btn.onclick=()=>selectAnswer(i);
+    opts.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  const q=currentQuestions[currentQIdx];
+  const ok=idx===q.c;
+  const letters=['A','B','C','D'];
+  document.querySelectorAll('.option-btn').forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    if(i===q.c)btn.classList.add('correct');
+    if(i===idx&&!ok)btn.classList.add('wrong');
+  });
+  const fb=document.getElementById('feedback');
+  if(ok){score++;fb.className='feedback-box correct-fb show';fb.innerHTML='<strong>✓ Correct!</strong>';}
+  else{fb.className='feedback-box wrong-fb show';fb.innerHTML=`<strong>✗ Incorrect</strong>The correct answer is <strong>${letters[q.c]}. ${q.o[q.c]}</strong>`;}
+  answers.push({correct:ok,selectedIdx:idx,correctIdx:q.c,questionText:q.q,correctText:q.o[q.c]});
+  document.getElementById('next-btn').classList.add('visible');
+}
+
+function nextQuestion(){
+  currentQIdx++;
+  if(currentQIdx>=currentQuestions.length)showResults();
+  else renderQuestion();
+}
+
+function showResults(){
+  const total=currentQuestions.length;
+  const pct=Math.round(score/total*100);
+  document.getElementById('progress-fill').style.width='100%';
+  const key=topics[currentTopicIdx].id+'_'+currentSubpartIdx;
+  scoreStore[key]={score,total};
+  const ssEl=document.getElementById('ss_'+key);
+  if(ssEl){ssEl.textContent=score+'/'+total+' last attempt';ssEl.classList.add('visible');}
+  const scoreEl=document.getElementById('result-score');
+  scoreEl.textContent=pct+'%';
+  scoreEl.className='result-score '+(pct>=80?'high':pct>=50?'mid':'low');
+  let icon,label,sub;
+  if(pct>=90){icon='🏆';label='Outstanding!';sub='Near-perfect score. You really know this material.';}
+  else if(pct>=75){icon='✅';label='Great Work!';sub='Solid performance. A quick review of missed questions and you\'re set.';}
+  else if(pct>=50){icon='📖';label='Keep Studying';sub='You\'re getting there. Review the answers below and try again.';}
+  else{icon='💪';label='More Practice Needed';sub='Don\'t give up! Go through the correct answers and try again.';}
+  document.getElementById('result-icon').textContent=icon;
+  document.getElementById('result-label').textContent=label;
+  document.getElementById('result-sub').textContent=sub;
+  document.getElementById('stat-correct').textContent=score;
+  document.getElementById('stat-wrong').textContent=total-score;
+  document.getElementById('stat-total').textContent=total;
+  const list=document.getElementById('breakdown-list');
+  list.innerHTML='';
+  answers.forEach((a,i)=>{
+    const row=document.createElement('div');
+    row.className='breakdown-item';
+    const shortQ=a.questionText.length>65?a.questionText.substring(0,65)+'…':a.questionText;
+    row.innerHTML=`<span class="breakdown-q">Q${i+1}: ${shortQ}</span><span class="breakdown-dot ${a.correct?'ok':'fail'}" title="${a.correct?'Correct':'Wrong — Correct: '+a.correctText}"></span>`;
+    list.appendChild(row);
+  });
+  showView('results-view');
+}
+
+function retryQuiz(){startQuiz(currentSubpartIdx);}
+init();
+</script>
+</body>
+</html>
