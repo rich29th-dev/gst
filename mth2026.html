@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTH 102 — 2026 Revision Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ── TOKENS ─────────────────────────────────────── */
+:root {
+  --r: 10px;
+  --font: 'Inter', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+[data-theme="dark"] {
+  --bg:       #0e1016;
+  --surface:  #151820;
+  --card:     #1c1f2e;
+  --border:   #252840;
+  --accent:   #7c6af5;
+  --accent-s: #a395ff;
+  --good:     #34d399;
+  --bad:      #f87171;
+  --warn:     #fbbf24;
+  --text:     #e2e4f0;
+  --sub:      #8589aa;
+  --hover:    rgba(124,106,245,.1);
+  --good-bg:  rgba(52,211,153,.08);
+  --bad-bg:   rgba(248,113,113,.08);
+  --tag-bg:   rgba(124,106,245,.15);
+  --shadow:   0 4px 24px rgba(0,0,0,.4);
+}
+[data-theme="light"] {
+  --bg:       #f5f6fb;
+  --surface:  #ffffff;
+  --card:     #ffffff;
+  --border:   #e0e2ef;
+  --accent:   #5b4de8;
+  --accent-s: #7c6af5;
+  --good:     #059669;
+  --bad:      #dc2626;
+  --warn:     #d97706;
+  --text:     #1a1d2e;
+  --sub:      #6b7280;
+  --hover:    rgba(91,77,232,.07);
+  --good-bg:  rgba(5,150,105,.07);
+  --bad-bg:   rgba(220,38,38,.07);
+  --tag-bg:   rgba(91,77,232,.1);
+  --shadow:   0 2px 16px rgba(0,0,0,.08);
+}
+
+/* ── RESET ───────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s;}
+button{cursor:pointer;font-family:var(--font);}
+
+/* ── LAYOUT ──────────────────────────────────────── */
+.page{display:none;} .page.show{display:block;}
+.wrap{max-width:860px;margin:0 auto;padding:32px 20px;}
+.wrap-sm{max-width:660px;margin:0 auto;padding:32px 20px;}
+
+/* ── TOPBAR ──────────────────────────────────────── */
+#topbar{
+  position:sticky;top:0;z-index:200;
+  background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;padding:0 20px;height:56px;
+  box-shadow:0 1px 0 var(--border);
+}
+.tb-logo{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent);color:#fff;padding:4px 10px;border-radius:6px;letter-spacing:.06em;flex-shrink:0;}
+.tb-title{font-size:15px;font-weight:600;color:var(--text);}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.tb-progress{font-family:var(--mono);font-size:12px;color:var(--sub);padding:3px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;display:none;}
+.tb-progress.show{display:block;}
+.tb-abandon{background:none;border:1px solid var(--border);color:var(--sub);font-size:13px;padding:5px 12px;border-radius:6px;display:none;transition:border-color .15s,color .15s;}
+.tb-abandon.show{display:flex;align-items:center;gap:5px;}
+.tb-abandon:hover{border-color:var(--bad);color:var(--bad);}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:6px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:border-color .15s;color:var(--text);}
+.theme-btn:hover{border-color:var(--accent);}
+
+/* ── HOME ────────────────────────────────────────── */
+.hero{text-align:center;padding:40px 0 52px;}
+.hero-label{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px;}
+.hero h1{font-size:38px;font-weight:700;line-height:1.15;margin-bottom:12px;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero p{color:var(--sub);font-size:15px;max-width:440px;margin:0 auto;}
+.stat-strip{display:flex;justify-content:center;gap:24px;margin:28px 0 0;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);display:block;}
+.stat .l{font-size:12px;color:var(--sub);margin-top:2px;}
+
+.section-head{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;}
+.section-head h2{font-size:16px;font-weight:700;}
+.section-head span{font-size:12px;color:var(--sub);font-family:var(--mono);}
+
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:12px;}
+.topic-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:transform .14s,border-color .14s,box-shadow .14s;position:relative;overflow:hidden;}
+.topic-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tc,var(--accent));opacity:0;transition:opacity .14s;}
+.topic-card:hover{transform:translateY(-2px);border-color:var(--tc,var(--accent));box-shadow:var(--shadow);}
+.topic-card:hover::after{opacity:1;}
+.tc-icon{font-family:var(--mono);font-size:18px;font-weight:700;margin-bottom:10px;}
+.tc-name{font-size:15px;font-weight:600;margin-bottom:4px;}
+.tc-desc{font-size:12px;color:var(--sub);margin-bottom:14px;line-height:1.5;}
+.tc-meta{display:flex;gap:6px;flex-wrap:wrap;}
+.tag{font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--tag-bg);color:var(--accent);}
+.tc-score{font-size:11px;color:var(--good);font-family:var(--mono);margin-top:8px;}
+
+/* ── SUBPART PAGE ─────────────────────────────────── */
+.back-row{display:flex;align-items:center;gap:8px;margin-bottom:28px;}
+.back-btn{background:none;border:1px solid var(--border);color:var(--sub);font-size:13px;padding:6px 14px;border-radius:7px;display:flex;align-items:center;gap:6px;transition:border-color .15s,color .15s;}
+.back-btn:hover{border-color:var(--accent);color:var(--text);}
+.breadcrumb{font-size:13px;color:var(--sub);}
+.breadcrumb b{color:var(--text);}
+
+.topic-header{margin-bottom:28px;}
+.topic-eyebrow{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
+.topic-header h2{font-size:26px;font-weight:700;margin-bottom:6px;}
+.topic-header p{color:var(--sub);font-size:14px;}
+
+.parts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.part-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:transform .13s,border-color .13s;text-align:center;}
+.part-card:hover{transform:translateY(-2px);border-color:var(--accent);}
+.part-num{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--accent);line-height:1;margin-bottom:8px;}
+.part-name{font-size:13px;font-weight:600;margin-bottom:3px;}
+.part-sub{font-size:11px;color:var(--sub);}
+.part-score{font-size:11px;font-family:var(--mono);color:var(--good);margin-top:7px;min-height:16px;}
+
+/* ── QUIZ PAGE ────────────────────────────────────── */
+.quiz-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.quiz-crumb{font-size:13px;color:var(--sub);}
+.quiz-counter{font-family:var(--mono);font-size:13px;color:var(--text);}
+.prog-bar{background:var(--border);height:3px;border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-s));border-radius:2px;transition:width .35s ease;}
+
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:26px;margin-bottom:16px;box-shadow:var(--shadow);}
+.q-badge{font-family:var(--mono);font-size:11px;color:var(--sub);margin-bottom:12px;}
+.q-text{font-size:17px;font-weight:500;line-height:1.55;margin-bottom:22px;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px 16px;text-align:left;font-size:14px;display:flex;align-items:flex-start;gap:10px;transition:border-color .1s,background .1s;line-height:1.45;}
+.opt:not(.locked):hover{border-color:var(--accent);background:var(--hover);}
+.opt-let{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--sub);min-width:18px;flex-shrink:0;padding-top:1px;}
+.opt.correct{border-color:var(--good)!important;background:var(--good-bg)!important;}
+.opt.correct .opt-let{color:var(--good);}
+.opt.wrong{border-color:var(--bad)!important;background:var(--bad-bg)!important;}
+.opt.wrong .opt-let{color:var(--bad);}
+.opt.locked{cursor:default;pointer-events:none;}
+
+.feedback{display:none;border-radius:8px;padding:12px 16px;font-size:13px;margin-top:10px;line-height:1.5;}
+.feedback.show{display:block;}
+.feedback.fb-ok{background:var(--good-bg);border:1px solid rgba(52,211,153,.25);color:var(--good);}
+.feedback.fb-bad{background:var(--bad-bg);border:1px solid rgba(248,113,113,.25);color:var(--bad);}
+.feedback strong{font-size:14px;display:block;margin-bottom:2px;}
+
+.quiz-actions{display:flex;align-items:center;gap:10px;margin-top:16px;}
+.btn-next{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px 26px;font-size:14px;font-weight:600;display:none;transition:opacity .14s,transform .14s;}
+.btn-next.show{display:block;}
+.btn-next:hover{opacity:.88;transform:translateY(-1px);}
+.btn-abandon-q{background:none;border:1px solid var(--border);color:var(--sub);font-size:13px;padding:10px 16px;border-radius:8px;transition:border-color .15s,color .15s;}
+.btn-abandon-q:hover{border-color:var(--bad);color:var(--bad);}
+
+/* ── ABANDON MODAL ───────────────────────────────── */
+#modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;}
+#modal-bg.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:360px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.4);text-align:center;}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:8px;}
+.modal p{font-size:14px;color:var(--sub);margin-bottom:24px;line-height:1.55;}
+.modal-actions{display:flex;gap:10px;justify-content:center;}
+.btn-danger{background:var(--bad);color:#fff;border:none;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600;}
+.btn-cancel{background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 22px;font-size:14px;}
+
+/* ── RESULTS PAGE ────────────────────────────────── */
+.result-hero{text-align:center;padding:36px 0 28px;}
+.r-icon{font-size:56px;margin-bottom:12px;}
+.r-pct{font-family:var(--mono);font-size:64px;font-weight:700;line-height:1;}
+.r-pct.hi{color:var(--good);}
+.r-pct.mid{color:var(--warn);}
+.r-pct.lo{color:var(--bad);}
+.r-title{font-size:19px;font-weight:700;margin:8px 0 4px;}
+.r-sub{font-size:14px;color:var(--sub);}
+.chips{display:flex;gap:12px;justify-content:center;margin:24px 0;flex-wrap:wrap;}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 20px;text-align:center;min-width:90px;}
+.chip .cv{font-family:var(--mono);font-size:22px;font-weight:700;display:block;}
+.chip .ck{font-size:11px;color:var(--sub);margin-top:2px;}
+.chip.cg .cv{color:var(--good);}
+.chip.cr .cv{color:var(--bad);}
+
+.breakdown{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:24px;}
+.breakdown h3{font-size:12px;color:var(--sub);letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px;}
+.bd-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:12px;font-size:13px;}
+.bd-row:last-child{border-bottom:none;}
+.bd-q{color:var(--sub);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bd-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.bd-dot.ok{background:var(--good);}
+.bd-dot.bad{background:var(--bad);}
+
+.r-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px;}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:600;transition:opacity .14s;}
+.btn-primary:hover{opacity:.86;}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:11px 22px;font-size:14px;transition:border-color .14s;}
+.btn-outline:hover{border-color:var(--accent);}
+
+/* ── HISTORY PAGE ────────────────────────────────── */
+.history-empty{text-align:center;padding:60px 20px;color:var(--sub);}
+.history-empty .ei{font-size:40px;margin-bottom:12px;}
+.history-table{width:100%;border-collapse:collapse;}
+.history-table th{text-align:left;font-size:11px;color:var(--sub);letter-spacing:.07em;text-transform:uppercase;padding:8px 12px;border-bottom:2px solid var(--border);}
+.history-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border);}
+.history-table tr:last-child td{border-bottom:none;}
+.score-pill{font-family:var(--mono);font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;}
+.score-pill.hi{background:rgba(52,211,153,.12);color:var(--good);}
+.score-pill.mid{background:rgba(251,191,36,.12);color:var(--warn);}
+.score-pill.lo{background:rgba(248,113,113,.12);color:var(--bad);}
+.clear-btn{background:none;border:1px solid var(--border);color:var(--sub);font-size:12px;padding:5px 12px;border-radius:6px;transition:border-color .15s,color .15s;}
+.clear-btn:hover{border-color:var(--bad);color:var(--bad);}
+
+/* ── BOTTOM NAV ──────────────────────────────────── */
+#bottom-nav{background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:center;gap:4px;padding:8px 16px;position:sticky;bottom:0;z-index:100;}
+.nav-btn{background:none;border:none;color:var(--sub);font-size:11px;font-weight:500;padding:7px 18px;border-radius:7px;display:flex;flex-direction:column;align-items:center;gap:3px;transition:color .14s,background .14s;}
+.nav-btn .ni{font-size:18px;}
+.nav-btn.active{color:var(--accent);background:var(--tag-bg);}
+.nav-btn:hover:not(.active){color:var(--text);}
+
+@media(max-width:580px){
+  .hero h1{font-size:26px;}
+  .r-pct{font-size:48px;}
+  .wrap,.wrap-sm{padding:20px 14px;}
+  #topbar{padding:0 14px;}
+  .q-text{font-size:15px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-logo">MTH 102</div>
+  <span class="tb-title" id="tb-title">2026 Revision</span>
+  <div class="tb-right">
+    <span class="tb-progress" id="tb-progress"></span>
+    <button class="tb-abandon" id="tb-abandon" onclick="askAbandon()">✕ Abandon</button>
+    <button class="theme-btn" id="theme-btn" title="Toggle theme" onclick="toggleTheme()">🌙</button>
+  </div>
+</div>
+
+<!-- ABANDON MODAL -->
+<div id="modal-bg">
+  <div class="modal">
+    <h3>Abandon Quiz?</h3>
+    <p>Your progress on this set will not be saved. You can restart it any time.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Keep Going</button>
+      <button class="btn-danger" onclick="confirmAbandon()">Abandon</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: HOME -->
+<div id="page-home" class="page show">
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-label">MTH 102 · 2026 Edition</div>
+      <h1>Revise smarter,<br>score <em>higher</em></h1>
+      <p>120 questions across 4 topics. Pick a topic, choose a set of 10, and test yourself.</p>
+      <div class="stat-strip">
+        <div class="stat"><span class="n">120</span><span class="l">Questions</span></div>
+        <div class="stat"><span class="n">4</span><span class="l">Topics</span></div>
+        <div class="stat"><span class="n">12</span><span class="l">Sets of 10</span></div>
+      </div>
+    </div>
+    <div class="section-head"><h2>Topics</h2><span>tap to explore</span></div>
+    <div class="topic-grid" id="topic-grid"></div>
+  </div>
+</div>
+
+<!-- PAGE: SUBPARTS -->
+<div id="page-subs" class="page">
+  <div class="wrap">
+    <div class="back-row">
+      <button class="back-btn" onclick="goHome()">← Topics</button>
+      <span class="breadcrumb" id="bc-text"></span>
+    </div>
+    <div class="topic-header">
+      <div class="topic-eyebrow" id="th-eyebrow"></div>
+      <h2 id="th-name"></h2>
+      <p id="th-desc"></p>
+    </div>
+    <div class="section-head"><h2>Sets</h2><span>10 questions each</span></div>
+    <div class="parts-grid" id="parts-grid"></div>
+  </div>
+</div>
+
+<!-- PAGE: QUIZ -->
+<div id="page-quiz" class="page">
+  <div class="wrap-sm">
+    <div class="quiz-meta">
+      <span class="quiz-crumb" id="q-crumb"></span>
+      <span class="quiz-counter" id="q-counter"></span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    <div class="q-card">
+      <div class="q-badge" id="q-badge"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="q-opts"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="quiz-actions">
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Next →</button>
+      <button class="btn-abandon-q" onclick="askAbandon()">Abandon set</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: RESULTS -->
+<div id="page-results" class="page">
+  <div class="wrap-sm">
+    <div class="result-hero">
+      <div class="r-icon" id="r-icon"></div>
+      <div class="r-pct" id="r-pct"></div>
+      <div class="r-title" id="r-title"></div>
+      <div class="r-sub" id="r-sub"></div>
+    </div>
+    <div class="chips">
+      <div class="chip cg"><span class="cv" id="rc-correct"></span><div class="ck">Correct</div></div>
+      <div class="chip cr"><span class="cv" id="rc-wrong"></span><div class="ck">Wrong</div></div>
+      <div class="chip"><span class="cv" id="rc-total"></span><div class="ck">Total</div></div>
+    </div>
+    <div class="breakdown"><h3>Breakdown</h3><div id="bd-list"></div></div>
+    <div class="r-actions">
+      <button class="btn-primary" onclick="retrySet()">Retry Set</button>
+      <button class="btn-outline" onclick="goSubs()">Other Sets</button>
+      <button class="btn-outline" onclick="goHome()">All Topics</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE: HISTORY -->
+<div id="page-history" class="page">
+  <div class="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:10px;">
+      <h2 style="font-size:20px;font-weight:700;">Score History</h2>
+      <button class="clear-btn" onclick="clearHistory()">Clear all</button>
+    </div>
+    <div id="history-body"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div id="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="goHome()"><span class="ni">🏠</span>Home</button>
+  <button class="nav-btn" id="nav-history" onclick="goHistory()"><span class="ni">📊</span>Scores</button>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA — 120 questions, 4 topics × 3 parts
+══════════════════════════════════════════ */
+const TOPICS = [
+  {
+    id:'diff', icon:'d/dx', name:'Differentiation', color:'#7c6af5',
+    desc:'Derivatives, rules of differentiation, chain/product rules, higher-order derivatives',
+    parts:[
+      { label:'Set 1', title:'Core Rules',
+        qs:[
+          {q:'What does the derivative represent in calculus?', o:['Slope of the tangent line','Area under the curve','Accumulated sum','Average value'], c:0},
+          {q:'If y = (x² + 1)(x + 1), find dy/dx', o:['2x² – 2x + 1','3x² + 2x + 1','x² + 2x + 1','3x³ + 2x + 1'], c:1},
+          {q:'If y = ln(2x), what is dy/dx?', o:['1/x','2/x','–x','ln(x)'], c:0},
+          {q:'Differentiate y = (4x – 5)⁶', o:['6(4x–5)⁵','24(4x–5)','6(4x–5)⁶','24(4x–5)⁵'], c:3},
+          {q:'Find the second derivative of y = (2x + 3)⁴', o:['48(2x+3)²','24(2x+3)³','8(2x+3)²','96(2x+3)²'], c:3},
+          {q:'If g(x) = 1/x, what is g′(x)?', o:['–1/x²','1/x','–x','1/x²'], c:0},
+          {q:'Differentiate y = cos²x', o:['2cosx sinx','2sinx cosx','–2cosx sinx','–2sinx cosx'], c:3},
+          {q:'Differentiate cos 5x', o:['5sin5x','–5sin5x','–5sinx','–sin5x'], c:1},
+          {q:'Differentiate sin 9x', o:['9cos9x','cos9x','9cosx','9sin9x'], c:0},
+          {q:'Differentiate y = sin3x', o:['–3cos²x sinx','–3sin²x cosx','3cos²x sinx','3sin²x cosx'], c:1},
+        ]
+      },
+      { label:'Set 2', title:'Chain & Product Rules',
+        qs:[
+          {q:'Given y = sin(5x – 4), find dy/dx', o:['cos(5x–4)','5sin(5x–4)','5x–4','5cos(5x–4)'], c:3},
+          {q:'Find dy/dx if y = (5x – 3)²', o:['2(5x–3)','8(5x–3)','5x–3','10(5x–3)'], c:3},
+          {q:'If y = (7x – 3)³, find dy/dx', o:['28(7x–3)²','21(7x–3)²','3(7x–3)²','21(7x–3)'], c:1},
+          {q:'If y = (3x + 7)⁵, find dy/dx', o:['12[3x+7]⁴','5[3x+7]⁴','15[3x+7]⁴','15[3x+7]³'], c:2},
+          {q:'Differentiate y = (7 + 2x)(1 – x)', o:['–5 – 4x','4x – 1','–5x + 1','–4x'], c:0},
+          {q:'Differentiate (2x + 6)(7x – 4)', o:['28x + 34','4x – 13','28x – 34','13x – 4'], c:0},
+          {q:'Differentiate y = x tan x', o:['sec²x + tanx','x sec²x + tanx','x sec²x + tan2x','sec²x + 2tanx'], c:1},
+          {q:'Differentiate y = x sin x', o:['x cosx + sinx','sinx – x cosx','cosx + x sinx','sinx + x cosx'], c:0},
+          {q:'Differentiate x cos(xy) with respect to x', o:['–x sin(xy)','cos(xy) – xy sin(xy)','–x sin(xy) + cos(xy)','x sin(xy) + cos(xy)'], c:2},
+          {q:'Given y = cos(5x – 4), find dy/dx', o:['5cos(5x–4)','–5sin(5x–4)','5x–4','5sin(5x–4)'], c:1},
+        ]
+      },
+      { label:'Set 3', title:'Higher Derivatives & Trig',
+        qs:[
+          {q:'If y = 3x⁴ – 7x + 5, find the second derivative', o:['36x²','12x³ + 6','36x² + 6','36x'], c:0},
+          {q:'If y = 3x⁴ + 6x – 9, find d²y/dx² when x = 4', o:['600','576','460','730'], c:1},
+          {q:'If y = 3x⁴ + 6x – 9, find d²y/dx²', o:['36x²','12x³ + 6','36x² + 6','36x'], c:0},
+          {q:'If y = (2x – 7)³, differentiate twice', o:['20(2x–7)','6(2x–7)³','24(2x–7)','4(2x–7)'], c:2},
+          {q:'If y = {2x + 5}⁴, differentiate twice', o:['20[2x+5]','48[2x+5]²','24[2x–7]','48[2x+5]³'], c:1},
+          {q:'Given y = tan(5x – 4), find dy/dx', o:['cos(5x–4)','5sin(5x–4)','5x–4','5sec²(5x–4)'], c:3},
+          {q:'Which method of differentiation uses a third variable?', o:['Implicit differentiation','Parametric differentiation','Product differentiation','Logarithm differentiation'], c:1},
+          {q:'Which of these is NOT a method of differentiation?', o:['Mechanics rule','Product rule','Quotient rule','Chain rule'], c:0},
+          {q:'In differentiation from first principle, delta x means:', o:['The image of x','A small change in x','The slope of x','None of the above'], c:1},
+          {q:'Given a function y = f(x), the point at which dy/dx = 0 is called:', o:['Value point','Equalization point','Stationary point','Maximum point'], c:2},
+        ]
+      },
+      { label:'Set 4', title:'Applied Differentiation',
+        qs:[
+          {q:'If y = 3x⁴ + 7x – 11, find dy/dx', o:['12x – 11','12x + 7','3x + 7','12x³ + 7'], c:3},
+          {q:'If y = x² – 7x + 5, find dy/dx', o:['2x – 7','x – 7','x + 7','2x + 2'], c:0},
+          {q:'If y = x² – 13x + 5, find dy/dx', o:['2x – 13','x – 13','x + 13','2x + 13'], c:0},
+          {q:'If y = x² + 9x + 5, find dy/dx', o:['2x + 9','x – 7','x + 7','2x – 9'], c:0},
+          {q:'If y = {7x – 3}⁴, find dy/dx', o:['20[7x–3]','4[7x–3]³','28[7x–3]³','4[7x–3]'], c:2},
+          {q:'Differentiation and integration form the central core of:', o:['Medicine','Polynomial','Calculus','Temperature'], c:2},
+          {q:'The first derivative measures the rate of change or ___ of a function.', o:['Intercept','Slope','Convexity','Concavity'], c:1},
+          {q:'What is cos x / sin x?', o:['tanx','cosecx','cosecantx','cotx'], c:3},
+          {q:'Differentiate y = x sin x', o:['x cosx + sinx','sinx – x cosx','cosx + x sinx','sinx + x cosx'], c:0},
+          {q:'If y = 3x⁴ + 7x – 11, find f(–3)', o:['275','245','196','211'], c:3},
+        ]
+      },
+    ]
+  },
+  {
+    id:'func', icon:'f(x)', name:'Functions & Relations', color:'#06b6d4',
+    desc:'Domain, range, mappings, function types, evaluating and composing functions',
+    parts:[
+      { label:'Set 1', title:'Evaluating Functions',
+        qs:[
+          {q:'If f(x) = 3x – 2, find f(8) – f(–5)', o:['7','9','37','39'], c:3},
+          {q:'If f(x) = 13x – 7, find f(8) – f(–5)', o:['25','9','37','169'], c:3},
+          {q:'If f(x) = 15x – 7, find f(8) – f(–5)', o:['81','56','37','195'], c:3},
+          {q:'If f(x) = 15x – 20, find f(8) + f(7)', o:['209','56','180','185'], c:3},
+          {q:'If f(x) = 9x³ – 11x² + 7x – 6, find f′(5)', o:['675','572','558','715'], c:1},
+          {q:'If f(x) = 2x³ – 3x² + 7x – 5, find f(–2)', o:['–36','47','–47','36'], c:2},
+          {q:'If f(x) = x² – 7x + 5, find f(7)', o:['62','21','5','12'], c:2},
+          {q:'If y = 3x⁴ + 7x – 11, find f(3)', o:['275','221','196','243'], c:3},
+          {q:'Evaluate 12x – 3xy when x = 9 and y = –7', o:['–81','297','342','245'], c:1},
+          {q:'Evaluate x³ – 2xy² + y³ given x = –2 and y = –3', o:['–45','–23','1','7'], c:2},
+        ]
+      },
+      { label:'Set 2', title:'Domain, Range & Mappings',
+        qs:[
+          {q:'Which of the following is a function?', o:['{(1,2),(2,2),(3,4)}','{(3,7),(3,6),(5,3)}','{(1,2),(–1,3),(–1,8)}','{(1,1),(1,2),(1,3)}'], c:0},
+          {q:'Which relation is a function?', o:['{(3,1),(4,1),(3,2)}','{(0,0),(1,2),(2,3)}','{(0,0),(0,1),(1,2)}','{(1,1),(1,2),(1,3)}'], c:1},
+          {q:'What is the range of f(x) = x + 3 for x ∈ {1,2,3}?', o:['{2,3,4}','{3,4,5}','{4,5,6}','{5,6,7}'], c:2},
+          {q:'What is the range of f(x) = x² for x ∈ {–2,–1,0,1,2}?', o:['{–4,–1,0,1,4}','{0,1,4}','{0,1,2,4}','{4,1,0}'], c:1},
+          {q:'What is the range of f(x) = x² for x ∈ {–3,–2,–1,0}?', o:['{1,2,3,4}','{0,1,4,9}','{–9,–4,–1,0}','{1,2,3,9}'], c:1},
+          {q:'What is the range of f(x) = 2x + 3 for x ∈ {1,2,3}?', o:['{2,3,4}','{5,7,9}','{4,5,6}','{5,6,7}'], c:1},
+          {q:'Which best describes a range?', o:['All possible x-values','Maximum value of a function','All possible y-values','Inputs of a function'], c:2},
+          {q:'What is f(7) if f(x) = x² – 4x + 3?', o:['35','19','27','24'], c:0},
+          {q:'A mapping in which every object in the domain has a unique image in the codomain is called:', o:['One to many','Many to many','One to one','Many to one'], c:2},
+          {q:'Which of this is not a type of mapping?', o:['One to one','Many to many','Zero to many','One to many'], c:2},
+        ]
+      },
+      { label:'Set 3', title:'Inverse, Composition & Types',
+        qs:[
+          {q:'Find the inverse of f(x) = 2x – 3', o:['(x+3)/2','(x–3)/2','5x–2','2/(x+3)'], c:0},
+          {q:'If g(x) = (3x–2)/5, evaluate g⁻¹(x)', o:['(5x+2)/3','(x–3)/2','5x–2','2/(x+3)'], c:0},
+          {q:'If g(x) = (3x–2)/5, evaluate g⁻¹(5)', o:['8','9','7','11'], c:1},
+          {q:'What is the inverse of f(x) = 2x + 3?', o:['g⁻¹(x) = 2y+3','g⁻¹(x) = (x–3)/2','g⁻¹(x) = (x+3)/2','g⁻¹(x) = 2x–3'], c:1},
+          {q:'If f(x) = 2x+1 and g(x) = x–3, what is f(g(x))?', o:['2x–5','2x+1','2x–1','2x–3'], c:0},
+          {q:'If f(x) = 3x and g(x) = x–1, find f(g(x))', o:['3x–3','9x–7','3x','x–3'], c:0},
+          {q:'If f(x) = x+3 and g(x) = 2x, what is f(g(9))?', o:['16','21','18','19'], c:1},
+          {q:'If f(x) = x+3 and g(x) = 2x, what is f(g(5))?', o:['16','21','18','13'], c:3},
+          {q:'A function is best defined as:', o:['A number','A rule','A relation where each input has one output','A formula with variables'], c:2},
+          {q:'Which of these is not one-to-one?', o:['f(x) = x+1','f(x) = x³','f(x) = √x','f(x) = x²'], c:3},
+        ]
+      },
+    ]
+  },
+  {
+    id:'limits', icon:'lim', name:'Limits & Continuity', color:'#f59e0b',
+    desc:'Evaluating limits, continuity conditions, discontinuity types',
+    parts:[
+      { label:'Set 1', title:'Evaluating Limits',
+        qs:[
+          {q:'Evaluate lim (x² – 25)/(x – 5) as x → 5', o:['Undefined','–10','10','5'], c:2},
+          {q:'Evaluate f(x) = 3x² – 6x + 12 as x → 10', o:['175','262','186','252'], c:3},
+          {q:'Evaluate the limit f(x) = x² – 5x + 6 as x → 3', o:['Undefined','2','3','0'], c:3},
+          {q:'Evaluate the limit f(x) = x² – 5x + 6 as x → 7', o:['Undefined','12','32','20'], c:3},
+          {q:'Evaluate lim (x² – 4x – 5)/(2x² – 1) as x → ∞', o:['0','Cannot be determined','1/2','1'], c:2},
+          {q:'Evaluate lim (x² – 7x + 12)/(x – 3) as x → 3', o:['0','–1','1','The limit does not exist'], c:2},
+          {q:'Which of these is not a method of evaluating the limits of a function?', o:['Direct substitution','The h method','By orthogonal method','The L\'Hôpital method'], c:2},
+          {q:'For what value of x is (9x – 7)/(2x – 5) not defined?', o:['2/5','–2','5/2','3'], c:2},
+          {q:'For what value of x is the equation (x + 7)/(2x – 5) equal to zero?', o:['7','3','5','–7'], c:3},
+          {q:'For what value of x is (3x – 7)/(2x – 5) equal to zero?', o:['3/7','–7','3','7/3'], c:3},
+        ]
+      },
+      { label:'Set 2', title:'Discontinuity & Relations',
+        qs:[
+          {q:'Which of these is not a type of discontinuity?', o:['Infinite discontinuity','Jump discontinuity','Removable discontinuity','Analytic discontinuity'], c:3},
+          {q:'A relation where the domain is a set of individual points is referred to as:', o:['Continuous relation','Discrete relation','Orthogonal relation','Diagonal relation'], c:1},
+          {q:'If A={1,2,3}, B={4,5,6,7} and F={(1,4),(2,5),(3,6)} is a function from A to B. State whether F is one-to-one:', o:['One to many','One to one','Many to one','Many to many'], c:1},
+          {q:'Let E={1,2,3,4} and F={1,2}. How many onto functions are there from E to F?', o:['14','16','12','8'], c:0},
+          {q:'If an operation is defined by a*b = a² + b², find (1*2)*6', o:['12','28','61','None of these'], c:2},
+          {q:'If f(x) = 6x + 16 and f(x) = 10, solve for x', o:['4','–1','15','8'], c:1},
+          {q:'The numbers 2, 11, 17, 31 are:', o:['Odd numbers','Perfect squares','Prime numbers','Even and odd numbers'], c:2},
+          {q:'Find the average of the first four prime numbers after 10', o:['20','17','15','25'], c:0},
+          {q:'What is the range of numbers 17.1, 50.3, 6.27, 33.2, 15.9, 66.05, 24?', o:['50.3','59.78','33.2','17.1'], c:1},
+          {q:'Factorise completely 8x – 16', o:['4(2x–4x)','4(x–2)','8(x–2)','8(2x–4)'], c:2},
+        ]
+      },
+    ]
+  },
+  {
+    id:'alg', icon:'xⁿ', name:'Algebra & Arithmetic', color:'#10b981',
+    desc:'Solving equations, expressions, integration basics, arithmetic operations',
+    parts:[
+      { label:'Set 1', title:'Equations & Expressions',
+        qs:[
+          {q:'If 7(x – 1) = 2(x + 3), find x', o:['–2','13/5','2','–13/5'], c:1},
+          {q:'If x = –5, the value of (6x – 11) – (7x + 8) is:', o:['–14','–7','–14','8'], c:0},
+          {q:'If x = 3, the value of (6x – 4) – (2x + 8) is:', o:['–20','–4','4','0'], c:2},
+          {q:'Solve for r: 30r + 20 – 10r = –40', o:['–4','–3','3','4'], c:1},
+          {q:'Solve for x: 2x² – 8 = 0', o:['x = 2, –2','x = 4, –4','x = 1, –1','x = 0'], c:0},
+          {q:'Solve for x: 3x² – 3 = 0', o:['x = 2, –2','x = 4, –4','x = 1, –1','x = 0'], c:2},
+          {q:'For what value of x is (9x – 7)/(2x – 5) not defined?', o:['x = 2/5','9/2','x = 5/2','x = 3'], c:2},
+          {q:'For what value of x is (3x – 7)/(2x – 5) not defined?', o:['3/7','5/2','2/5','7'], c:1},
+          {q:'Evaluate x³ – 12xy² + y³ given x = –2 and y = –3', o:['71','1','17','–71'], c:0},
+          {q:'Evaluate x³ – 2xy² + y³ given x = –2 and y = –3', o:['–45','–23','1','7'], c:2},
+        ]
+      },
+      { label:'Set 2', title:'Integration & Mixed',
+        qs:[
+          {q:'Which of these is not a method of integration?', o:['Integration by part','Integration by substitution','Integration by formula','Partial fraction integration'], c:3},
+          {q:'Which of these is not a method of integration?', o:['Integration by part','Integration by substitution','Integration by partial fraction','Integration by formula'], c:3},
+          {q:'The C added to integration means:', o:['Coefficient of integration','Factor of integration','Constant of integration','All of the above'], c:2},
+          {q:'If y = x² – 7x + 5, find dy/dx', o:['2x – 7','x – 7','x + 7','2x + 2'], c:0},
+          {q:'If y = 3x⁴ + 7x – 11, find f(3)', o:['275','221','196','243'], c:3},
+          {q:'If y = 3x⁴ + 7x – 11, find f(–3)', o:['275','245','196','211'], c:3},
+          {q:'Differentiate y = x sin x', o:['x cosx + sinx','sinx – x cosx','cosx + x sinx','sinx + x cosx'], c:0},
+          {q:'Evaluate 12x – 3xy when x = 9 and y = –7', o:['–81','297','342','245'], c:1},
+          {q:'What is f(g(x)) if f(x) = 2x+1 and g(x) = x–3?', o:['2x–5','2x+1','2x–1','2x–3'], c:0},
+          {q:'A function maps: each input to exactly:', o:['Many outputs','One output','No output','Two outputs'], c:1},
+        ]
+      },
+    ]
+  },
+];
+
+/* ══════════════════════════════════════════
+   STATE & LOCAL STORAGE
+══════════════════════════════════════════ */
+const LS_KEY = 'mth102_2026';
+
+function loadLS(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'{}'); }catch(e){ return {}; } }
+function saveLS(d){ try{ localStorage.setItem(LS_KEY, JSON.stringify(d)); }catch(e){} }
+
+let state = {
+  topicIdx: 0,
+  partIdx: 0,
+  qIdx: 0,
+  qs: [],
+  score: 0,
+  answers: [],
+  answered: false,
+};
+
+let abandonTarget = null; // 'home' or 'subs'
+
+/* ══════════════════════════════════════════
+   THEME
+══════════════════════════════════════════ */
+function toggleTheme(){
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('theme-btn').textContent = t === 'dark' ? '🌙' : '☀️';
+  try{ localStorage.setItem('mth102_theme', t); }catch(e){}
+}
+(function initTheme(){
+  try{
+    const t = localStorage.getItem('mth102_theme');
+    if(t){ document.documentElement.setAttribute('data-theme',t); document.getElementById('theme-btn').textContent = t==='dark'?'🌙':'☀️'; }
+  }catch(e){}
+})();
+
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
+  document.getElementById('page-'+id).classList.add('show');
+  window.scrollTo(0,0);
+
+  // topbar
+  const inQuiz = id === 'quiz';
+  document.getElementById('tb-progress').classList.toggle('show', inQuiz);
+  document.getElementById('tb-abandon').classList.toggle('show', inQuiz);
+
+  // nav active
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(id==='home'||id==='subs') document.getElementById('nav-home').classList.add('active');
+  if(id==='history') document.getElementById('nav-history').classList.add('active');
+}
+
+function goHome(){
+  renderHome();
+  showPage('home');
+}
+
+function goSubs(){
+  renderSubs(state.topicIdx);
+  showPage('subs');
+}
+
+function goHistory(){
+  renderHistory();
+  showPage('history');
+}
+
+/* ══════════════════════════════════════════
+   RENDER: HOME
+══════════════════════════════════════════ */
+function renderHome(){
+  const data = loadLS();
+  const grid = document.getElementById('topic-grid');
+  grid.innerHTML = '';
+  TOPICS.forEach((t,ti)=>{
+    const total = t.parts.reduce((s,p)=>s+p.qs.length,0);
+    const attempts = t.parts.reduce((s,p,pi)=>{ const k=t.id+'_'+pi; return s+(data[k]?1:0); },0);
+    const card = document.createElement('div');
+    card.className = 'topic-card';
+    card.style.setProperty('--tc', t.color);
+    card.innerHTML = `
+      <div class="tc-icon" style="color:${t.color}">${t.icon}</div>
+      <div class="tc-name">${t.name}</div>
+      <div class="tc-desc">${t.desc}</div>
+      <div class="tc-meta">
+        <span class="tag" style="background:${t.color}22;color:${t.color}">${t.parts.length} sets</span>
+        <span class="tag" style="background:${t.color}22;color:${t.color}">${total} questions</span>
+        ${attempts>0?`<span class="tag" style="background:${t.color}22;color:${t.color}">${attempts}/${t.parts.length} attempted</span>`:''}
+      </div>
+    `;
+    card.onclick = ()=>{ state.topicIdx=ti; renderSubs(ti); showPage('subs'); };
+    grid.appendChild(card);
+  });
+}
+
+/* ══════════════════════════════════════════
+   RENDER: SUBPARTS
+══════════════════════════════════════════ */
+function renderSubs(ti){
+  const t = TOPICS[ti];
+  const data = loadLS();
+  document.getElementById('bc-text').innerHTML = `<b>${t.name}</b>`;
+  document.getElementById('th-eyebrow').textContent = 'Topic ' + (ti+1);
+  document.getElementById('th-name').textContent = t.name;
+  document.getElementById('th-desc').textContent = t.desc;
+
+  const grid = document.getElementById('parts-grid');
+  grid.innerHTML = '';
+  t.parts.forEach((p,pi)=>{
+    const key = t.id+'_'+pi;
+    const saved = data[key];
+    const card = document.createElement('div');
+    card.className = 'part-card';
+    const scoreHTML = saved
+      ? `<div class="part-score">${saved.score}/${saved.total} — ${Math.round(saved.score/saved.total*100)}%</div>`
+      : `<div class="part-score"></div>`;
+    card.innerHTML = `
+      <div class="part-num" style="color:${t.color}">${pi+1}</div>
+      <div class="part-name">${p.label}: ${p.title}</div>
+      <div class="part-sub">${p.qs.length} questions</div>
+      ${scoreHTML}
+    `;
+    card.onclick = ()=>startQuiz(ti, pi);
+    grid.appendChild(card);
+  });
+}
+
+/* ══════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════ */
+function startQuiz(ti, pi){
+  state.topicIdx = ti;
+  state.partIdx = pi;
+  state.qs = [...TOPICS[ti].parts[pi].qs];
+  state.qIdx = 0;
+  state.score = 0;
+  state.answers = [];
+  state.answered = false;
+  showPage('quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const q = state.qs[state.qIdx];
+  const total = state.qs.length;
+  const t = TOPICS[state.topicIdx];
+  const p = t.parts[state.partIdx];
+  state.answered = false;
+
+  document.getElementById('q-crumb').textContent = t.name + ' · ' + p.label;
+  document.getElementById('q-counter').textContent = (state.qIdx+1) + ' / ' + total;
+  document.getElementById('tb-progress').textContent = (state.qIdx+1) + '/' + total;
+  document.getElementById('prog-fill').style.width = (state.qIdx/total*100)+'%';
+  document.getElementById('q-badge').textContent = 'Question ' + (state.qIdx+1);
+  document.getElementById('q-text').textContent = q.q;
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback'; fb.innerHTML = '';
+  document.getElementById('btn-next').classList.remove('show');
+  document.getElementById('btn-next').textContent = state.qIdx < total-1 ? 'Next →' : 'See Results';
+
+  const opts = document.getElementById('q-opts');
+  opts.innerHTML = '';
+  ['A','B','C','D'].forEach((letter,i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-let">${letter}</span><span>${q.o[i]}</span>`;
+    btn.onclick = ()=>selectOpt(i);
+    opts.appendChild(btn);
+  });
+}
+
+function selectOpt(idx){
+  if(state.answered) return;
+  state.answered = true;
+  const q = state.qs[state.qIdx];
+  const ok = idx === q.c;
+  if(ok) state.score++;
+
+  document.querySelectorAll('.opt').forEach((btn,i)=>{
+    btn.classList.add('locked');
+    if(i===q.c) btn.classList.add('correct');
+    if(i===idx && !ok) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  if(ok){
+    fb.className = 'feedback fb-ok show';
+    fb.innerHTML = '<strong>✓ Correct!</strong>';
+  } else {
+    fb.className = 'feedback fb-bad show';
+    fb.innerHTML = `<strong>✗ Incorrect</strong>Correct answer: <strong>${['A','B','C','D'][q.c]}. ${q.o[q.c]}</strong>`;
+  }
+  state.answers.push({ correct:ok, qt:q.q, ct:q.o[q.c] });
+  document.getElementById('btn-next').classList.add('show');
+}
+
+function nextQ(){
+  state.qIdx++;
+  if(state.qIdx >= state.qs.length) showResults();
+  else renderQ();
+}
+
+/* ══════════════════════════════════════════
+   RESULTS
+══════════════════════════════════════════ */
+function showResults(){
+  const total = state.qs.length;
+  const pct = Math.round(state.score/total*100);
+
+  // Save to localStorage
+  const data = loadLS();
+  const key = TOPICS[state.topicIdx].id + '_' + state.partIdx;
+  const t = TOPICS[state.topicIdx];
+  const p = t.parts[state.partIdx];
+
+  if(!data.history) data.history = [];
+  data[key] = { score:state.score, total };
+  data.history.unshift({
+    date: new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
+    topic: t.name,
+    set: p.label + ': ' + p.title,
+    score: state.score,
+    total,
+    pct
+  });
+  if(data.history.length > 100) data.history = data.history.slice(0,100);
+  saveLS(data);
+
+  document.getElementById('prog-fill').style.width = '100%';
+  const pctEl = document.getElementById('r-pct');
+  pctEl.textContent = pct + '%';
+  pctEl.className = 'r-pct ' + (pct>=80?'hi':pct>=50?'mid':'lo');
+
+  let icon,title,sub;
+  if(pct>=90){ icon='🏆'; title='Outstanding!'; sub='Near-perfect — you really know this material.'; }
+  else if(pct>=75){ icon='✅'; title='Great Work!'; sub='Solid performance. Review a few missed questions and you\'re set.'; }
+  else if(pct>=50){ icon='📖'; title='Keep Studying'; sub='You\'re getting there. Check the breakdown below and try again.'; }
+  else { icon='💪'; title='More Practice Needed'; sub='Don\'t give up — go through the correct answers and retry.'; }
+
+  document.getElementById('r-icon').textContent = icon;
+  document.getElementById('r-title').textContent = title;
+  document.getElementById('r-sub').textContent = sub;
+  document.getElementById('rc-correct').textContent = state.score;
+  document.getElementById('rc-wrong').textContent = total - state.score;
+  document.getElementById('rc-total').textContent = total;
+
+  const list = document.getElementById('bd-list');
+  list.innerHTML = '';
+  state.answers.forEach((a,i)=>{
+    const row = document.createElement('div');
+    row.className = 'bd-row';
+    const short = a.qt.length>62 ? a.qt.slice(0,62)+'…' : a.qt;
+    row.innerHTML = `<span class="bd-q">Q${i+1}: ${short}</span><span class="bd-dot ${a.correct?'ok':'bad'}" title="${a.correct?'Correct':'Wrong — '+a.ct}"></span>`;
+    list.appendChild(row);
+  });
+
+  showPage('results');
+}
+
+function retrySet(){ startQuiz(state.topicIdx, state.partIdx); }
+
+/* ══════════════════════════════════════════
+   ABANDON
+══════════════════════════════════════════ */
+function askAbandon(){ document.getElementById('modal-bg').classList.add('show'); }
+function closeModal(){ document.getElementById('modal-bg').classList.remove('show'); }
+function confirmAbandon(){
+  closeModal();
+  renderSubs(state.topicIdx);
+  showPage('subs');
+}
+
+/* ══════════════════════════════════════════
+   HISTORY
+══════════════════════════════════════════ */
+function renderHistory(){
+  const data = loadLS();
+  const body = document.getElementById('history-body');
+  const history = data.history || [];
+
+  if(!history.length){
+    body.innerHTML = `<div class="history-empty"><div class="ei">📊</div><p>No scores yet. Complete a set to see your history here.</p></div>`;
+    return;
+  }
+
+  body.innerHTML = `
+    <table class="history-table">
+      <thead><tr><th>Date</th><th>Topic</th><th>Set</th><th>Score</th></tr></thead>
+      <tbody id="history-rows"></tbody>
+    </table>
+  `;
+  const tbody = document.getElementById('history-rows');
+  history.forEach(h=>{
+    const cls = h.pct>=80?'hi':h.pct>=50?'mid':'lo';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="color:var(--sub)">${h.date}</td><td>${h.topic}</td><td>${h.set}</td><td><span class="score-pill ${cls}">${h.score}/${h.total} (${h.pct}%)</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function clearHistory(){
+  if(!confirm('Clear all score history?')) return;
+  try{ localStorage.removeItem(LS_KEY); }catch(e){}
+  renderHistory();
+  renderHome();
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+renderHome();
+</script>
+</body>
+</html>
+
