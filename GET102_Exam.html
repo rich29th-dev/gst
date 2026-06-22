@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GET102 – Engineering Graphics & Solid Modeling | Quiz</title>
+<style>
+  :root {
+    --primary: #0f6fc6;
+    --primary-dark: #0a4f91;
+    --primary-light: #e8f2fc;
+    --accent: #f08c00;
+    --success: #2d9e4f;
+    --danger: #c0392b;
+    --warning: #e67e22;
+    --text: #1a1a2e;
+    --text-muted: #5a6a7a;
+    --border: #d1dce8;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --nav-width: 260px;
+    --header-h: 60px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ========== HEADER ========== */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: var(--header-h);
+    background: var(--primary-dark);
+    color: #fff;
+    display: flex; align-items: center;
+    padding: 0 16px;
+    z-index: 200;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .site-header .logo {
+    font-size: 1.15rem; font-weight: 700; letter-spacing: .5px;
+    flex: 1;
+  }
+  .site-header .logo span { color: #f0bc43; }
+  .timer-box {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: .95rem; font-weight: 600;
+    min-width: 110px; justify-content: center;
+  }
+  .timer-box.warn { background: rgba(230,126,34,.3); border-color: var(--warning); }
+  .timer-box.danger { background: rgba(192,57,43,.3); border-color: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+  .hamburger {
+    display: none;
+    background: none; border: 1px solid rgba(255,255,255,.3);
+    color: #fff; border-radius: 6px;
+    padding: 5px 9px; cursor: pointer; font-size: 1.1rem;
+  }
+
+  /* ========== LAYOUT ========== */
+  .app-body {
+    margin-top: var(--header-h);
+    display: flex;
+    min-height: calc(100vh - var(--header-h));
+  }
+
+  /* ========== NAV PANEL ========== */
+  .nav-panel {
+    width: var(--nav-width);
+    background: var(--card);
+    border-left: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: fixed;
+    top: var(--header-h); right: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform .3s ease;
+  }
+  .nav-panel .nav-title {
+    background: var(--primary);
+    color: #fff; padding: 12px 14px;
+    font-weight: 600; font-size: .875rem;
+    letter-spacing: .5px;
+  }
+  .nav-legend {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: .73rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .dot {
+    width: 14px; height: 14px; border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .dot.answered { background: var(--success); }
+  .dot.skipped { background: var(--warning); }
+  .dot.flagged { background: var(--accent); }
+  .dot.not-answered { background: #c8d6e5; border: 1px solid #a0b4c8; }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    padding: 10px 12px;
+    flex: 1;
+  }
+  .q-nav-btn {
+    width: 100%; aspect-ratio: 1;
+    border: none; border-radius: 5px;
+    font-size: .78rem; font-weight: 600;
+    cursor: pointer; position: relative;
+    background: #c8d6e5; color: var(--text);
+    transition: all .15s;
+  }
+  .q-nav-btn:hover { transform: scale(1.08); }
+  .q-nav-btn.answered { background: var(--success); color: #fff; }
+  .q-nav-btn.skipped  { background: var(--warning); color: #fff; }
+  .q-nav-btn.flagged  { background: var(--accent); color: #fff; }
+  .q-nav-btn.current  { outline: 3px solid var(--primary); outline-offset: 1px; }
+  .flag-dot {
+    position: absolute; top: 1px; right: 1px;
+    width: 6px; height: 6px;
+    border-radius: 50%; background: var(--accent);
+    display: none;
+  }
+  .q-nav-btn.flagged .flag-dot { display: block; }
+
+  .nav-footer {
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .nav-stats {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px; font-size: .75rem;
+  }
+  .stat-card {
+    background: var(--bg); border-radius: 6px;
+    padding: 6px 8px; text-align: center;
+  }
+  .stat-card strong { display: block; font-size: 1.1rem; }
+
+  .btn-submit-nav {
+    background: var(--danger); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 10px; font-size: .9rem; font-weight: 600;
+    cursor: pointer; width: 100%;
+    transition: background .2s;
+  }
+  .btn-submit-nav:hover { background: #a93226; }
+
+  /* ========== MAIN CONTENT ========== */
+  .main-content {
+    flex: 1;
+    margin-right: var(--nav-width);
+    padding: 24px 28px;
+    max-width: calc(100% - var(--nav-width));
+  }
+
+  /* ========== INTRO SCREEN ========== */
+  #intro-screen {
+    max-width: 700px; margin: 0 auto;
+  }
+  .intro-card {
+    background: var(--card); border-radius: 12px;
+    padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    margin-bottom: 20px;
+  }
+  .intro-card h1 {
+    font-size: 1.5rem; color: var(--primary-dark);
+    margin-bottom: 4px;
+  }
+  .intro-card .subtitle {
+    color: var(--text-muted); font-size: .9rem; margin-bottom: 20px;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 24px;
+  }
+  .info-item {
+    background: var(--primary-light); border-radius: 8px;
+    padding: 14px; text-align: center;
+  }
+  .info-item .val { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+  .info-item .lbl { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); border-radius: 8px;
+    padding: 14px 16px; margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .toggle-row .tog-label { font-size: .9rem; font-weight: 500; }
+  .toggle-row .tog-desc { font-size: .78rem; color: var(--text-muted); margin-top: 2px; }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+  .toggle { position: relative; width: 44px; height: 24px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0;
+    background: #c8d6e5; border-radius: 24px;
+    cursor: pointer; transition: background .2s;
+  }
+  .toggle-slider::before {
+    content: ''; position: absolute;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; left: 3px; top: 3px;
+    transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  .toggle input:checked ~ .toggle-slider { background: var(--primary); }
+  .toggle input:checked ~ .toggle-slider::before { transform: translateX(20px); }
+  .tog-state { font-size: .8rem; font-weight: 600; color: var(--text-muted); min-width: 50px; }
+
+  .rules-list { list-style: none; margin-bottom: 24px; }
+  .rules-list li {
+    padding: 7px 0; border-bottom: 1px solid var(--border);
+    font-size: .88rem; display: flex; gap: 8px; align-items: flex-start;
+  }
+  .rules-list li::before { content: '▸'; color: var(--primary); flex-shrink: 0; margin-top: 1px; }
+
+  .btn-start {
+    background: var(--primary); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 14px 40px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; width: 100%;
+    transition: background .2s, transform .1s;
+  }
+  .btn-start:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+  /* ========== QUIZ SCREEN ========== */
+  #quiz-screen { display: none; }
+
+  .q-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+  }
+  .q-label {
+    font-size: .82rem; color: var(--text-muted); font-weight: 500;
+  }
+  .q-number {
+    font-size: 1.1rem; font-weight: 700; color: var(--primary-dark);
+  }
+  .q-section-badge {
+    background: var(--primary-light); color: var(--primary);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: .75rem; font-weight: 600;
+  }
+  .flag-btn {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: 1.5px solid var(--border);
+    border-radius: 8px; padding: 5px 12px;
+    font-size: .82rem; cursor: pointer; color: var(--text-muted);
+    transition: all .15s; font-family: var(--font);
+  }
+  .flag-btn.flagged {
+    background: #fff3e0; border-color: var(--accent); color: var(--accent);
+  }
+
+  .q-card {
+    background: var(--card); border-radius: 12px;
+    padding: 28px 32px; box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    margin-bottom: 20px;
+  }
+  .q-text {
+    font-size: 1.05rem; line-height: 1.65;
+    margin-bottom: 24px; color: var(--text);
+    font-weight: 500;
+  }
+  .options-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .option-item label {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 13px 16px; border-radius: 8px;
+    border: 2px solid var(--border);
+    cursor: pointer; transition: all .15s;
+    font-size: .95rem; line-height: 1.5;
+    background: var(--card);
+  }
+  .option-item input[type=radio] { display: none; }
+  .option-item label:hover { border-color: var(--primary); background: var(--primary-light); }
+  .option-item input[type=radio]:checked + label {
+    border-color: var(--primary); background: var(--primary-light);
+    font-weight: 500;
+  }
+  .option-item label .opt-letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; min-width: 26px;
+    border-radius: 50%; background: var(--bg);
+    border: 1.5px solid var(--border);
+    font-weight: 700; font-size: .8rem; color: var(--text-muted);
+    transition: all .15s;
+  }
+  .option-item input[type=radio]:checked + label .opt-letter {
+    background: var(--primary); border-color: var(--primary); color: #fff;
+  }
+
+  /* Review mode styles */
+  .option-item.correct label { border-color: var(--success); background: #edfbf1; }
+  .option-item.correct .opt-letter { background: var(--success); border-color: var(--success); color: #fff; }
+  .option-item.wrong label { border-color: var(--danger); background: #fdf0ef; }
+  .option-item.wrong .opt-letter { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+  /* ========== NAV BUTTONS ========== */
+  .q-actions {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: none; border-radius: 8px;
+    padding: 9px 18px; font-size: .875rem; font-weight: 600;
+    cursor: pointer; transition: all .15s; font-family: var(--font);
+  }
+  .btn-prev { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
+  .btn-prev:hover { background: var(--border); }
+  .btn-skip { background: #fff3e0; color: var(--warning); border: 1.5px solid var(--warning); }
+  .btn-skip:hover { background: var(--warning); color: #fff; }
+  .btn-next { background: var(--primary); color: #fff; }
+  .btn-next:hover { background: var(--primary-dark); }
+  .btn-review { background: #e8f5e9; color: var(--success); border: 1.5px solid var(--success); }
+  .btn-review:hover { background: var(--success); color: #fff; }
+  .btn-submit-main {
+    background: var(--danger); color: #fff;
+    display: none;
+  }
+  .btn-submit-main:hover { background: #a93226; }
+  .btn-submit-main.show { display: inline-flex; }
+  .spacer { flex: 1; }
+
+  /* ========== REVIEW SCREEN ========== */
+  #review-screen { display: none; }
+  .review-header {
+    background: var(--card); border-radius: 12px;
+    padding: 24px 28px; margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.07);
+  }
+  .review-header h2 { font-size: 1.3rem; color: var(--primary-dark); margin-bottom: 16px; }
+  .score-display {
+    display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+  }
+  .score-big {
+    font-size: 3rem; font-weight: 800; color: var(--primary);
+    line-height: 1;
+  }
+  .score-big span { font-size: 1.2rem; color: var(--text-muted); font-weight: 400; }
+  .score-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; flex: 1; min-width: 280px;
+  }
+  .score-item { text-align: center; }
+  .score-item .sv { font-size: 1.5rem; font-weight: 700; }
+  .score-item .sl { font-size: .78rem; color: var(--text-muted); }
+  .sv.green { color: var(--success); }
+  .sv.red { color: var(--danger); }
+  .sv.orange { color: var(--warning); }
+
+  .review-q-card {
+    background: var(--card); border-radius: 10px;
+    padding: 20px 24px; box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    margin-bottom: 14px;
+  }
+  .review-q-num { font-size: .8rem; color: var(--text-muted); margin-bottom: 6px; }
+  .review-q-text { font-size: .95rem; font-weight: 500; margin-bottom: 12px; }
+  .review-options { display: flex; flex-direction: column; gap: 6px; }
+  .review-opt {
+    padding: 9px 14px; border-radius: 7px;
+    font-size: .88rem; display: flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--border);
+  }
+  .review-opt.correct-opt { border-color: var(--success); background: #edfbf1; }
+  .review-opt.user-wrong { border-color: var(--danger); background: #fdf0ef; }
+  .review-opt .badge { font-size: .7rem; margin-left: auto; font-weight: 600; }
+  .review-opt.correct-opt .badge { color: var(--success); }
+  .review-opt.user-wrong .badge { color: var(--danger); }
+  .unanswered-note {
+    font-size: .82rem; color: var(--text-muted);
+    font-style: italic; margin-top: 6px;
+  }
+
+  /* ========== RESULT SCREEN ========== */
+  #result-screen { display: none; }
+  .result-card {
+    background: var(--card); border-radius: 16px;
+    padding: 48px 32px; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    max-width: 600px; margin: 0 auto 24px;
+  }
+  .result-icon { font-size: 4rem; margin-bottom: 16px; }
+  .result-card h2 { font-size: 1.8rem; margin-bottom: 8px; color: var(--primary-dark); }
+  .result-card .result-sub { color: var(--text-muted); margin-bottom: 28px; }
+  .result-score-big {
+    font-size: 4.5rem; font-weight: 800; color: var(--primary);
+    line-height: 1; margin-bottom: 4px;
+  }
+  .result-score-label { font-size: 1rem; color: var(--text-muted); margin-bottom: 28px; }
+  .result-stats {
+    display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .result-stat { text-align: center; }
+  .result-stat .rv { font-size: 1.6rem; font-weight: 700; }
+  .result-stat .rl { font-size: .78rem; color: var(--text-muted); }
+  .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn-retry { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 12px 28px; font-size: .95rem; font-weight: 600; cursor: pointer; }
+  .btn-review-result { background: var(--card); color: var(--primary); border: 2px solid var(--primary); border-radius: 10px; padding: 12px 28px; font-size: .95rem; font-weight: 600; cursor: pointer; }
+
+  /* ========== MODAL ========== */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.5); z-index: 500;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card); border-radius: 14px;
+    padding: 32px; max-width: 440px; width: 90%;
+    box-shadow: 0 8px 40px rgba(0,0,0,.2);
+  }
+  .modal h3 { font-size: 1.2rem; margin-bottom: 10px; color: var(--primary-dark); }
+  .modal p { color: var(--text-muted); font-size: .9rem; line-height: 1.5; margin-bottom: 20px; }
+  .modal-stats { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .mstat { flex: 1; min-width: 80px; background: var(--bg); border-radius: 8px; padding: 10px; text-align: center; }
+  .mstat .mv { font-size: 1.4rem; font-weight: 700; }
+  .mstat .ml { font-size: .75rem; color: var(--text-muted); }
+  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-cancel { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 20px; cursor: pointer; font-size: .88rem; font-weight: 600; }
+  .btn-confirm { background: var(--danger); color: #fff; border: none; border-radius: 8px; padding: 9px 20px; cursor: pointer; font-size: .88rem; font-weight: 600; }
+  .btn-confirm:hover { background: #a93226; }
+
+  /* ========== MOBILE ========== */
+  @media (max-width: 768px) {
+    .hamburger { display: block; }
+    .nav-panel {
+      transform: translateX(100%);
+    }
+    .nav-panel.open { transform: translateX(0); }
+    .main-content { margin-right: 0; max-width: 100%; padding: 16px; }
+    .q-card { padding: 20px 16px; }
+    .q-actions { gap: 8px; }
+    .btn { padding: 8px 14px; font-size: .82rem; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+    .score-grid { grid-template-columns: repeat(2,1fr); }
+    .intro-card { padding: 20px; }
+    .modal { padding: 20px; }
+    .nav-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 99;
+    }
+    .nav-overlay.show { display: block; }
+  }
+  @media (max-width: 480px) {
+    .site-header .logo { font-size: 1rem; }
+    .info-grid { grid-template-columns: 1fr; }
+    .score-grid { grid-template-columns: 1fr 1fr; }
+    .result-stats { gap: 14px; }
+  }
+
+  .progress-bar-wrap {
+    height: 6px; background: var(--border); border-radius: 3px;
+    margin-bottom: 20px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; background: var(--primary);
+    border-radius: 3px; transition: width .3s;
+  }
+
+  /* Offline indicator */
+  .offline-badge {
+    display: none; position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    background: #333; color: #fff; border-radius: 20px;
+    padding: 6px 16px; font-size: .82rem; font-weight: 600; z-index: 999;
+    align-items: center; gap: 6px; box-shadow: 0 2px 12px rgba(0,0,0,.3);
+  }
+  .offline-badge.show { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="logo">GET<span>102</span> &nbsp;|&nbsp; Engineering Graphics</div>
+  <div class="timer-box" id="timerDisplay">⏱ 45:00</div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle navigation">☰</button>
+</header>
+
+<!-- NAV OVERLAY (mobile) -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- OFFLINE BADGE -->
+<div class="offline-badge" id="offlineBadge">📶 Offline — progress saved</div>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- INTRO SCREEN -->
+    <div id="intro-screen">
+      <div class="intro-card">
+        <h1>GET102 — Engineering Graphics &amp; Solid Modeling</h1>
+        <p class="subtitle">Computer-Based Test (CBT) — Practice Examination</p>
+
+        <div class="info-grid">
+          <div class="info-item"><div class="val">70</div><div class="lbl">Questions Selected</div></div>
+          <div class="info-item"><div class="val">45</div><div class="lbl">Minutes</div></div>
+          <div class="info-item"><div class="val">190</div><div class="lbl">Question Bank</div></div>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="tog-label">Show Answers on Failure</div>
+            <div class="tog-desc">Display correct answers immediately after a wrong attempt, or reveal all at the end.</div>
+          </div>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" id="showAnswersOnFail" checked>
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="tog-state" id="togState">After Each</span>
+          </div>
+        </div>
+
+        <ul class="rules-list">
+          <li>70 questions are randomly selected from a bank of 190 each attempt.</li>
+          <li>Options are randomized each attempt to prevent memorization.</li>
+          <li>The timer runs continuously — even if you lose internet or close the tab.</li>
+          <li>Your progress is saved automatically. Resume anytime within the time limit.</li>
+          <li>Use the navigation panel to jump to any question, skip, or flag for review.</li>
+          <li>You can flag questions and review them before final submission.</li>
+          <li>The exam auto-submits when the timer reaches zero.</li>
+        </ul>
+
+        <button class="btn-start" id="startBtn">Begin Examination</button>
+      </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen">
+      <div class="q-header">
+        <div>
+          <div class="q-label">Question</div>
+          <div class="q-number" id="qNumber">1 of 70</div>
+        </div>
+        <span class="q-section-badge" id="qSection">Section A</span>
+        <button class="flag-btn" id="flagBtn">🚩 Flag for Review</button>
+      </div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+      </div>
+
+      <div class="q-card">
+        <div class="q-text" id="qText">Loading…</div>
+        <ul class="options-list" id="optionsList"></ul>
+      </div>
+
+      <div class="q-actions">
+        <button class="btn btn-prev" id="prevBtn">◀ Previous</button>
+        <button class="btn btn-skip" id="skipBtn">⏭ Skip</button>
+        <div class="spacer"></div>
+        <button class="btn btn-review" id="reviewBtn">📋 Review All</button>
+        <button class="btn btn-next" id="nextBtn">Next ▶</button>
+        <button class="btn btn-submit-main" id="submitMainBtn">✔ Submit Exam</button>
+      </div>
+    </div>
+
+    <!-- REVIEW SCREEN -->
+    <div id="review-screen">
+      <div class="review-header">
+        <h2>📋 Question Review</h2>
+        <div class="score-display">
+          <div class="score-big" id="rScoreBig">–</div>
+          <div class="score-grid">
+            <div class="score-item"><div class="sv green" id="rCorrect">–</div><div class="sl">Correct</div></div>
+            <div class="score-item"><div class="sv red" id="rWrong">–</div><div class="sl">Wrong</div></div>
+            <div class="score-item"><div class="sv orange" id="rSkipped">–</div><div class="sl">Unanswered</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="reviewList"></div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen">
+      <div class="result-card">
+        <div class="result-icon" id="resultIcon">🎉</div>
+        <h2 id="resultTitle">Exam Complete!</h2>
+        <p class="result-sub" id="resultSub">Here are your results.</p>
+        <div class="result-score-big" id="resultScore">–</div>
+        <div class="result-score-label">Score (%)</div>
+        <div class="result-stats">
+          <div class="result-stat"><div class="rv" style="color:var(--success)" id="resCorrect">–</div><div class="rl">Correct</div></div>
+          <div class="result-stat"><div class="rv" style="color:var(--danger)" id="resWrong">–</div><div class="rl">Wrong</div></div>
+          <div class="result-stat"><div class="rv" style="color:var(--warning)" id="resSkipped">–</div><div class="rl">Skipped</div></div>
+          <div class="result-stat"><div class="rv" id="resTime">–</div><div class="rl">Time Used</div></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-retry" id="retryBtn">🔄 Try Again</button>
+          <button class="btn-review-result" id="reviewResultBtn">📋 Review Answers</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- NAV PANEL -->
+  <aside class="nav-panel" id="navPanel">
+    <div class="nav-title">📌 Question Navigator</div>
+    <div class="nav-legend">
+      <div class="legend-item"><div class="dot answered"></div> Answered</div>
+      <div class="legend-item"><div class="dot skipped"></div> Skipped</div>
+      <div class="legend-item"><div class="dot flagged"></div> Flagged</div>
+      <div class="legend-item"><div class="dot not-answered"></div> Not Visited</div>
+    </div>
+    <div class="nav-grid" id="navGrid"></div>
+    <div class="nav-footer">
+      <div class="nav-stats">
+        <div class="stat-card"><strong id="navAnswered">0</strong>Answered</div>
+        <div class="stat-card"><strong id="navSkipped">0</strong>Skipped</div>
+        <div class="stat-card"><strong id="navFlagged">0</strong>Flagged</div>
+        <div class="stat-card"><strong id="navRemaining">70</strong>Remaining</div>
+      </div>
+      <button class="btn-submit-nav" id="submitNavBtn">✔ Submit Examination</button>
+    </div>
+  </aside>
+
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="submitModal">
+  <div class="modal">
+    <h3>⚠️ Submit Examination</h3>
+    <p>Are you sure you want to submit? You cannot change your answers after submission.</p>
+    <div class="modal-stats">
+      <div class="mstat"><div class="mv" id="mAnswered">–</div><div class="ml">Answered</div></div>
+      <div class="mstat"><div class="mv" id="mUnanswered">–</div><div class="ml">Unanswered</div></div>
+      <div class="mstat"><div class="mv" id="mFlagged">–</div><div class="ml">Flagged</div></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="cancelSubmit">Cancel</button>
+      <button class="btn-confirm" id="confirmSubmit">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION BANK — ALL 190 QUESTIONS
+// ============================================================
+const ALL_QUESTIONS = [
+  // SECTION A: Design Thinking (Unit 1)
+  {s:"Design Thinking",q:"What is the primary focus of design thinking?",o:["Technical specifications","Human-centered problem solving","Cost reduction","Material selection"],a:1},
+  {s:"Design Thinking",q:"Which of the following is NOT a stage of design thinking?",o:["Empathize","Define","Prototype","Sympathize"],a:3},
+  {s:"Design Thinking",q:"The empathize mode in design thinking involves:",o:["Creating prototypes","Understanding users' needs and context","Finalizing designs","Analyzing financial data"],a:1},
+  {s:"Design Thinking",q:"What is the purpose of the Define mode in design thinking?",o:["Generating ideas","Crafting a meaningful problem statement","Testing prototypes","Sketching final designs"],a:1},
+  {s:"Design Thinking",q:"Which core element of design thinking emphasizes diverse team collaboration?",o:["Process","Place","People","Product"],a:2},
+  {s:"Design Thinking",q:"The transition from Ideate to Prototype involves:",o:["Creating a problem statement","Selecting multiple ideas for prototyping","Conducting user interviews","Finalizing the design"],a:1},
+  {s:"Design Thinking",q:"What is the role of empathy in design thinking?",o:["To finalize the design","To understand the user's needs and motivations","To reduce project costs","To select materials"],a:1},
+  {s:"Design Thinking",q:"In design thinking, prototyping is primarily used to:",o:["Finalize the product","Test and refine ideas","Create technical drawings","Analyze data"],a:1},
+  {s:"Design Thinking",q:"Which of the following best describes the \"T-shaped person\" in design thinking?",o:["A person with deep expertise in one area and broad collaboration skills","A person with limited technical knowledge","A person focused only on design","A person with no team collaboration skills"],a:0},
+  {s:"Design Thinking",q:"What does the Test mode in design thinking focus on?",o:["Generating new ideas","Soliciting feedback from users","Creating initial sketches","Defining the problem"],a:1},
+  {s:"Design Thinking",q:"The process of unpacking in design thinking involves:",o:["Creating prototypes","Sharing and synthesizing observations","Finalizing designs","Scaling objects"],a:1},
+  {s:"Design Thinking",q:"The ideate mode in design thinking focuses on:",o:["Testing solutions","Generating a wide range of ideas","Defining problems","Creating final drawings"],a:1},
+  {s:"Design Thinking",q:"A key characteristic of a design-thinking team is:",o:["Uniform expertise","Diverse backgrounds and skills","Limited collaboration","Focus on cost reduction"],a:1},
+  {s:"Design Thinking",q:"The purpose of prototyping in design thinking is to:",o:["Finalize the product","Test and refine solutions","Create technical drawings","Analyze data"],a:1},
+  {s:"Design Thinking",q:"In design thinking, the term \"human-centered\" refers to:",o:["Focusing on technical specifications","Prioritizing user needs and context","Reducing project costs","Using advanced software"],a:1},
+
+  // SECTION B: Engineering Graphics & AutoCAD Basics (Unit 2)
+  {s:"Engineering Graphics & AutoCAD",q:"Engineering graphics is primarily used by engineers to:",o:["Communicate technical information clearly","Create artistic designs","Perform mathematical calculations","Write reports"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"Which of the following is NOT a purpose of engineering graphics?",o:["Conveying technical ideas universally","Supporting product development","Creating decorative artwork","Guiding assembly of parts"],a:2},
+  {s:"Engineering Graphics & AutoCAD",q:"The universal language of engineering graphics is standardized by:",o:["Artistic conventions","National and international standards","Local design preferences","Company policies"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, scaling an object makes it:",o:["Either bigger or smaller","Only bigger","Only smaller","Unchanged in size"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The AutoCAD 'mirror' command generates an object that is:",o:["Upright","Inverted","Copied","Chamfered"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"The 'Fillet' command in AutoCAD is used to create:",o:["Sharp corners","Round corners","Revolved corners","Flat surfaces"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"What is the default origin point in an AutoCAD drawing?",o:["(0,1)","(0,0)","(1,1)","(1,0)"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"Centre lines in AutoCAD are drawn using:",o:["Thin chain line with thick ends","Short thin dashes","Short thick dashes","Solid thick line"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"Dimension lines in AutoCAD should be:",o:["Perpendicular to the edge being dimensioned","Parallel to the edge being dimensioned","At 45° to the edge","Curved"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"Which AutoCAD tool is most suitable for drawing internal and external tangents between circles?",o:["Fillet and Circle","Tan Tan Radius and Fillet","Chamfer and Fillet","Tan Tan Radius and Centre"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"How can you access the snap setting in AutoCAD?",o:["Right-clicking on the status bar","Right-clicking on the command line","Right-clicking on the navigation bar","Right-clicking on the model tab"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"Which AutoCAD command is used to create a smooth curve between two lines?",o:["Chamfer","Fillet","Offset","Trim"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Offset' command is used to:",o:["Create a parallel copy of an object at a specified distance","Rotate an object","Scale an object","Delete an object"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The 'Trim' command in AutoCAD is used to:",o:["Extend lines","Remove portions of objects","Create arcs","Mirror objects"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"Which AutoCAD command allows you to create a circular pattern of objects?",o:["Array","Mirror","Rotate","Scale"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Hatch' command is used to:",o:["Create filled patterns or gradients","Draw lines","Scale objects","Rotate objects"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The 'Explode' command in AutoCAD is used to:",o:["Break a complex object into its component parts","Combine multiple objects","Scale an object","Mirror an object"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"Which AutoCAD tool is used to measure distances between two points?",o:["Dimension","Measure","Scale","Offset"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Layer' command is used to:",o:["Organize objects into groups with specific properties","Create 3D models","Scale drawings","Mirror objects"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"Which of the following is NOT a common AutoCAD file format?",o:["DWG","DXF","PDF","TXT"],a:3},
+  {s:"Engineering Graphics & AutoCAD",q:"Engineering graphics is considered the universal language of engineers because:",o:["It uses artistic designs","It follows international standards","It is only used locally","It requires no training"],a:1},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Copy' command is used to:",o:["Create a duplicate of an object","Rotate an object","Scale an object","Delete an object"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The AutoCAD 'Rotate' command requires:",o:["A base point and rotation angle","A scaling factor","A mirror line","A hatch pattern"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Block' command is used to:",o:["Create reusable groups of objects","Draw lines","Scale objects","Create 3D models"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The AutoCAD 'Chamfer' command is used to:",o:["Create round corners","Create angled edges between two lines","Draw circles","Create sections"],a:1},
+
+  // SECTION C: Orthographic Projections (Unit 3)
+  {s:"Orthographic Projections",q:"Orthographic projection uses projectors that are:",o:["Parallel to each other and perpendicular to the projection plane","Converging towards a point","Parallel to the object","At 45° to the projection plane"],a:0},
+  {s:"Orthographic Projections",q:"In first angle projection, the object is placed:",o:["Between the observer and the projection plane","Behind the projection plane","Above the projection plane","Below the projection plane"],a:0},
+  {s:"Orthographic Projections",q:"In third angle projection, the plan is placed:",o:["Below the front view","Above the front view","To the left of the front view","To the right of the front view"],a:1},
+  {s:"Orthographic Projections",q:"Which quadrant is used in first angle projection?",o:["First quadrant","Second quadrant","Third quadrant","Fourth quadrant"],a:0},
+  {s:"Orthographic Projections",q:"In first angle projection, the view from the left is placed:",o:["To the right of the front view","To the left of the front view","Above the front view","Below the front view"],a:0},
+  {s:"Orthographic Projections",q:"In third angle projection, the side view is placed:",o:["To the right of the front view","To the left of the front view","Above the front view","Below the front view"],a:0},
+  {s:"Orthographic Projections",q:"The minimum number of views typically required to describe an object in orthographic projection is:",o:["One","Two","Three","Four"],a:2},
+  {s:"Orthographic Projections",q:"Hidden lines in orthographic projections are used to:",o:["Show visible edges","Represent edges not directly visible","Indicate centerlines","Mark dimensions"],a:1},
+  {s:"Orthographic Projections",q:"In AutoCAD, orthographic projections are typically created using:",o:["3D modeling tools","2D drafting tools","Animation tools","Rendering tools"],a:1},
+  {s:"Orthographic Projections",q:"Which AutoCAD command is most useful for aligning views in orthographic projections?",o:["Align","Move","Copy","Offset"],a:0},
+  {s:"Orthographic Projections",q:"In first angle projection, the top view is placed:",o:["Above the front view","Below the front view","To the left of the front view","To the right of the front view"],a:1},
+  {s:"Orthographic Projections",q:"In third angle projection, the front view is placed in the:",o:["First quadrant","Second quadrant","Third quadrant","Fourth quadrant"],a:2},
+  {s:"Orthographic Projections",q:"The symbol for first angle projection in AutoCAD drawings is:",o:["A cone with a circle","A cone with a square","A circle with a cross","A square with a cross"],a:0},
+  {s:"Orthographic Projections",q:"The symbol for third angle projection in AutoCAD drawings is:",o:["A cone with a circle","A cone with a square","A circle with a cross","A square with a cross"],a:1},
+  {s:"Orthographic Projections",q:"In orthographic projection, the front view shows:",o:["Width and height","Width and depth","Height and depth","All three dimensions"],a:0},
+  {s:"Orthographic Projections",q:"In AutoCAD, hidden lines are typically drawn as:",o:["Solid lines","Dashed lines","Dotted lines","Chain lines"],a:1},
+  {s:"Orthographic Projections",q:"The AutoCAD command used to create orthographic views from a 3D model is:",o:["VIEW","FLATSHOT","RENDER","EXTRUDE"],a:1},
+  {s:"Orthographic Projections",q:"In orthographic projection, the side view shows:",o:["Width and height","Height and depth","Width and depth","All three dimensions"],a:1},
+  {s:"Orthographic Projections",q:"In AutoCAD, the 'UCS' command is used to:",o:["Change the coordinate system for drawing","Scale objects","Rotate objects","Create layers"],a:0},
+  {s:"Orthographic Projections",q:"The AutoCAD command to ensure precise alignment of orthographic views is:",o:["Snap","Grid","Ortho","Align"],a:3},
+  {s:"Orthographic Projections",q:"In first angle projection, the view from below is placed:",o:["Above the front view","Below the front view","To the left of the front view","To the right of the front view"],a:0},
+  {s:"Orthographic Projections",q:"In AutoCAD, orthographic views are aligned using:",o:["The 'Align' command","The 'Mirror' command","The 'Scale' command","The 'Hatch' command"],a:0},
+  {s:"Orthographic Projections",q:"The top view in orthographic projection shows:",o:["Width and height","Width and depth","Height and depth","All three dimensions"],a:1},
+  {s:"Orthographic Projections",q:"In AutoCAD, the 'DVIEW' command is used to:",o:["Create dynamic 3D views","Draw 2D lines","Scale objects","Create hatches"],a:0},
+  {s:"Orthographic Projections",q:"In orthographic projection, a symmetrical object typically requires:",o:["One view","Two views","Three views","Four views"],a:1},
+
+  // SECTION D: Isometric Drawing (Unit 4)
+  {s:"Isometric Drawing",q:"Isometric drawing is used to represent:",o:["Two-dimensional views","Three-dimensional views with distortion","Flat surfaces only","Hidden details only"],a:1},
+  {s:"Isometric Drawing",q:"In isometric drawing, the angles between the isometric axes are:",o:["90°","120°","60°","45°"],a:1},
+  {s:"Isometric Drawing",q:"In AutoCAD, the 'Isometric Grid' is used to:",o:["Create 3D models","Assist in drawing isometric views","Scale objects","Create orthographic projections"],a:1},
+  {s:"Isometric Drawing",q:"Non-isometric lines in isometric drawing are:",o:["Lines parallel to the isometric axes","Lines inclined at angles to the isometric axes","Hidden lines","Center lines"],a:1},
+  {s:"Isometric Drawing",q:"In AutoCAD, an isometric circle appears as:",o:["A perfect circle","An ellipse","A square","A rectangle"],a:1},
+  {s:"Isometric Drawing",q:"The AutoCAD command to switch to isometric drawing mode is:",o:["ISOPLANE","VIEW","ORTHO","SNAP"],a:0},
+  {s:"Isometric Drawing",q:"In isometric drawing, measurements are made:",o:["Along the isometric axes","At 90° to the axes","At 45° to the axes","Randomly"],a:0},
+  {s:"Isometric Drawing",q:"The AutoCAD 'Ellipse' command is used in isometric drawing to create:",o:["Perfect circles","Isometric circles (ellipses)","Arcs","Splines"],a:1},
+  {s:"Isometric Drawing",q:"In isometric drawing, a rectangular block is drawn using:",o:["Three receding lines at 30° to the horizontal","Two receding lines at 45° to the horizontal","Four receding lines at 60° to the horizontal","One receding line at 90° to the horizontal"],a:0},
+  {s:"Isometric Drawing",q:"The best method to draw an object with non-isometric lines in AutoCAD is to:",o:["Use the 'Line' command directly","Transfer ordinates from orthographic views","Use the 'Circle' command","Use the 'Arc' command"],a:1},
+  {s:"Isometric Drawing",q:"In AutoCAD, the 'Snap' setting in isometric mode is set to:",o:["Isometric snap","Rectangular snap","Polar snap","Grid snap"],a:0},
+  {s:"Isometric Drawing",q:"The AutoCAD command to draw an isometric circle is:",o:["CIRCLE","ELLIPSE with ISOCIRCLE option","ARC","POLYLINE"],a:1},
+  {s:"Isometric Drawing",q:"In isometric drawing, the receding lines are drawn at:",o:["30° to the horizontal","45° to the horizontal","60° to the horizontal","90° to the horizontal"],a:0},
+  {s:"Isometric Drawing",q:"In AutoCAD, the 'F8' key toggles:",o:["Ortho mode","Isometric mode","Snap mode","Grid mode"],a:0},
+  {s:"Isometric Drawing",q:"To draw an isometric box in AutoCAD, you should:",o:["Use the 'Box' command in 3D","Use the 'Line' command with isometric snap","Use the 'Circle' command","Use the 'Rectangle' command"],a:1},
+  {s:"Isometric Drawing",q:"In AutoCAD, the 'Isometric Snap' setting is activated by:",o:["Pressing F5","Pressing F8","Right-clicking the status bar","Using the 'Line' command"],a:0},
+  {s:"Isometric Drawing",q:"In isometric drawing, a circle appears as:",o:["A perfect circle","An ellipse","A square","A rectangle"],a:1},
+  {s:"Isometric Drawing",q:"The AutoCAD command to toggle between isometric planes is:",o:["F5","F8","F9","F12"],a:0},
+  {s:"Isometric Drawing",q:"In AutoCAD, an isometric drawing is created in:",o:["2D drafting workspace","3D modeling workspace","Rendering workspace","Animation workspace"],a:0},
+  {s:"Isometric Drawing",q:"The AutoCAD 'Line' command in isometric mode draws lines:",o:["Along isometric axes","At 90° to the axes","At 45° to the axes","Randomly"],a:0},
+
+  // SECTION E: Sectioning (Unit 5)
+  {s:"Sectioning & Conventions",q:"A sectional view is used to:",o:["Show hidden details of an object","Create 3D models","Scale drawings","Draw isometric views"],a:0},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, section lines (hatching) are created using the:",o:["Line command","Hatch command","Polyline command","Offset command"],a:1},
+  {s:"Sectioning & Conventions",q:"The angle of section lines in a sectional view is typically:",o:["30°","45°","60°","90°"],a:1},
+  {s:"Sectioning & Conventions",q:"The distance between section lines in AutoCAD should be:",o:["Less than 4 mm","4 to 10 mm, depending on drawing size","Exactly 10 mm","More than 10 mm"],a:1},
+  {s:"Sectioning & Conventions",q:"Which of the following is NOT a type of sectional view?",o:["Full section","Half section","Quarter section","Revolved section"],a:2},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, the cutting plane line is drawn as:",o:["A thin chain line with thick ends","A solid thick line","A dashed line","A dotted line"],a:0},
+  {s:"Sectioning & Conventions",q:"In a full section, the cutting plane:",o:["Cuts halfway through the object","Extends through the entire object","Cuts at an angle","Does not cut the object"],a:1},
+  {s:"Sectioning & Conventions",q:"A half section is typically used for:",o:["Asymmetrical objects","Symmetrical objects","Complex 3D models","Non-geometric shapes"],a:1},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, the 'BHATCH' command is used to:",o:["Create boundary hatches","Draw lines","Scale objects","Rotate objects"],a:0},
+  {s:"Sectioning & Conventions",q:"Which of the following is exempted from sectioning in AutoCAD?",o:["Bolts and nuts","Solid blocks","Hollow pipes","Flat surfaces"],a:0},
+  {s:"Sectioning & Conventions",q:"Conventional breaks in AutoCAD are used to:",o:["Reduce the length of long uniform parts","Create 3D models","Draw hidden lines","Scale objects"],a:0},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, section hatching for different materials is distinguished by:",o:["Line color","Line thickness","Hatching pattern","Line length"],a:2},
+  {s:"Sectioning & Conventions",q:"An offset section in AutoCAD is used when:",o:["The cutting plane follows a zig-zag path","The object is symmetrical","Only one view is needed","The object is simple"],a:0},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, the 'Section' command is used to:",o:["Create 3D sections from solid models","Draw 2D lines","Scale objects","Mirror objects"],a:0},
+  {s:"Sectioning & Conventions",q:"A revolved section in AutoCAD is:",o:["Rotated onto the projection plane","Removed from the object","Drawn separately","Not used in engineering drawings"],a:0},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, the 'Hatch' command is used to create:",o:["Section lines","Centerlines","Hidden lines","Dimension lines"],a:0},
+  {s:"Sectioning & Conventions",q:"A partial section in AutoCAD is used when:",o:["A full section is unnecessary","The object is symmetrical","The object is complex","No hidden lines are needed"],a:0},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, the 'Boundary' command is used with hatching to:",o:["Define the area to be hatched","Draw lines","Scale objects","Create 3D models"],a:0},
+  {s:"Sectioning & Conventions",q:"In a sectional view, the cutting plane is indicated by:",o:["A solid line","A dashed line","A thin chain line with thick ends","A dotted line"],a:2},
+  {s:"Sectioning & Conventions",q:"In AutoCAD, conventional breaks are drawn using:",o:["The 'Break' command","The 'Line' command","The 'Hatch' command","The 'Offset' command"],a:0},
+
+  // SECTION F: Conic Sections (Unit 6)
+  {s:"Conic Sections & Development",q:"A conic section is formed by:",o:["Cutting a cone with a plane","Rotating a circle","Extruding a 2D shape","Drawing a 3D model"],a:0},
+  {s:"Conic Sections & Development",q:"When a cone is cut by a plane at 90° to its axis, the resulting section is:",o:["A circle","An ellipse","A parabola","A hyperbola"],a:0},
+  {s:"Conic Sections & Development",q:"The eccentricity of an ellipse is always:",o:["Equal to 1","Less than 1","Greater than 1","Zero"],a:1},
+  {s:"Conic Sections & Development",q:"In AutoCAD, an ellipse can be drawn using the:",o:["Circle command","Ellipse command","Arc command","Polyline command"],a:1},
+  {s:"Conic Sections & Development",q:"The eccentricity of a parabola is:",o:["Less than 1","Equal to 1","Greater than 1","Zero"],a:1},
+  {s:"Conic Sections & Development",q:"A hyperbola is formed when the cutting plane angle is:",o:["Equal to the apex angle","Less than the apex angle","Greater than the apex angle","90° to the axis"],a:1},
+  {s:"Conic Sections & Development",q:"In AutoCAD, the 'Arc' command can be used to draw parts of:",o:["Parabolas and hyperbolas","Circles only","Straight lines","Polygons"],a:0},
+  {s:"Conic Sections & Development",q:"The focus-directrix method in AutoCAD is used to draw:",o:["Circles","Conic sections","Straight lines","3D models"],a:1},
+  {s:"Conic Sections & Development",q:"In the concentric circle method for drawing an ellipse in AutoCAD, you need:",o:["Major and minor axes","Focus and directrix","Tangent angles","Rectangle dimensions"],a:0},
+  {s:"Conic Sections & Development",q:"The development of a cylinder in AutoCAD results in:",o:["A rectangle","A circle","A triangle","A polygon"],a:0},
+  {s:"Conic Sections & Development",q:"In AutoCAD, the development of a surface is drawn using:",o:["2D drafting tools","3D modeling tools","Rendering tools","Animation tools"],a:0},
+  {s:"Conic Sections & Development",q:"The oblong method for drawing an ellipse in AutoCAD requires:",o:["Major and minor axes","Focus and directrix","Conjugate axes and angle","Circle radius"],a:2},
+  {s:"Conic Sections & Development",q:"The development of a truncated cylinder in AutoCAD is represented as:",o:["A curved rectangle","A circle","A triangle","A polygon"],a:0},
+  {s:"Conic Sections & Development",q:"In AutoCAD, the 'Polyline' command is useful for drawing:",o:["Complex conic sections","Straight lines only","Circles only","3D models"],a:0},
+  {s:"Conic Sections & Development",q:"The focus of a parabola in AutoCAD can be located using:",o:["The focus-directrix method","The circle command","The rectangle method","The tangent method"],a:0},
+  {s:"Conic Sections & Development",q:"In AutoCAD, a parabola can be drawn using:",o:["The 'Ellipse' command","The 'Arc' command","The 'Polyline' command","The 'Circle' command"],a:2},
+  {s:"Conic Sections & Development",q:"The development of a pyramid in AutoCAD results in:",o:["A series of triangles","A rectangle","A circle","A polygon"],a:0},
+  {s:"Conic Sections & Development",q:"In AutoCAD, the 'Trim' command is useful for:",o:["Refining conic sections","Creating 3D models","Scaling objects","Mirroring objects"],a:0},
+  {s:"Conic Sections & Development",q:"The concentric circle method in AutoCAD is used to draw:",o:["Circles","Ellipses","Parabolas","Hyperbolas"],a:1},
+  {s:"Conic Sections & Development",q:"In AutoCAD, the development of a surface is typically drawn in:",o:["2D drafting mode","3D modeling mode","Rendering mode","Animation mode"],a:0},
+
+  // SECTION G: Freehand Sketching (Unit 7)
+  {s:"Freehand & Guided Sketching",q:"Freehand sketching is primarily used to:",o:["Create final technical drawings","Visualize initial design ideas","Produce 3D models","Render images"],a:1},
+  {s:"Freehand & Guided Sketching",q:"In AutoCAD, freehand sketching can be simulated using:",o:["The 'Sketch' command","The 'Line' command","The 'Circle' command","The 'Hatch' command"],a:0},
+  {s:"Freehand & Guided Sketching",q:"Multiview sketching in AutoCAD shows:",o:["A single 3D view","Multiple 2D views of a 3D object","Only hidden lines","Only centerlines"],a:1},
+  {s:"Freehand & Guided Sketching",q:"The main advantage of multiview sketching over pictorial drawing is:",o:["It shows true dimensions","It is easier to draw","It shows 3D distortions","It requires fewer views"],a:0},
+  {s:"Freehand & Guided Sketching",q:"In AutoCAD, grid paper is useful for sketching because it:",o:["Aligns views and features","Creates 3D models","Scales drawings","Adds textures"],a:0},
+  {s:"Freehand & Guided Sketching",q:"In AutoCAD, freehand sketching is simulated using:",o:["The 'Sketch' command","The 'Line' command","The 'Circle' command","The 'Hatch' command"],a:0},
+  {s:"Freehand & Guided Sketching",q:"Multiview sketching in AutoCAD is used to:",o:["Create 3D models","Represent 3D objects in 2D views","Draw artistic designs","Create textures"],a:1},
+  {s:"Freehand & Guided Sketching",q:"The primary goal of freehand sketching is to:",o:["Create final drawings","Visualize design ideas","Render 3D models","Scale objects"],a:1},
+  {s:"Freehand & Guided Sketching",q:"In AutoCAD, grid paper is used for sketching to:",o:["Align views and features","Create 3D models","Add textures","Scale drawings"],a:0},
+  {s:"Freehand & Guided Sketching",q:"A true shape (TS) view in AutoCAD shows:",o:["Foreshortened dimensions","Actual dimensions of a surface","Distorted shapes","Hidden lines only"],a:1},
+
+  // SECTION H: Visualization & Solid Modeling (Unit 8)
+  {s:"Visualization & Solid Modeling",q:"3D solid modeling in AutoCAD is used to:",o:["Create 2D drawings only","Construct complete geometric forms with properties","Draw orthographic projections","Create artistic sketches"],a:1},
+  {s:"Visualization & Solid Modeling",q:"The AutoCAD command to create a 3D solid model from a 2D shape is:",o:["Extrude","Line","Circle","Hatch"],a:0},
+  {s:"Visualization & Solid Modeling",q:"Boolean operations in AutoCAD 3D modeling include:",o:["Union, difference, and intersection","Scaling and rotation","Mirroring and offsetting","Hatching and trimming"],a:0},
+  {s:"Visualization & Solid Modeling",q:"In AutoCAD, the 'Union' command in 3D modeling:",o:["Combines two geometries into one","Subtracts one geometry from another","Creates an intersection of two geometries","Deletes a geometry"],a:0},
+  {s:"Visualization & Solid Modeling",q:"The AutoCAD 'Subtract' command in 3D modeling is used to:",o:["Combine two geometries","Remove one geometry from another","Create an intersection","Scale a geometry"],a:1},
+  {s:"Visualization & Solid Modeling",q:"In AutoCAD, the 'Render' command is used to:",o:["Create a realistic image of a 3D model","Draw 2D lines","Scale objects","Create sections"],a:0},
+  {s:"Visualization & Solid Modeling",q:"Primitive geometries in AutoCAD include:",o:["Spheres, cones, and cylinders","Lines and arcs","Hatches and polylines","Text and dimensions"],a:0},
+  {s:"Visualization & Solid Modeling",q:"The AutoCAD 'Sweep' command is used to:",o:["Create a 3D volume by running a 2D shape along a path","Draw a straight line","Create a 2D sketch","Scale a 3D model"],a:0},
+  {s:"Visualization & Solid Modeling",q:"In AutoCAD, a texture map is applied to a 3D model to:",o:["Add visual and tactile qualities","Change the model's shape","Scale the model","Create sections"],a:0},
+  {s:"Visualization & Solid Modeling",q:"The AutoCAD 'Revolve' command is used to:",o:["Create a 3D solid by rotating a 2D shape around an axis","Draw a straight line","Create a 2D sketch","Mirror a 3D model"],a:0},
+  {s:"Visualization & Solid Modeling",q:"In AutoCAD, the 'Extrude' command is used to:",o:["Create a 3D solid from a 2D shape","Draw a 2D line","Scale a 3D model","Create a hatch pattern"],a:0},
+  {s:"Visualization & Solid Modeling",q:"The AutoCAD 'Intersect' command in 3D modeling creates:",o:["A new solid from the overlapping area of two geometries","A union of two geometries","A subtraction of one geometry","A scaled model"],a:0},
+  {s:"Visualization & Solid Modeling",q:"In AutoCAD, rendering is used to:",o:["Create realistic images of 3D models","Draw 2D sketches","Scale objects","Create sections"],a:0},
+  {s:"Visualization & Solid Modeling",q:"The AutoCAD 'Loft' command is used to:",o:["Create a 3D surface between multiple cross-sections","Draw a straight line","Create a hatch pattern","Mirror a 3D model"],a:0},
+  {s:"Visualization & Solid Modeling",q:"In AutoCAD, a 3D model's surface properties can include:",o:["Color and texture","Scaling factors","Line types","Hatch patterns"],a:0},
+
+  // SECTION I: Line Types
+  {s:"Line Types & Conventions",q:"In engineering drawings, a continuous thick line is primarily used to represent:",o:["Hidden edges","Visible edges","Centerlines","Dimension lines"],a:1},
+  {s:"Line Types & Conventions",q:"A chain line in AutoCAD is typically used to indicate:",o:["Visible outlines","Cutting planes or centerlines","Hidden edges","Construction lines"],a:1},
+  {s:"Line Types & Conventions",q:"Short dashes in an engineering drawing are used to show:",o:["Visible edges","Hidden edges","Centerlines","Section lines"],a:1},
+  {s:"Line Types & Conventions",q:"A continuous thin line in AutoCAD is most commonly used for:",o:["Outlining objects","Dimension lines and extension lines","Hidden edges","Cutting planes"],a:1},
+  {s:"Line Types & Conventions",q:"In engineering drawings, a long chain line with thick ends is used to represent:",o:["Hidden edges","Cutting plane lines","Visible edges","Construction lines"],a:1},
+  {s:"Line Types & Conventions",q:"Which type of line is used to indicate the center of a circle or arc in AutoCAD?",o:["Continuous thick line","Short dashes","Chain line","Continuous thin line"],a:2},
+  {s:"Line Types & Conventions",q:"In AutoCAD, phantom lines (long dashes with short dashes) are used to show:",o:["Alternate positions or paths of motion","Visible edges","Hidden edges","Dimension lines"],a:0},
+  {s:"Line Types & Conventions",q:"A zig-zag line in an engineering drawing is typically used to indicate:",o:["A break in a long object","A hidden edge","A centerline","A visible edge"],a:0},
+  {s:"Line Types & Conventions",q:"In AutoCAD, the line type for hidden edges is set to:",o:["Continuous","Dashed","Chain","Phantom"],a:1},
+  {s:"Line Types & Conventions",q:"Which line type is NOT typically used in engineering drawings?",o:["Continuous thick line","Wavy line","Chain line","Short dashes"],a:1},
+  {s:"Line Types & Conventions",q:"In AutoCAD, the LTSCALE command is used to:",o:["Change the line type scale for dashed or chain lines","Draw continuous lines","Create dimension lines","Set the line thickness"],a:0},
+  {s:"Line Types & Conventions",q:"A continuous thin freehand line in an engineering drawing is used for:",o:["Break lines in irregular boundaries","Visible edges","Hidden edges","Centerlines"],a:0},
+  {s:"Line Types & Conventions",q:"In AutoCAD, the line weight setting affects:",o:["The thickness of lines when printed","The type of line (e.g., dashed or continuous)","The color of lines","The length of lines"],a:0},
+  {s:"Line Types & Conventions",q:"Which line type is used to indicate the boundary of a sectional view in AutoCAD?",o:["Continuous thick line","Short dashes","Chain line with thick ends","Phantom line"],a:2},
+  {s:"Line Types & Conventions",q:"In engineering drawings, construction lines are typically drawn as:",o:["Continuous thin lines","Short dashes","Continuous thick lines","Chain lines"],a:0},
+  {s:"Line Types & Conventions",q:"The AutoCAD LAYER command can be used to assign:",o:["Specific line types to objects","Only colors to lines","Only text styles","Only dimensions"],a:0},
+  {s:"Line Types & Conventions",q:"In AutoCAD, a centerline is drawn using:",o:["Short dashes","Continuous thick line","Chain line with alternating long and short dashes","Continuous thin line"],a:2},
+  {s:"Line Types & Conventions",q:"Which line type is used to represent the path of a moving part in an engineering drawing?",o:["Phantom line","Hidden line","Continuous thick line","Dimension line"],a:0},
+  {s:"Line Types & Conventions",q:"In AutoCAD, the LINETYPE command is used to:",o:["Load or change line types for drawing","Set the line thickness","Create dimension lines","Draw arcs"],a:0},
+  {s:"Line Types & Conventions",q:"A break line in AutoCAD is used to:",o:["Shorten the view of a long uniform part","Indicate hidden edges","Show centerlines","Draw visible edges"],a:0},
+
+  // Additional AutoCAD-Focused
+  {s:"Engineering Graphics & AutoCAD",q:"The AutoCAD 'Purge' command is used to:",o:["Remove unused objects from the drawing","Create 3D models","Scale objects","Mirror objects"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Scale' command requires:",o:["A base point and scale factor","A rotation angle","A mirror line","A hatch pattern"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The AutoCAD 'Array' command can create:",o:["Rectangular or polar patterns","Straight lines","3D models","Hatches"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"In AutoCAD, the 'Text' command is used to:",o:["Add annotations to a drawing","Create 3D text","Scale text","Mirror text"],a:0},
+  {s:"Engineering Graphics & AutoCAD",q:"The AutoCAD 'Dimension' command is used to:",o:["Add measurements to a drawing","Create 3D models","Scale objects","Draw lines"],a:0},
+
+  // SECTION J: Engineering Drawing Instruments
+  {s:"Drawing Instruments",q:"A T-square is primarily used in manual drafting to:",o:["Draw vertical lines","Draw horizontal lines","Measure angles","Draw circles"],a:1},
+  {s:"Drawing Instruments",q:"In engineering drawing, a set square is used to draw:",o:["Circles","Angles (e.g., 30°, 45°, 60°)","Freehand sketches","Curved lines"],a:1},
+  {s:"Drawing Instruments",q:"The compass in engineering drawing is used to:",o:["Draw straight lines","Draw circles and arcs","Measure distances","Draw angles"],a:1},
+  {s:"Drawing Instruments",q:"A protractor is used in manual drafting to:",o:["Draw circles","Measure and draw angles","Draw straight lines","Create section lines"],a:1},
+  {s:"Drawing Instruments",q:"In AutoCAD, the equivalent tool for a physical compass is the:",o:["Line command","Circle command","Arc command","Polyline command"],a:1},
+  {s:"Drawing Instruments",q:"A divider in engineering drawing is used to:",o:["Draw circles","Transfer measurements","Draw straight lines","Create section lines"],a:1},
+  {s:"Drawing Instruments",q:"The drawing board in manual drafting provides:",o:["A smooth, flat surface for drafting","A tool for measuring angles","A device for drawing circles","A tool for creating textures"],a:0},
+  {s:"Drawing Instruments",q:"In manual drafting, French curves are used to draw:",o:["Straight lines","Irregular curved lines","Circles","Angles"],a:1},
+  {s:"Drawing Instruments",q:"In AutoCAD, the equivalent of a French curve is the:",o:["Spline command","Line command","Circle command","Rectangle command"],a:0},
+  {s:"Drawing Instruments",q:"A scale rule in engineering drawing is used to:",o:["Draw circles","Measure and draw to scale","Draw angles","Create section lines"],a:1},
+  {s:"Drawing Instruments",q:"In AutoCAD, the SCALE command serves a similar purpose to which manual drafting tool?",o:["T-square","Scale rule","Compass","Protractor"],a:1},
+  {s:"Drawing Instruments",q:"The eraser shield in manual drafting is used to:",o:["Protect areas while erasing","Draw straight lines","Measure angles","Draw circles"],a:0},
+  {s:"Drawing Instruments",q:"In manual drafting, drafting tape is used to:",o:["Secure the drawing paper to the board","Draw lines","Measure distances","Create textures"],a:0},
+  {s:"Drawing Instruments",q:"A lettering guide in engineering drawing is used to:",o:["Draw consistent text and annotations","Draw circles","Measure angles","Draw straight lines"],a:0},
+  {s:"Drawing Instruments",q:"In AutoCAD, the equivalent of a lettering guide is the:",o:["Text command","Line command","Hatch command","Dimension command"],a:0}
+];
+
+// ============================================================
+// STATE
+// ============================================================
+const STORAGE_KEY = 'get102_quiz_state';
+const TOTAL_Q = 70;
+const TIMER_TOTAL = 45 * 60; // seconds
+
+let state = {
+  questions: [],      // selected 70 questions with shuffled options
+  answers: {},        // {qIdx: selectedOptionIdx}
+  skipped: {},        // {qIdx: true}
+  flagged: {},        // {qIdx: true}
+  currentQ: 0,
+  startTime: null,    // epoch ms when exam started
+  submitted: false,
+  showAnswersOnFail: true,
+  timeLeft: TIMER_TOTAL
+};
+
+let timerInterval = null;
+
+// ============================================================
+// UTILITY
+// ============================================================
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function clearState() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+function formatTime(secs) {
+  if (secs < 0) secs = 0;
+  const m = Math.floor(secs / 60).toString().padStart(2, '0');
+  const s = (secs % 60).toString().padStart(2, '0');
+  return `⏱ ${m}:${s}`;
+}
+
+function computeTimeLeft() {
+  if (!state.startTime) return state.timeLeft;
+  const elapsed = Math.floor((Date.now() - state.startTime) / 1000);
+  return Math.max(0, TIMER_TOTAL - elapsed);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+const showAnswersOnFailToggle = document.getElementById('showAnswersOnFail');
+const togState = document.getElementById('togState');
+showAnswersOnFailToggle.addEventListener('change', () => {
+  togState.textContent = showAnswersOnFailToggle.checked ? 'After Each' : 'At End Only';
+});
+
+document.getElementById('startBtn').addEventListener('click', () => {
+  const saved = loadState();
+  if (saved && !saved.submitted && saved.startTime) {
+    const tl = computeTimeLeft.call({startTime: saved.startTime});
+    // Restore
+    if (tl > 0) {
+      Object.assign(state, saved);
+      state.showAnswersOnFail = showAnswersOnFailToggle.checked;
+      startExam(true);
+      return;
+    }
+  }
+  // New exam
+  clearState();
+  state.showAnswersOnFail = showAnswersOnFailToggle.checked;
+  startExam(false);
+});
+
+function buildQuestions() {
+  // Shuffle question bank and pick 70
+  const picked = shuffle(ALL_QUESTIONS).slice(0, TOTAL_Q);
+  // For each question, shuffle options but track correct answer index
+  return picked.map(q => {
+    const letters = ['a','b','c','d'];
+    // Create indexed options
+    const indexed = q.o.map((opt, i) => ({text: opt, isCorrect: i === q.a}));
+    const shuffled = shuffle(indexed);
+    const correctIdx = shuffled.findIndex(x => x.isCorrect);
+    return {
+      section: q.s,
+      question: q.q,
+      options: shuffled.map(x => x.text),
+      correctIdx
+    };
+  });
+}
+
+function startExam(resuming) {
+  if (!resuming) {
+    state.questions = buildQuestions();
+    state.answers = {};
+    state.skipped = {};
+    state.flagged = {};
+    state.currentQ = 0;
+    state.startTime = Date.now();
+    state.submitted = false;
+    state.timeLeft = TIMER_TOTAL;
+    saveState();
+  }
+
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('navPanel').style.display = 'flex';
+
+  buildNavGrid();
+  renderQuestion();
+  startTimer();
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    const tl = computeTimeLeft();
+    updateTimerDisplayValue(tl);
+    if (tl <= 0) {
+      clearInterval(timerInterval);
+      submitExam(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  updateTimerDisplayValue(computeTimeLeft());
+}
+
+function updateTimerDisplayValue(tl) {
+  const el = document.getElementById('timerDisplay');
+  el.textContent = formatTime(tl);
+  el.className = 'timer-box';
+  if (tl <= 300) el.classList.add('danger');
+  else if (tl <= 600) el.classList.add('warn');
+}
+
+// ============================================================
+// RENDER QUESTION
+// ============================================================
+function renderQuestion() {
+  const qi = state.currentQ;
+  const q = state.questions[qi];
+  if (!q) return;
+
+  // Number
+  document.getElementById('qNumber').textContent = `${qi + 1} of ${TOTAL_Q}`;
+  document.getElementById('qSection').textContent = q.section;
+  document.getElementById('qText').textContent = q.question;
+
+  // Options
+  const ol = document.getElementById('optionsList');
+  ol.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const li = document.createElement('li');
+    li.className = 'option-item';
+    const id = `opt_${qi}_${i}`;
+    li.innerHTML = `
+      <input type="radio" name="q${qi}" id="${id}" value="${i}" ${state.answers[qi] === i ? 'checked' : ''}>
+      <label for="${id}">
+        <span class="opt-letter">${letters[i]}</span>
+        ${opt}
+      </label>`;
+    li.querySelector('input').addEventListener('change', () => {
+      state.answers[qi] = i;
+      delete state.skipped[qi];
+      saveState();
+      updateNavBtn(qi);
+      updateNavStats();
+    });
+    ol.appendChild(li);
+  });
+
+  // Flag
+  const fb = document.getElementById('flagBtn');
+  fb.className = 'flag-btn' + (state.flagged[qi] ? ' flagged' : '');
+  fb.textContent = state.flagged[qi] ? '🚩 Flagged' : '🚩 Flag for Review';
+
+  // Progress
+  const answered = Object.keys(state.answers).length;
+  document.getElementById('progressBar').style.width = `${(answered / TOTAL_Q) * 100}%`;
+
+  // Buttons
+  document.getElementById('prevBtn').disabled = qi === 0;
+  document.getElementById('nextBtn').style.display = qi < TOTAL_Q - 1 ? 'inline-flex' : 'none';
+  const smbtn = document.getElementById('submitMainBtn');
+  if (qi === TOTAL_Q - 1) smbtn.classList.add('show'); else smbtn.classList.remove('show');
+
+  updateNavGrid();
+  updateNavStats();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (state.currentQ > 0) { state.currentQ--; renderQuestion(); }
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (state.currentQ < TOTAL_Q - 1) { state.currentQ++; renderQuestion(); }
+});
+document.getElementById('skipBtn').addEventListener('click', () => {
+  if (state.answers[state.currentQ] === undefined) {
+    state.skipped[state.currentQ] = true;
+    saveState();
+    updateNavBtn(state.currentQ);
+    updateNavStats();
+  }
+  if (state.currentQ < TOTAL_Q - 1) { state.currentQ++; renderQuestion(); }
+});
+document.getElementById('flagBtn').addEventListener('click', () => {
+  const qi = state.currentQ;
+  if (state.flagged[qi]) delete state.flagged[qi];
+  else state.flagged[qi] = true;
+  saveState();
+  const fb = document.getElementById('flagBtn');
+  fb.className = 'flag-btn' + (state.flagged[qi] ? ' flagged' : '');
+  fb.textContent = state.flagged[qi] ? '🚩 Flagged' : '🚩 Flag for Review';
+  updateNavBtn(qi);
+  updateNavStats();
+});
+
+// ============================================================
+// NAV GRID
+// ============================================================
+function buildNavGrid() {
+  const grid = document.getElementById('navGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < TOTAL_Q; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'q-nav-btn';
+    btn.id = `navbtn_${i}`;
+    btn.textContent = i + 1;
+    btn.innerHTML += '<span class="flag-dot"></span>';
+    btn.addEventListener('click', () => {
+      state.currentQ = i;
+      renderQuestion();
+      // Close mobile nav
+      document.getElementById('navPanel').classList.remove('open');
+      document.getElementById('navOverlay').classList.remove('show');
+    });
+    grid.appendChild(btn);
+  }
+  updateNavGrid();
+}
+
+function updateNavGrid() {
+  for (let i = 0; i < TOTAL_Q; i++) {
+    const btn = document.getElementById(`navbtn_${i}`);
+    if (!btn) continue;
+    btn.className = 'q-nav-btn';
+    if (state.flagged[i]) btn.classList.add('flagged');
+    else if (state.answers[i] !== undefined) btn.classList.add('answered');
+    else if (state.skipped[i]) btn.classList.add('skipped');
+    if (i === state.currentQ) btn.classList.add('current');
+  }
+}
+
+function updateNavBtn(qi) {
+  const btn = document.getElementById(`navbtn_${qi}`);
+  if (!btn) return;
+  btn.className = 'q-nav-btn';
+  if (state.flagged[qi]) btn.classList.add('flagged');
+  else if (state.answers[qi] !== undefined) btn.classList.add('answered');
+  else if (state.skipped[qi]) btn.classList.add('skipped');
+  if (qi === state.currentQ) btn.classList.add('current');
+}
+
+function updateNavStats() {
+  const answered = Object.keys(state.answers).length;
+  const skipped = Object.keys(state.skipped).length;
+  const flagged = Object.keys(state.flagged).length;
+  const remaining = TOTAL_Q - answered - skipped;
+  document.getElementById('navAnswered').textContent = answered;
+  document.getElementById('navSkipped').textContent = skipped;
+  document.getElementById('navFlagged').textContent = flagged;
+  document.getElementById('navRemaining').textContent = Math.max(0, remaining);
+}
+
+// ============================================================
+// REVIEW (before submit)
+// ============================================================
+document.getElementById('reviewBtn').addEventListener('click', showReview);
+document.getElementById('reviewResultBtn').addEventListener('click', showReview);
+
+function showReview() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('review-screen').style.display = 'block';
+  renderReview();
+}
+
+function renderReview() {
+  // Compute score if submitted
+  let correct = 0, wrong = 0, unanswered = 0;
+  state.questions.forEach((q, i) => {
+    if (state.answers[i] !== undefined) {
+      if (state.answers[i] === q.correctIdx) correct++;
+      else wrong++;
+    } else unanswered++;
+  });
+  const pct = Math.round((correct / TOTAL_Q) * 100);
+
+  document.getElementById('rScoreBig').textContent = state.submitted ? `${pct}%` : '–';
+  document.getElementById('rCorrect').textContent = state.submitted ? correct : '–';
+  document.getElementById('rWrong').textContent = state.submitted ? wrong : '–';
+  document.getElementById('rSkipped').textContent = state.submitted ? unanswered : '–';
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+
+  state.questions.forEach((q, i) => {
+    const userAns = state.answers[i];
+    const isCorrect = userAns === q.correctIdx;
+    const isUnanswered = userAns === undefined;
+
+    const card = document.createElement('div');
+    card.className = 'review-q-card';
+
+    let statusIcon = '⬜';
+    if (state.submitted) {
+      if (isUnanswered) statusIcon = '⏭';
+      else if (isCorrect) statusIcon = '✅';
+      else statusIcon = '❌';
+    } else {
+      if (state.flagged[i]) statusIcon = '🚩';
+      else if (isUnanswered) statusIcon = '⬜';
+      else statusIcon = '✔';
+    }
+
+    card.innerHTML = `
+      <div class="review-q-num">${statusIcon} Question ${i + 1} &nbsp;·&nbsp; <em>${q.section}</em></div>
+      <div class="review-q-text">${q.question}</div>
+      <div class="review-options" id="ropts_${i}"></div>
+      ${isUnanswered && state.submitted ? '<div class="unanswered-note">Not answered — this question was skipped.</div>' : ''}
+    `;
+    list.appendChild(card);
+
+    const optsContainer = card.querySelector(`#ropts_${i}`);
+    q.options.forEach((opt, j) => {
+      const div = document.createElement('div');
+      div.className = 'review-opt';
+      const isUserChoice = userAns === j;
+      const isAnswerCorrect = j === q.correctIdx;
+
+      // Only show correct/wrong styling after submission
+      if (state.submitted) {
+        if (isAnswerCorrect) div.classList.add('correct-opt');
+        if (isUserChoice && !isAnswerCorrect) div.classList.add('user-wrong');
+      }
+
+      let badge = '';
+      if (state.submitted) {
+        if (isAnswerCorrect && isUserChoice) badge = '<span class="badge">✓ Your Answer (Correct)</span>';
+        else if (isAnswerCorrect) badge = '<span class="badge">✓ Correct Answer</span>';
+        else if (isUserChoice) badge = '<span class="badge">✗ Your Answer</span>';
+      } else {
+        if (isUserChoice) badge = '<span class="badge" style="color:var(--primary)">Your Selection</span>';
+      }
+
+      div.innerHTML = `<span style="font-weight:600;min-width:22px">${letters[j]}.</span> ${opt} ${badge}`;
+      optsContainer.appendChild(div);
+    });
+
+    // Nav button to jump to that question
+    const jumpBtn = document.createElement('button');
+    jumpBtn.className = 'btn btn-prev';
+    jumpBtn.style.marginTop = '10px; font-size:.8rem; padding:6px 12px';
+    jumpBtn.style.fontSize = '.8rem'; jumpBtn.style.padding = '6px 12px'; jumpBtn.style.marginTop = '10px';
+    jumpBtn.textContent = '↩ Go to Question';
+    jumpBtn.addEventListener('click', () => {
+      state.currentQ = i;
+      document.getElementById('review-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'block';
+      renderQuestion();
+    });
+    if (!state.submitted) card.appendChild(jumpBtn);
+  });
+
+  // Back button
+  if (!document.getElementById('reviewBackBtn')) {
+    const backBtn = document.createElement('button');
+    backBtn.id = 'reviewBackBtn';
+    backBtn.className = 'btn btn-next';
+    backBtn.style.cssText = 'margin-top:16px;margin-bottom:32px';
+    backBtn.textContent = state.submitted ? '← Back to Results' : '← Back to Quiz';
+    backBtn.addEventListener('click', () => {
+      document.getElementById('review-screen').style.display = 'none';
+      if (state.submitted) {
+        document.getElementById('result-screen').style.display = 'block';
+      } else {
+        document.getElementById('quiz-screen').style.display = 'block';
+        renderQuestion();
+      }
+    });
+    list.appendChild(backBtn);
+  }
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+[document.getElementById('submitMainBtn'), document.getElementById('submitNavBtn')].forEach(btn => {
+  btn.addEventListener('click', openSubmitModal);
+});
+document.getElementById('cancelSubmit').addEventListener('click', () => {
+  document.getElementById('submitModal').classList.remove('show');
+});
+document.getElementById('confirmSubmit').addEventListener('click', () => {
+  document.getElementById('submitModal').classList.remove('show');
+  submitExam(false);
+});
+
+function openSubmitModal() {
+  const answered = Object.keys(state.answers).length;
+  const flagged = Object.keys(state.flagged).length;
+  document.getElementById('mAnswered').textContent = answered;
+  document.getElementById('mUnanswered').textContent = TOTAL_Q - answered;
+  document.getElementById('mFlagged').textContent = flagged;
+  document.getElementById('submitModal').classList.add('show');
+}
+
+function submitExam(autoSubmit) {
+  if (state.submitted) return;
+  if (timerInterval) clearInterval(timerInterval);
+  state.submitted = true;
+  const timeUsed = TIMER_TOTAL - computeTimeLeft();
+  state.timeUsed = timeUsed;
+  saveState();
+
+  // Calculate score
+  let correct = 0, wrong = 0, unanswered = 0;
+  state.questions.forEach((q, i) => {
+    if (state.answers[i] !== undefined) {
+      if (state.answers[i] === q.correctIdx) correct++;
+      else wrong++;
+    } else unanswered++;
+  });
+  const pct = Math.round((correct / TOTAL_Q) * 100);
+  const pass = pct >= 50;
+
+  // Show result screen
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('review-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+
+  document.getElementById('resultIcon').textContent = pass ? '🎉' : '📖';
+  document.getElementById('resultTitle').textContent = pass ? 'Congratulations!' : 'Keep Practicing!';
+  document.getElementById('resultSub').textContent = autoSubmit
+    ? 'Time expired — your answers have been submitted automatically.'
+    : pass ? 'You passed the examination.' : 'Review the answers to improve your score.';
+  document.getElementById('resultScore').textContent = pct;
+  document.getElementById('resCorrect').textContent = correct;
+  document.getElementById('resWrong').textContent = wrong;
+  document.getElementById('resSkipped').textContent = unanswered;
+
+  const m = Math.floor(timeUsed / 60), s = timeUsed % 60;
+  document.getElementById('resTime').textContent = `${m}m ${s}s`;
+
+  // Timer display
+  document.getElementById('timerDisplay').textContent = '⏱ Done';
+  document.getElementById('timerDisplay').className = 'timer-box';
+
+  // Show answers toggle behavior
+  if (!state.showAnswersOnFail || pass) {
+    document.getElementById('reviewResultBtn').textContent = '📋 Review Answers';
+  } else {
+    document.getElementById('reviewResultBtn').textContent = '📋 See Answers';
+  }
+
+  updateNavStats();
+}
+
+// Retry
+document.getElementById('retryBtn').addEventListener('click', () => {
+  clearState();
+  location.reload();
+});
+
+// ============================================================
+// MOBILE NAV
+// ============================================================
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navPanel').classList.toggle('open');
+  document.getElementById('navOverlay').classList.toggle('show');
+});
+document.getElementById('navOverlay').addEventListener('click', () => {
+  document.getElementById('navPanel').classList.remove('open');
+  document.getElementById('navOverlay').classList.remove('show');
+});
+
+// ============================================================
+// OFFLINE DETECTION
+// ============================================================
+window.addEventListener('offline', () => {
+  document.getElementById('offlineBadge').classList.add('show');
+  saveState();
+});
+window.addEventListener('online', () => {
+  document.getElementById('offlineBadge').classList.remove('show');
+});
+
+// ============================================================
+// CHECK FOR RESUMED SESSION ON LOAD
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = loadState();
+  if (saved && !saved.submitted && saved.startTime) {
+    const tl = Math.max(0, saved.TIMER_TOTAL || TIMER_TOTAL) - Math.floor((Date.now() - saved.startTime) / 1000);
+    if (tl > 0) {
+      // Show resume option — modify start button
+      const startBtn = document.getElementById('startBtn');
+      startBtn.textContent = '▶ Resume Previous Exam';
+      startBtn.style.background = 'var(--success)';
+
+      // Add new exam button
+      const newBtn = document.createElement('button');
+      newBtn.className = 'btn-start';
+      newBtn.style.cssText = 'margin-top:10px; background:var(--text-muted)';
+      newBtn.textContent = '🔄 Start Fresh Exam';
+      newBtn.addEventListener('click', () => {
+        clearState();
+        startBtn.textContent = 'Begin Examination';
+        startBtn.style.background = 'var(--primary)';
+        newBtn.remove();
+      });
+      startBtn.parentNode.insertBefore(newBtn, startBtn.nextSibling);
+    }
+  }
+});
+</script>
+</body>
+</html>
