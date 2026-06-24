@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHM 108 · Qualitative Analysis Quiz</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --card: #1c2230;
+    --border: #2d3748;
+    --teal: #00c9b1;
+    --green: #22c55e;
+    --green-bg: #052e16;
+    --red: #ef4444;
+    --red-bg: #2d0f0f;
+    --yellow: #fbbf24;
+    --yellow-bg: #2d1f00;
+    --text: #e2e8f0;
+    --muted: #8b9ab0;
+    --radius: 10px;
+    --drawer-w: 280px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 60px;
+    transition: padding-right 0.3s;
+  }
+
+  /* ── Top bar (toggle button) ── */
+  .topbar {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    justify-content: flex-end;
+    padding: 14px 0 0;
+  }
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--teal);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .nav-toggle:hover { border-color: var(--teal); background: #1a2535; }
+  .nav-toggle svg { flex-shrink: 0; }
+
+  /* ── Header ── */
+  header {
+    width: 100%;
+    max-width: 720px;
+    padding: 14px 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  header h1 {
+    font-size: clamp(18px, 5vw, 26px);
+    font-weight: 700;
+    text-align: center;
+    color: #f0f6fc;
+  }
+  header p { font-size: 13px; color: var(--muted); }
+
+  /* ── Progress ── */
+  .progress-wrap { width: 100%; max-width: 720px; margin-bottom: 20px; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), #00e5cc);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Score strip ── */
+  .score-strip { width: 100%; max-width: 720px; display: flex; gap: 8px; margin-bottom: 20px; }
+  .score-pill {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .score-pill .val { font-size: 22px; font-weight: 700; }
+  .score-pill .lbl { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+  .score-pill.correct .val { color: var(--green); }
+  .score-pill.wrong   .val { color: var(--red); }
+  .score-pill.remain  .val { color: var(--yellow); }
+
+  /* ── Card ── */
+  .card {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px 24px;
+  }
+  .q-num {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 12px;
+  }
+  .question {
+    font-size: clamp(15px, 3.5vw, 17px); line-height: 1.6;
+    font-weight: 500; color: #f0f6fc; margin-bottom: 24px;
+  }
+
+  /* ── Options ── */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .option {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    font-size: 14.5px; color: var(--text); user-select: none;
+  }
+  .option:hover:not(.disabled) { border-color: var(--teal); background: #1a2535; transform: translateX(3px); }
+  .option .badge {
+    min-width: 30px; height: 30px; border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    transition: background 0.2s, color 0.2s; flex-shrink: 0;
+  }
+  .option.correct { border-color: var(--green); background: var(--green-bg); }
+  .option.correct .badge { background: var(--green); color: #fff; }
+  .option.wrong   { border-color: var(--red);   background: var(--red-bg); }
+  .option.wrong   .badge { background: var(--red);   color: #fff; }
+  .option.disabled { cursor: default; transform: none; }
+
+  /* ── Feedback ── */
+  .feedback {
+    display: none; padding: 12px 16px; border-radius: var(--radius);
+    font-size: 13.5px; font-weight: 500; margin-bottom: 20px; line-height: 1.5;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct { background: #052e16; border: 1px solid #166534; color: #4ade80; }
+  .feedback.wrong   { background: #2d0f0f; border: 1px solid #7f1d1d; color: #f87171; }
+
+  /* ── Buttons ── */
+  .btn-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .btn-row-right { display: flex; gap: 8px; }
+  .btn {
+    padding: 11px 20px; border-radius: var(--radius);
+    font-size: 14px; font-weight: 600; border: none;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: linear-gradient(135deg, var(--teal), #00a896); color: #0d1117; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+
+  /* ── Results screen ── */
+  #results { display: none; width: 100%; max-width: 720px; text-align: center; }
+  .result-badge {
+    width: 100px; height: 100px; border-radius: 50%;
+    margin: 20px auto 24px;
+    display: flex; align-items: center; justify-content: center; font-size: 40px;
+  }
+  .result-score { font-size: clamp(36px, 10vw, 64px); font-weight: 800; color: var(--teal); line-height: 1; }
+  .result-label { font-size: 14px; color: var(--muted); margin: 6px 0 28px; }
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+  .result-cell { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 12px; }
+  .result-cell .v { font-size: 28px; font-weight: 700; }
+  .result-cell .l { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+  .grade-bar-wrap { margin-bottom: 28px; }
+  .grade-bar { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; margin: 8px 0; }
+  .grade-fill { height: 100%; border-radius: 99px; transition: width 1s ease; }
+
+  /* ══════════════════════════════
+     NAVIGATION DRAWER
+  ══════════════════════════════ */
+  .drawer-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 100;
+    backdrop-filter: blur(2px);
+  }
+  .drawer-overlay.open { display: block; }
+
+  .drawer {
+    position: fixed;
+    top: 0; right: 0;
+    width: var(--drawer-w);
+    height: 100%;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    z-index: 101;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .drawer.open { transform: translateX(0); }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 16px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .drawer-title { font-size: 13px; font-weight: 700; color: var(--teal); letter-spacing: 1.5px; text-transform: uppercase; }
+  .drawer-close {
+    width: 30px; height: 30px; border-radius: 6px;
+    background: var(--border); border: none; color: var(--muted);
+    font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .drawer-close:hover { background: var(--red-bg); color: var(--red); }
+
+  /* Legend */
+  .drawer-legend {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+  /* Grid of question dots */
+  .drawer-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    padding: 14px 16px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .q-dot {
+    aspect-ratio: 1;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    transition: transform 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .q-dot:hover { transform: scale(1.1); border-color: var(--teal); }
+  .q-dot.current { border-color: var(--teal); color: var(--teal); box-shadow: 0 0 0 2px rgba(0,201,177,0.3); }
+  .q-dot.state-correct { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .q-dot.state-wrong   { background: var(--red-bg);   border-color: var(--red);   color: var(--red); }
+  .q-dot.state-skipped { background: var(--yellow-bg); border-color: var(--yellow); color: var(--yellow); }
+
+  /* ── Deco ── */
+  .deco { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; overflow:hidden; }
+  .deco-dot { position:absolute; border-radius:50%; background:var(--teal); opacity:0.04; }
+</style>
+</head>
+<body>
+
+<div class="deco">
+  <div class="deco-dot" style="width:400px;height:400px;top:-100px;right:-100px;"></div>
+  <div class="deco-dot" style="width:300px;height:300px;bottom:10%;left:-80px;"></div>
+</div>
+
+<!-- Drawer overlay -->
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+
+<!-- Navigation Drawer -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">⚗ Questions</span>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Unanswered</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Correct</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Wrong</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Skipped</div>
+  </div>
+  <div class="drawer-grid" id="drawer-grid"></div>
+</div>
+
+<!-- Top bar -->
+<div class="topbar">
+  <button class="nav-toggle" onclick="toggleDrawer()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <rect x="1" y="3" width="14" height="2" rx="1" fill="currentColor"/>
+      <rect x="1" y="7" width="10" height="2" rx="1" fill="currentColor"/>
+      <rect x="1" y="11" width="12" height="2" rx="1" fill="currentColor"/>
+    </svg>
+    Questions
+  </button>
+</div>
+
+<header>
+  <div class="eyebrow">Igbinedion University Okada</div>
+  <h1>⚗️ CHM 108 — Qualitative Analysis</h1>
+  <p>70 questions · Tap an option to reveal the answer</p>
+</header>
+
+<!-- Quiz area -->
+<div id="quiz-area" style="width:100%;max-width:720px;">
+
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-text">Question 1 of 70</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="score-strip">
+    <div class="score-pill correct"><div class="val" id="sc-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="score-pill wrong">  <div class="val" id="sc-wrong">0</div>  <div class="lbl">Wrong</div></div>
+    <div class="score-pill remain"><div class="val" id="sc-remain">70</div><div class="lbl">Remaining</div></div>
+  </div>
+
+  <div class="card">
+    <div class="q-num" id="q-num">QUESTION 1</div>
+    <div class="question" id="q-text"></div>
+    <div class="options" id="q-options"></div>
+    <div class="feedback" id="q-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-outline" id="btn-prev" onclick="prevQ()">← Prev</button>
+      <div class="btn-row-right">
+        <button class="btn btn-outline" id="btn-skip" onclick="skipQ()">Skip</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQ()" disabled>Next →</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Results -->
+<div id="results">
+  <div class="card">
+    <div class="result-badge" id="res-badge"></div>
+    <div class="result-score" id="res-score"></div>
+    <div class="result-label" id="res-label"></div>
+    <div class="result-grid">
+      <div class="result-cell"><div class="v" style="color:var(--green)" id="res-c">0</div><div class="l">Correct</div></div>
+      <div class="result-cell"><div class="v" style="color:var(--red)"   id="res-w">0</div><div class="l">Wrong</div></div>
+      <div class="result-cell"><div class="v" style="color:var(--yellow)" id="res-s">0</div><div class="l">Skipped</div></div>
+    </div>
+    <div class="grade-bar-wrap">
+      <div style="text-align:left;font-size:13px;color:var(--muted);">Score</div>
+      <div class="grade-bar"><div class="grade-fill" id="res-bar" style="width:0%"></div></div>
+    </div>
+    <div class="btn-row" style="justify-content:center;gap:12px;">
+      <button class="btn btn-outline" onclick="restartQuiz()">↺ Restart</button>
+      <button class="btn btn-primary" id="review-btn" onclick="reviewMissed()">Review Missed</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { q: "The positively charged elements are called", opts: ["Ions","Anions","Cations","Protons"], ans: 2 },
+  { q: "The process in which the presence of elements or group of elements in a sample are/is identified is called _______.", opts: ["Quantitative analysis","Qualitative analysis","Phytochemical analysis","All of the above"], ans: 1 },
+  { q: "Which of the following chlorides — AgCl, PbCl₂ and Hg₂Cl₂ — is soluble in cold water at room temperature?", opts: ["AgCl","PbCl₂","Hg₂Cl₂","None of the above"], ans: 3 },
+  { q: "Based on the appearance, which of the following coloured compounds has a red colour?", opts: ["Antimony sulphide","Cobalt salt","Ferric chloride","Ferrous salt"], ans: 0 },
+  { q: "Which of the following salts produces a colourless gas with a sharp, pungent and irritating odour that turns damp red litmus blue when heated with sodium hydroxide?", opts: ["Ammonium salt","Sulphide salt","Carbonate salt","Chloride salt"], ans: 0 },
+  { q: "The negatively charged elements are called", opts: ["Ions","Anions","Cations","Protons"], ans: 1 },
+  { q: "Which of the following is applicable in identifying the anion in a salt?", opts: ["Appearance","Flame tests","Test for ammonium salts","All of the above"], ans: 3 },
+  { q: "What type of reagent is added during the course of confirmation of the presence of Pb²⁺ giving a yellow precipitate?", opts: ["NH₃","K₂CrO₄","HNO₃","Both NH₃ and HNO₃"], ans: 1 },
+  { q: "Based on the appearance, which of the following coloured compounds has a pink colour?", opts: ["Mercury sulphide","Cobalt salt","Tin sulphide","Nickel sulphide"], ans: 1 },
+  { q: "Which of the following gases is a pale-yellow gas with a pungent odour?", opts: ["Ammonia gas","Fluorine gas","Hydrogen sulphide gas","Chlorine gas"], ans: 1 },
+  { q: "Qualitative analysis is more reliable than quantitative analysis — True or False?", opts: ["TRUE","FALSE"], ans: 1 },
+  { q: "When separating the mixture of AgCl, PbCl₂ and Hg₂Cl₂, a white precipitate was formed. On addition of 6 M NH₃ solution it gives a gray precipitate as a confirmation of ______", opts: ["Hg₂²⁺","Ag⁺","Pb²⁺","Both Ag⁺ and Hg₂²⁺"], ans: 0 },
+  { q: "Based on the appearance, which of the following coloured compounds has a yellow colour?", opts: ["Chromium chloride","Cobalt salt","Ferric chloride","Mercury sulphide"], ans: 2 },
+  { q: "Which of the following gases is a yellow-green gas with a pungent, irritating and bleach-like odour?", opts: ["Ammonia gas","Sulphur dioxide gas","Hydrogen sulphide gas","Chlorine gas"], ans: 3 },
+  { q: "Qualitative analysis is not as reliable as quantitative analysis but it is", opts: ["slower to perform","easier to perform","expensive","time consuming"], ans: 1 },
+  { q: "The salt containing a Group IIA cation is _________.", opts: ["As₂S₃","Bi₂S₃","CaCO₃","Hg₂Cl₂"], ans: 1 },
+  { q: "Based on the appearance, which of the following coloured compounds has a green colour?", opts: ["Lead sulphide","Mercury iodide","Lead iodide","Ferrous salt"], ans: 3 },
+  { q: "Which of the following gases is a colourless gas with a suffocating and pungent odour?", opts: ["Ammonia gas","Sulphur dioxide gas","Hydrogen sulphide gas","Chlorine gas"], ans: 1 },
+  { q: "Which of the following is NOT a preliminary dry test of anion in an inorganic sample?", opts: ["Observation of smoke or char.","Observation of moisture.","Observation of precipitate formed.","Measuring melting point of the sample."], ans: 0 },
+  { q: "The white precipitate formed when 6 M NH₃ solution was added to the solution of mixture of AgCl and Hg₂Cl₂, followed by addition of 6 M HNO₃, confirms ________", opts: ["Ag⁺","Hg₂²⁺","Pb²⁺","Both Ag⁺ and Hg₂²⁺"], ans: 0 },
+  { q: "Based on the appearance, which of the following coloured compounds has a black colour?", opts: ["Antimony sulphide","Cobalt salt","Tin sulphide","Nickel sulphide"], ans: 3 },
+  { q: "Which of the following gases is a colourless gas with a sharp, pungent and irritating odour?", opts: ["Ammonia gas","Sulphur dioxide gas","Hydrogen sulphide gas","Chlorine gas"], ans: 0 },
+  { q: "The sulphides of Hg²⁺, Cu²⁺ and Bi³⁺ ions are soluble in nitric acid with the exception of Cu²⁺ — True or False?", opts: ["TRUE","FALSE"], ans: 1 },
+  { q: "Which of the following is precipitation used to identify?", opts: ["Anions","Gases","Cations","Dissolved solids"], ans: 0 },
+  { q: "Which of the following cations will produce a blue precipitate when treated with sodium hydroxide solution?", opts: ["Iron (II)","Copper (II)","Zinc","Nickel"], ans: 1 },
+  { q: "Which of the following is a flame test used to identify?", opts: ["Anions","Gases","Cations","Precipitates"], ans: 2 },
+  { q: "Which of the following gases is a colourless gas with a strong, unpleasant odour like rotten eggs?", opts: ["Ammonia gas","Sulphur dioxide gas","Hydrogen sulphide gas","Chlorine gas"], ans: 2 },
+  { q: "In flame testing, what element is indicated by a brick red flame?", opts: ["Calcium","Sodium","Copper","Lithium"], ans: 0 },
+  { q: "When NH₄OH solution is added to the filtrate containing both Cu²⁺ and Bi³⁺, the filtrate formed contains a deep blue complex ion which confirms the presence of ________.", opts: ["Bi³⁺","K⁺","Hg²⁺","Cu²⁺"], ans: 3 },
+  { q: "Which of the following cations does NOT form insoluble chlorides with hydrochloric acid?", opts: ["Ag⁺","Bi³⁺","Hg₂²⁺","Pb²⁺"], ans: 1 },
+  { q: "In flame testing, what element is indicated by a light blue flame?", opts: ["Carbon","Sodium","Copper","Lead"], ans: 3 },
+  { q: "When doing a flame test, what element is indicated by a purple/lilac flame?", opts: ["Barium","Calcium","Potassium","Copper"], ans: 2 },
+  { q: "When nitric acid is added to the mixture of sulphides of Hg²⁺, Cu²⁺ and Bi³⁺ ions, it gives a black colouration as residue which indicates the presence of", opts: ["Bi³⁺","Hg²⁺","Cu²⁺ only","Both Cu²⁺ and Hg²⁺"], ans: 1 },
+  { q: "Which of the following cations forms insoluble chlorides with hydrochloric acid?", opts: ["Ag⁺","As³⁺","Al³⁺","Ba²⁺"], ans: 0 },
+  { q: "For confirmation of the presence of Bi³⁺, what type of reagent is needed to be added to give a white gelatinous precipitate?", opts: ["NH₄OH","HNO₃","Only NH₃","Both NH₃ and HNO₃"], ans: 0 },
+  { q: "Which of the following cations forms insoluble sulphides in acidic conditions?", opts: ["Ag⁺","Cu²⁺","Al³⁺","Ba²⁺"], ans: 1 },
+  { q: "What is the purpose of employing a flame test?", opts: ["To determine the temperature of the salt sample","To identify the ion in the salt sample based on flame colour","To measure the reactivity of the ion","To analyze the density of the ion"], ans: 1 },
+  { q: "When doing a flame test, what element is indicated by a yellowish green flame?", opts: ["Barium","Calcium","Potassium","Copper"], ans: 0 },
+  { q: "Why is it necessary to clean the wire loop before performing a flame test?", opts: ["To prevent contamination of the sample","To change the colour of the flame","To avoid overheating the wire","To increase the efficiency of the test"], ans: 0 },
+  { q: "On addition of 6 M NH₃ solution to the solution of mixture of AgCl and Hg₂Cl₂ formed, followed by addition of 6 M HNO₃, a white precipitate is obtained which confirms ________", opts: ["Hg₂²⁺","Ag⁺","Pb²⁺","Both Ag⁺ and Hg₂²⁺"], ans: 1 },
+  { q: "Which of the following salts produces a brown gas that turns damp blue litmus red and bleaches to white when reacted with manganese dioxide and concentrated sulphuric acid?", opts: ["Chloride salt","Sulphide salt","Nitrate salt","Bromide salt"], ans: 0 },
+  { q: "Which of these chlorides — AgCl, PbCl₂ and Hg₂Cl₂ — is soluble in hot water?", opts: ["PbCl₂","Hg₂Cl₂","AgCl","None of the above"], ans: 0 },
+  { q: "Which of the following salts contains a Group I cation?", opts: ["As₂S₃","CuS","AgCl","CaCO₃"], ans: 2 },
+  { q: "Which of the following is a characteristic test for the presence of sulphide ions?", opts: ["Cadmium carbonate test","Lead acetate paper test","Flame test","Silver nitrate test"], ans: 0 },
+  { q: "Which of the following salts produces a colourless gas which readily gives reddish-brown fumes with the oxygen of the air when reacted with dilute sulphuric acid?", opts: ["Ammonium salt","Sulphide salt","Nitrite salt","Chloride salt"], ans: 2 },
+  { q: "On addition of 6 M NH₃ solution to the white precipitate formed when separating the mixture of AgCl, PbCl₂ and Hg₂Cl₂, a gray precipitate is obtained which confirms ______", opts: ["Hg₂²⁺","Ag⁺","Pb²⁺","Both Ag⁺ and Hg₂²⁺"], ans: 0 },
+  { q: "Chloride ion cannot be oxidized by chlorine water — True or False?", opts: ["TRUE","FALSE"], ans: 0 },
+  { q: "Which of the following is a characteristic test for the presence of sulphate ions?", opts: ["Lime water test","Lead acetate paper test","Flame test","Barium chloride test"], ans: 3 },
+  { q: "Which of the following salts produces a violet vapour that turns starch to a blue-black complex when reacted with conc. sulphuric acid?", opts: ["Ammonium salt","Sulphide salt","Iodide salt","Bromide salt"], ans: 2 },
+  { q: "Which of the following cations does NOT form insoluble sulphides in acidic conditions?", opts: ["Pb²⁺","Ba²⁺","Ca²⁺","Mg²⁺"], ans: 0 },
+  { q: "Which of the following salts produces a reddish-brown gas that turns damp starch indicator paper yellow when reacted with conc. sulphuric acid?", opts: ["Ammonium salt","Sulphide salt","Nitrite salt","Bromide salt"], ans: 3 },
+  { q: "In flame testing, what element is indicated by a golden yellow flame?", opts: ["Carbon","Sodium","Copper","Lithium"], ans: 1 },
+  { q: "When doing a flame test, what element is indicated by a bright green flame?", opts: ["Barium","Calcium","Potassium","Copper"], ans: 3 },
+  { q: "In the process of confirming the presence of Pb²⁺, what type of reagent is added to give a yellow precipitate?", opts: ["NH₃","HNO₃","K₂CrO₄","Both NH₃ and HNO₃"], ans: 2 },
+  { q: "Which of the following is a characteristic test for the presence of carbonate ions?", opts: ["Lime water test","Magnesium sulphate test","Flame test","Silver nitrate test"], ans: 1 },
+  { q: "Which of the following salts produces an acidic brown gas that turns damp blue litmus red when reacted with conc. sulphuric acid?", opts: ["Chloride salt","Sulphide salt","Nitrate salt","Bromide salt"], ans: 2 },
+  { q: "Which of the following salts produces an acidic steamy fume with a pungent odour, which forms white fumes in the presence of moist air when reacted with conc. sulphuric acid?", opts: ["Chloride salt","Sulphide salt","Nitrite salt","Bromide salt"], ans: 0 },
+  { q: "Which of the following is a characteristic test for the presence of iodide ions?", opts: ["Chlorine water test","Lead acetate paper test","Flame test","Lime water test"], ans: 0 },
+  { q: "The colour of the precipitate obtained when BaCl₂ solution is added to Na₂SO₄ solution is", opts: ["black","white","yellow","red"], ans: 1 },
+  { q: "Which of the following cations does NOT form insoluble hydroxides in basic conditions?", opts: ["Cr³⁺","Fe³⁺","Al³⁺","Ca²⁺"], ans: 3 },
+  { q: "The physical examination of the unknown salt involves the study of", opts: ["smell","colour","density","all of the above"], ans: 3 },
+  { q: "Which of the following anions will produce a colourless gas that turns lime water milky when heated with dilute acid?", opts: ["Carbonate","Sulphite","Nitrate","Sulphide"], ans: 0 },
+  { q: "Which of the following is a characteristic test for the presence of bromide ions?", opts: ["Lime water test","Lead acetate paper test","Lead (II) nitrate test","Flame test"], ans: 2 },
+  { q: "The colour of BaSO₄ precipitate is:", opts: ["black","green","white","blue"], ans: 2 },
+  { q: "Which of the following is a characteristic test for the presence of chloride ions?", opts: ["Lime water test","Lead acetate paper test","Flame test","Silver nitrate test"], ans: 3 },
+  { q: "Which of the following anions does NOT involve the production of gases?", opts: ["CO₃²⁻","SO₄²⁻","S²⁻","SO₃²⁻"], ans: 1 },
+  { q: "Which of the following cations forms insoluble hydroxides in basic conditions?", opts: ["Ag⁺","Cu²⁺","Al³⁺","Ba²⁺"], ans: 2 },
+  { q: "Which of the following anions will produce a colourless gas with a pungent odour that turns damp red litmus blue when heated with sodium hydroxide?", opts: ["Chloride","Sulphate","Nitrate","Carbonate"], ans: 2 },
+  { q: "In qualitative analysis, cations are grouped based on their", opts: ["boiling properties","melting properties","solubility properties","all of the above"], ans: 2 },
+  { q: "Iron (II) Ammonium Sulphate behaves like Iron (II) Sulphate in solution because _________.", opts: ["it readily reduces by the air","it readily reduces by water","it readily oxidizes by the air","it readily oxidizes by water"], ans: 2 }
+];
+
+const LABELS = ['A','B','C','D'];
+// state: null | 'correct' | 'wrong' | 'skipped'
+const state = new Array(questions.length).fill(null);
+let current = 0;
+let drawerOpen = false;
+
+/* ─── Derived counts ─── */
+function counts() {
+  return {
+    correct: state.filter(s => s === 'correct').length,
+    wrong:   state.filter(s => s === 'wrong').length,
+    skipped: state.filter(s => s === 'skipped').length,
+    unanswered: state.filter(s => s === null).length
+  };
+}
+
+/* ─── Drawer ─── */
+function buildDrawer() {
+  const grid = document.getElementById('drawer-grid');
+  grid.innerHTML = '';
+  questions.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'q-dot' +
+      (i === current ? ' current' : '') +
+      (state[i] ? ' state-' + state[i] : '');
+    dot.textContent = i + 1;
+    dot.onclick = () => { jumpTo(i); closeDrawer(); };
+    grid.appendChild(dot);
+  });
+}
+
+function toggleDrawer() {
+  drawerOpen ? closeDrawer() : openDrawer();
+}
+function openDrawer() {
+  buildDrawer();
+  drawerOpen = true;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeDrawer() {
+  drawerOpen = false;
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+/* ─── Load question ─── */
+function loadQuestion(idx) {
+  current = idx;
+  const q = questions[idx];
+  const s = state[idx];
+  const isAnswered = s !== null;
+
+  document.getElementById('q-num').textContent = `QUESTION ${idx + 1} OF ${questions.length}`;
+  document.getElementById('q-text').innerHTML = q.q;
+
+  const pct = Math.round((idx / questions.length) * 100);
+  document.getElementById('prog-text').textContent = `Question ${idx + 1} of ${questions.length}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  // Options
+  const optsEl = document.getElementById('q-options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option' + (isAnswered ? ' disabled' : '');
+    div.innerHTML = `<span class="badge">${LABELS[i]}</span><span>${opt}</span>`;
+    if (!isAnswered) {
+      div.onclick = () => selectAnswer(i);
+    }
+    optsEl.appendChild(div);
+  });
+
+  // Restore visual state if revisiting answered question
+  const fb = document.getElementById('q-feedback');
+  if (isAnswered) {
+    const opts = optsEl.querySelectorAll('.option');
+    if (s === 'correct') {
+      opts[q.ans].classList.add('correct');
+      fb.className = 'feedback correct show';
+      fb.textContent = '✓ Correct!';
+    } else if (s === 'wrong') {
+      // find which was chosen — we stored chosen index too
+      const chosen = state_chosen[idx];
+      if (chosen !== undefined) opts[chosen].classList.add('wrong');
+      opts[q.ans].classList.add('correct');
+      fb.className = 'feedback wrong show';
+      fb.textContent = `✗ Wrong. The correct answer is ${LABELS[q.ans]}: ${q.opts[q.ans]}`;
+    } else if (s === 'skipped') {
+      opts[q.ans].classList.add('correct');
+      fb.className = 'feedback wrong show';
+      fb.textContent = `Skipped. The correct answer was ${LABELS[q.ans]}: ${q.opts[q.ans]}`;
+    }
+    document.getElementById('btn-next').disabled = false;
+    document.getElementById('btn-skip').style.display = 'none';
+  } else {
+    fb.className = 'feedback';
+    fb.textContent = '';
+    document.getElementById('btn-next').disabled = true;
+    document.getElementById('btn-skip').style.display = '';
+  }
+
+  // Prev button
+  document.getElementById('btn-prev').disabled = idx === 0;
+
+  updateScoreStrip();
+}
+
+// Track chosen answer per question for replay
+const state_chosen = {};
+
+/* ─── Select ─── */
+function selectAnswer(chosen) {
+  const q = questions[current];
+  if (state[current] !== null) return;
+
+  const opts = document.querySelectorAll('.option');
+  opts.forEach(o => o.classList.add('disabled'));
+
+  const fb = document.getElementById('q-feedback');
+  state_chosen[current] = chosen;
+
+  if (chosen === q.ans) {
+    state[current] = 'correct';
+    opts[chosen].classList.add('correct');
+    fb.className = 'feedback correct show';
+    fb.textContent = '✓ Correct!';
+  } else {
+    state[current] = 'wrong';
+    opts[chosen].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.className = 'feedback wrong show';
+    fb.textContent = `✗ Wrong. The correct answer is ${LABELS[q.ans]}: ${q.opts[q.ans]}`;
+  }
+
+  document.getElementById('btn-next').disabled = false;
+  document.getElementById('btn-skip').style.display = 'none';
+  updateScoreStrip();
+}
+
+/* ─── Navigation ─── */
+function nextQ() {
+  if (current < questions.length - 1) {
+    loadQuestion(current + 1);
+  } else {
+    showResults();
+  }
+}
+
+function prevQ() {
+  if (current > 0) loadQuestion(current - 1);
+}
+
+function skipQ() {
+  if (state[current] === null) state[current] = 'skipped';
+  if (current < questions.length - 1) {
+    loadQuestion(current + 1);
+  } else {
+    showResults();
+  }
+}
+
+function jumpTo(idx) {
+  loadQuestion(idx);
+}
+
+/* ─── Score strip ─── */
+function updateScoreStrip() {
+  const c = counts();
+  document.getElementById('sc-correct').textContent = c.correct;
+  document.getElementById('sc-wrong').textContent = c.wrong;
+  document.getElementById('sc-remain').textContent = c.unanswered;
+}
+
+/* ─── Results ─── */
+function showResults() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const res = document.getElementById('results');
+  res.style.display = 'block';
+
+  const c = counts();
+  const total = questions.length;
+  const pct = Math.round((c.correct / total) * 100);
+
+  let emoji = '😔', grade = 'Keep Studying';
+  if (pct >= 90) { emoji = '🏆'; grade = 'Outstanding!'; }
+  else if (pct >= 75) { emoji = '🎉'; grade = 'Great Work!'; }
+  else if (pct >= 60) { emoji = '👍'; grade = 'Good Effort!'; }
+  else if (pct >= 50) { emoji = '📚'; grade = 'Keep Pushing!'; }
+
+  document.getElementById('res-badge').textContent = emoji;
+  document.getElementById('res-badge').style.background = pct >= 60 ? '#052e16' : '#2d0f0f';
+  document.getElementById('res-score').textContent = pct + '%';
+  document.getElementById('res-label').textContent = grade;
+  document.getElementById('res-c').textContent = c.correct;
+  document.getElementById('res-w').textContent = c.wrong;
+  document.getElementById('res-s').textContent = c.skipped;
+
+  const bar = document.getElementById('res-bar');
+  bar.style.background = pct >= 60 ? 'var(--green)' : 'var(--red)';
+  setTimeout(() => bar.style.width = pct + '%', 100);
+
+  const missed = state.filter(s => s === 'wrong' || s === 'skipped').length;
+  document.getElementById('review-btn').style.display = missed > 0 ? '' : 'none';
+}
+
+function restartQuiz() {
+  state.fill(null);
+  Object.keys(state_chosen).forEach(k => delete state_chosen[k]);
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quiz-area').style.display = 'block';
+  loadQuestion(0);
+}
+
+function reviewMissed() {
+  // Jump to the first wrong/skipped question
+  const first = state.findIndex(s => s === 'wrong' || s === 'skipped');
+  if (first === -1) return;
+  // Reset only those questions
+  state.forEach((s, i) => {
+    if (s === 'wrong' || s === 'skipped') {
+      state[i] = null;
+      delete state_chosen[i];
+    }
+  });
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quiz-area').style.display = 'block';
+  loadQuestion(first);
+}
+
+// Init
+loadQuestion(0);
+</script>
+</body>
+</html>
