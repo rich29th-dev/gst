@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHY 108 · Optics Quiz</title>
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--card:#1c2230;--border:#2d3748;
+    --teal:#00c9b1;--green:#22c55e;--green-bg:#052e16;
+    --red:#ef4444;--red-bg:#2d0f0f;
+    --yellow:#fbbf24;--yellow-bg:#2d1f00;
+    --text:#e2e8f0;--muted:#8b9ab0;--radius:10px;--drawer-w:280px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 16px 60px;}
+  .topbar{width:100%;max-width:720px;display:flex;justify-content:flex-end;padding:14px 0 0;}
+  .nav-toggle{display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:var(--radius);background:var(--surface);border:1.5px solid var(--border);color:var(--teal);font-size:13px;font-weight:600;cursor:pointer;transition:border-color .2s,background .2s;}
+  .nav-toggle:hover{border-color:var(--teal);background:#1a2535;}
+  header{width:100%;max-width:720px;padding:14px 0 20px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);}
+  header h1{font-size:clamp(18px,5vw,26px);font-weight:700;text-align:center;color:#f0f6fc;}
+  header p{font-size:13px;color:var(--muted);}
+  .progress-wrap{width:100%;max-width:720px;margin-bottom:20px;}
+  .progress-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .progress-bar{height:5px;background:var(--border);border-radius:99px;overflow:hidden;}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),#00e5cc);border-radius:99px;transition:width .4s ease;}
+  .score-strip{width:100%;max-width:720px;display:flex;gap:8px;margin-bottom:20px;}
+  .score-pill{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;text-align:center;}
+  .score-pill .val{font-size:22px;font-weight:700;}
+  .score-pill .lbl{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+  .score-pill.correct .val{color:var(--green);}
+  .score-pill.wrong .val{color:var(--red);}
+  .score-pill.remain .val{color:var(--yellow);}
+  .card{width:100%;max-width:720px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 24px 24px;}
+  .q-num{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:12px;}
+  .question{font-size:clamp(15px,3.5vw,17px);line-height:1.6;font-weight:500;color:#f0f6fc;margin-bottom:24px;}
+  .options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+  .option{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--surface);cursor:pointer;transition:border-color .15s,background .15s,transform .1s;font-size:14.5px;color:var(--text);user-select:none;}
+  .option:hover:not(.disabled){border-color:var(--teal);background:#1a2535;transform:translateX(3px);}
+  .option .badge{min-width:30px;height:30px;border-radius:6px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);transition:background .2s,color .2s;flex-shrink:0;}
+  .option.correct{border-color:var(--green);background:var(--green-bg);}
+  .option.correct .badge{background:var(--green);color:#fff;}
+  .option.wrong{border-color:var(--red);background:var(--red-bg);}
+  .option.wrong .badge{background:var(--red);color:#fff;}
+  .option.disabled{cursor:default;transform:none;}
+  .feedback{display:none;padding:12px 16px;border-radius:var(--radius);font-size:13.5px;font-weight:500;margin-bottom:20px;line-height:1.5;}
+  .feedback.show{display:block;}
+  .feedback.correct{background:#052e16;border:1px solid #166534;color:#4ade80;}
+  .feedback.wrong{background:#2d0f0f;border:1px solid #7f1d1d;color:#f87171;}
+  .btn-row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .btn-row-right{display:flex;gap:8px;}
+  .btn{padding:11px 20px;border-radius:var(--radius);font-size:14px;font-weight:600;border:none;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap;}
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:linear-gradient(135deg,var(--teal),#00a896);color:#0d1117;}
+  .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+  .btn:disabled{opacity:.35;cursor:default;}
+  #results{display:none;width:100%;max-width:720px;text-align:center;}
+  .result-badge{width:100px;height:100px;border-radius:50%;margin:20px auto 24px;display:flex;align-items:center;justify-content:center;font-size:40px;}
+  .result-score{font-size:clamp(36px,10vw,64px);font-weight:800;color:var(--teal);line-height:1;}
+  .result-label{font-size:14px;color:var(--muted);margin:6px 0 28px;}
+  .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+  .result-cell{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 12px;}
+  .result-cell .v{font-size:28px;font-weight:700;}
+  .result-cell .l{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:4px;}
+  .grade-bar-wrap{margin-bottom:28px;}
+  .grade-bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin:8px 0;}
+  .grade-fill{height:100%;border-radius:99px;transition:width 1s ease;}
+  .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;backdrop-filter:blur(2px);}
+  .drawer-overlay.open{display:block;}
+  .drawer{position:fixed;top:0;right:0;width:var(--drawer-w);height:100%;background:var(--surface);border-left:1px solid var(--border);z-index:101;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden;}
+  .drawer.open{transform:translateX(0);}
+  .drawer-header{display:flex;align-items:center;justify-content:space-between;padding:18px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .drawer-title{font-size:13px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase;}
+  .drawer-close{width:30px;height:30px;border-radius:6px;background:var(--border);border:none;color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .drawer-close:hover{background:var(--red-bg);color:var(--red);}
+  .drawer-legend{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+  .legend-dot{width:10px;height:10px;border-radius:3px;}
+  .drawer-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:14px 16px;overflow-y:auto;flex:1;}
+  .q-dot{aspect-ratio:1;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--muted);transition:transform .15s,border-color .15s;user-select:none;}
+  .q-dot:hover{transform:scale(1.1);border-color:var(--teal);}
+  .q-dot.current{border-color:var(--teal);color:var(--teal);box-shadow:0 0 0 2px rgba(0,201,177,.3);}
+  .q-dot.state-correct{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+  .q-dot.state-wrong{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+  .q-dot.state-skipped{background:var(--yellow-bg);border-color:var(--yellow);color:var(--yellow);}
+  .deco{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden;}
+  .deco-dot{position:absolute;border-radius:50%;background:var(--teal);opacity:.04;}
+</style>
+</head>
+<body>
+<div class="deco">
+  <div class="deco-dot" style="width:400px;height:400px;top:-100px;right:-100px;"></div>
+  <div class="deco-dot" style="width:300px;height:300px;bottom:10%;left:-80px;"></div>
+</div>
+
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">🔬 Questions</span>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Unanswered</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Correct</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Wrong</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Skipped</div>
+  </div>
+  <div class="drawer-grid" id="drawer-grid"></div>
+</div>
+
+<div class="topbar">
+  <button class="nav-toggle" onclick="toggleDrawer()">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" rx="1" fill="currentColor"/><rect x="1" y="7" width="10" height="2" rx="1" fill="currentColor"/><rect x="1" y="11" width="12" height="2" rx="1" fill="currentColor"/></svg>
+    Questions
+  </button>
+</div>
+
+<header>
+  <div class="eyebrow">Igbinedion University Okada</div>
+  <h1>🔬 PHY 108 — Optics & Lenses Quiz</h1>
+  <p>105 questions · Tap an option to reveal the answer</p>
+</header>
+
+<div id="quiz-area" style="width:100%;max-width:720px;">
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-text">Question 1 of 105</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+  <div class="score-strip">
+    <div class="score-pill correct"><div class="val" id="sc-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="score-pill wrong">  <div class="val" id="sc-wrong">0</div>  <div class="lbl">Wrong</div></div>
+    <div class="score-pill remain"><div class="val" id="sc-remain">105</div><div class="lbl">Remaining</div></div>
+  </div>
+  <div class="card">
+    <div class="q-num" id="q-num">QUESTION 1</div>
+    <div class="question" id="q-text"></div>
+    <div class="options" id="q-options"></div>
+    <div class="feedback" id="q-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-outline" id="btn-prev" onclick="prevQ()">← Prev</button>
+      <div class="btn-row-right">
+        <button class="btn btn-outline" id="btn-skip" onclick="skipQ()">Skip</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQ()" disabled>Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="results">
+  <div class="card">
+    <div class="result-badge" id="res-badge"></div>
+    <div class="result-score" id="res-score"></div>
+    <div class="result-label" id="res-label"></div>
+    <div class="result-grid">
+      <div class="result-cell"><div class="v" style="color:var(--green)" id="res-c">0</div><div class="l">Correct</div></div>
+      <div class="result-cell"><div class="v" style="color:var(--red)"   id="res-w">0</div><div class="l">Wrong</div></div>
+      <div class="result-cell"><div class="v" style="color:var(--yellow)" id="res-s">0</div><div class="l">Skipped</div></div>
+    </div>
+    <div class="grade-bar-wrap">
+      <div style="text-align:left;font-size:13px;color:var(--muted);">Score</div>
+      <div class="grade-bar"><div class="grade-fill" id="res-bar" style="width:0%"></div></div>
+    </div>
+    <div class="btn-row" style="justify-content:center;gap:12px;">
+      <button class="btn btn-outline" onclick="restartQuiz()">↺ Restart</button>
+      <button class="btn btn-primary" id="review-btn" onclick="reviewMissed()">Review Missed</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  // ── SET 1: Q1–40 ──
+  {q:"Which of the following is NOT an apparatus used in the Determination of the Refractive Index of a Rectangular Block experiment?",opts:["Optical pins","Rectangular glass block","String","Drawing board"],ans:2},
+  {q:"The angle between the incident ray and the normal is called",opts:["Angle of deviation","Angle of emergence","Angle of incidence","Angle of reflection"],ans:2},
+  {q:"The graph of Sin i against Sin r should produce:",opts:["A curve","A straight line","A parabola","A circle"],ans:1},
+  {q:"According to Snell's law:",opts:["Sin i × Sin r = constant","Sin i / Sin r = constant","Sin r / Sin i = 0","Cos i = Cos r"],ans:1},
+  {q:"The slope of the graph of Sin i versus Sin r represents the:",opts:["Focal length","Density","Refractive index","Wavelength"],ans:2},
+  {q:"In an experiment involving the determination of the refractive index of a rectangular glass slab, the normal is drawn:",opts:["Parallel to the surface of the outline","Perpendicular to the surface of the outline","Along the ray","Outside the block"],ans:1},
+  {q:"The SI unit of refractive index is:",opts:["m/s","cm","Degree","None of the above"],ans:3},
+  {q:"The velocity of light through glass is given by:",opts:["Vg = c × n","Vg = n/c","Vg = c/n","Vg = c + n"],ans:2},
+  {q:"When viewed through the glass block, the four pins should appear:",opts:["Bent","Scattered","As one straight line","Invisible"],ans:2},
+  {q:"Which quantity is measured in centimetres in a refractive index experiment using rectangular glass block?",opts:["Angle of incidence, i","Lateral displacement, d","Refractive index, n","Emergent angle, e"],ans:1},
+  {q:"The mathematical relationship between refractive index and speed is:",opts:["n = c/Vg","n = c × Vg","n = Vg/c","n = c + Vg"],ans:0},
+  {q:"In a refractive index experiment using rectangular glass block, the line joining P1 and P2 represents the:",opts:["Incident ray","Emergent ray","Normal","Reflected ray"],ans:1},
+  {q:"The refractive index of a medium depends on:",opts:["Optical density","Mass of the medium","Color of pins","Shape of paper"],ans:0},
+  {q:"The focal length of the lens is represented by:",opts:["u","v","1/r","f"],ans:3},
+  {q:"The object distance is represented by:",opts:["1/u","u","v/u","m"],ans:1},
+  {q:"The image distance is represented by:",opts:["u","v","1/v","v/f"],ans:1},
+  {q:"In an experiment to find the focal length of a convex lens, the image distance was V = 53.50 cm and focal length was f = 15.89 cm. What is the object distance, U?",opts:["U = 22.60 cm","U = 2260 cm","f = 226.0 cm","f = 2.260 cm"],ans:0},
+  {q:"In an experiment to find the focal length of a convex lens, u is greater than f (u > f) is:",opts:["True","False","None of the above","All of the above"],ans:0},
+  {q:"The magnification is given by:",opts:["m = u/v","m = v/u","m = f/u","m = u + v"],ans:1},
+  {q:"The unit of focal length is:",opts:["Second","Kilogram","Centimetre","Newton"],ans:2},
+  {q:"Which of the following is a mounted source of light in an experiment to find the focal length of a convex lens?",opts:["Optical pin","Illuminated object","Battery","Glass block"],ans:1},
+  {q:"The graph of 1/v against 1/u is expected to be:",opts:["Circular","Curved","Straight line","Parabolic"],ans:2},
+  {q:"The SI unit of 1/u is:",opts:["cm","cm²","cm⁻¹","pm"],ans:2},
+  {q:"The lens formula 1/f = 1/u + 1/v is the same as:",opts:["f = uv/(v+u)","f = uv/(v−u)","f = u + v","f = uv/m"],ans:0},
+  {q:"The graph of (u + v) against u helps to determine:",opts:["Refractive index","Focal length","Resistance","Density"],ans:1},
+  {q:"The slope of a graph is also called:",opts:["Intercept","Gradient","Tangent","Angle"],ans:1},
+  {q:"Which quantity is dimensionless?",opts:["Object distance, u","Image distance, v","Focal length, f","Magnification, m"],ans:3},
+  {q:"If OA = 10f and OA = 60 cm, what is the value of f?",opts:["0.6 cm","0.06 dm","6.00 m","0.06 m"],ans:3},
+  {q:"Which apparatus holds the convex lens upright?",opts:["Clamp stand","Lens holder","Ammeter","Pin holder"],ans:1},
+  {q:"The image formed on the screen by the convex lens is:",opts:["Virtual","Inverted","Erect","Imaginary"],ans:1},
+  {q:"A convex lens is also known as a:",opts:["Diverging lens","Reflecting lens","Converging lens","Cylindrical lens"],ans:2},
+  {q:"The image is formed on the opposite side of the lens when:",opts:["u < f","u > f","u = 0","u = infinity"],ans:1},
+  {q:"In an experiment to measure the internal diameter, d, of a capillary tube, the relevant relation is d² = (4m²)/(πρl²). Hence the density, ρ, of mercury is:",opts:["ρ = 16m²/(πd²)","ρ = 4m²/(πd²)","ρ = 4d²/(πm²)","ρ = m²/(πd²)"],ans:0},
+  {q:"For a given lens, the magnification is expressed as m = v/f − 1, hence:",opts:["f(m − 1) = v","mf + 1 = v","f(m + 1) = v","mf − 1 = v"],ans:2},
+  {q:"In an experiment to determine the focal length of a converging lens, graph of 1/v vs 1/u was plotted. The focal length was obtained from the graph as:",opts:["The intercept on either axis","The reciprocal of any of the intercepts","The slope of the graph","None of the above"],ans:1},
+  {q:"If 1/f = 1/u + 1/v holds for a lens, then the magnification m is:",opts:["m = v/f + 1","m = v/f − 1","m = f/v − 1","m = u(1/f − 1)"],ans:1},
+  {q:"The angle of incidence i and refraction r are equal in a transparent glass block when the value of i is:",opts:["45°","30°","Depends on the material","0°"],ans:3},
+  {q:"Which of the following has 3 significant figures?",opts:["305.0 m","0.050 m","1.008 m","8.06 × 10⁻⁵ m"],ans:3},
+  {q:"For the relation R = 0.0945t − 22.45, a graph of R vs t yields an intercept equal to:",opts:["+0.0945","−22.45","+22.45","−237.6"],ans:1},
+  {q:"For a given convex lens, the magnification is expressed as m = v/f − 1, hence:",opts:["f(m − 1) = v","mf + 1 = v","f(m + 1) = v","mf − 1 = v"],ans:2},
+
+  // ── SET 2: Q1–65 ──
+  {q:"The bending of light as it passes from one medium to another is called:",opts:["Reflection","Refraction","Diffraction","Polarization"],ans:1},
+  {q:"If the angle of incidence, i = 30°, what is the angle of refraction, r?",opts:["15°","20°","30°","45°"],ans:1},
+  {q:"Refraction occurs because light changes its:",opts:["Colour","Frequency","Phase","Speed"],ans:3},
+  {q:"How is the value of θ obtained in a rectangular glass block experiment?",opts:["θ = 90° − i","θ = 90° + i","θ = 180° − i","θ = i"],ans:0},
+  {q:"The law governing refraction is:",opts:["Hooke's law","Ohm's law","Snell's law","Newton's law"],ans:2},
+  {q:"How is the value of α obtained in a rectangular glass block experiment?",opts:["α = 90° − r","α = 90° + r","α = 180° − r","α = r"],ans:0},
+  {q:"Snell's law is written as:",opts:["n = sin i / sin r","n = sin r / sin i","n = cos i / cos r","n = tan i / tan r"],ans:0},
+  {q:"Which apparatus is used to measure the lateral displacement d in a rectangular glass block experiment?",opts:["Protractor","Vernier caliper","Micrometer screw gauge","Meter rule"],ans:3},
+  {q:"The angle between the incident ray and the normal is called:",opts:["Angle of refraction","Angle of incidence","Angle of emergence","Critical angle"],ans:1},
+  {q:"In the equation v = c / n, what does the constant c represent?",opts:["1.5 × 10⁸ m/s","3.0 × 10⁸ m/s","3.0 × 10⁵ m/s","9.8 × 10⁸ m/s"],ans:1},
+  {q:"The angle between the refracted ray and the normal is called:",opts:["Angle of incidence","Angle of reflection","Angle of refraction","Angle of deviation"],ans:2},
+  {q:"How far apart should the optical pins be placed?",opts:["1 cm","2 cm","5 cm","10 cm"],ans:2},
+  {q:"A rectangular glass block is used in optics practical to study:",opts:["Interference of light","Dispersion of light","Diffraction of light","Refraction of light"],ans:3},
+  {q:"What does i represent in the rectangular glass block experiment?",opts:["Incident ray","Refracted ray","Emergent ray","Normal ray"],ans:0},
+  {q:"The refractive index of a medium is:",opts:["v / c","c / v","c × v","1 / (c × v)"],ans:1},
+  {q:"What type of graph is obtained in the rectangular glass block experiment?",opts:["Hyperbolic graph","Parabolic graph","Straight-line graph","Exponential graph"],ans:2},
+  {q:"When light enters glass from air, it bends:",opts:["Away from the normal","Towards the normal","Parallel to the normal","90° to the normal"],ans:1},
+  {q:"After drawing the outline of the rectangular glass block on paper, what is the next step?",opts:["Place the optical pins","Use a protractor to draw the angle line","Measure the thickness of the block","Shine a laser pointer"],ans:1},
+  {q:"The speed of light is lower in:",opts:["Air","Vacuum","Glass","Space"],ans:2},
+  {q:"If the angle of incidence, i = 35°, what is the value of θ?",opts:["35°","45°","55°","65°"],ans:2},
+  {q:"The normal is drawn:",opts:["Parallel to the surface","Perpendicular to the surface","At an angle of 45° to the surface","Tangential to the surface"],ans:1},
+  {q:"If the angle of refraction, r = 15°, what is the value of α?",opts:["15°","30°","60°","75°"],ans:3},
+  {q:"The incident ray, refracted ray, and normal all lie in:",opts:["Different planes","Parallel planes","Perpendicular planes","The same plane"],ans:3},
+  {q:"If the angle of incidence, i = 50°, what is the value of θ?",opts:["30°","40°","50°","60°"],ans:1},
+  {q:"The refractive index of glass is usually:",opts:["Less than 1","Equal to 0","Greater than 1","Equal to 1"],ans:2},
+  {q:"After joining RX, it cuts OC perpendicularly at which point?",opts:["O","C","R","X"],ans:3},
+  {q:"In a rectangular glass block, the emergent ray is:",opts:["Perpendicular to incident ray","Parallel to incident ray","Divergent to incident ray","At a right angle to incident ray"],ans:1},
+  {q:"What is the SI unit of slope in the graph obtained from the rectangular glass block experiment?",opts:["m/s","No unit","Radians","Degrees"],ans:1},
+  {q:"The sideways displacement of light in a glass block is called:",opts:["Vertical displacement","Angular displacement","Lateral displacement","Linear displacement"],ans:2},
+  {q:"When aligning the four optical pins, how should they appear?",opts:["All four pins appearing as one straight line","Forming a square","Positioned zigzag","Two parallel rows"],ans:0},
+  {q:"The emergent ray emerges from the glass block due to:",opts:["Reflection","Total internal reflection","Diffraction","Refraction"],ans:3},
+  {q:"After obtaining the apparatus for the experiment, what is the first procedure?",opts:["Place the optical pins","Draw the outline of the glass block","Draw the normal line","Measure the mass of the block"],ans:1},
+  {q:"The unit of refractive index is:",opts:["Metres","Dioptres","No unit","Degrees"],ans:2},
+  {q:"The graph of cos θ against cos α is a:",opts:["Curved-line graph","Straight-line graph","Zigzag graph","Circular graph"],ans:1},
+  {q:"If the angle of incidence increases, the angle of refraction:",opts:["Decreases","Remains constant","Also increases","Becomes zero"],ans:2},
+  {q:"What does d represent in the rectangular glass block experiment?",opts:["Distance between pins","Lateral displacement of the ray","Diameter of the block","Deviation angle"],ans:1},
+  {q:"The optical density of glass is:",opts:["Less than air","Equal to air","Greater than air","Zero"],ans:2},
+  {q:"Which apparatus is used to measure angles in the rectangular glass block experiment?",opts:["Meter rule","Vernier caliper","Protractor","Spherometer"],ans:2},
+  {q:"Light travels fastest in:",opts:["Water","Glass","Air","Vacuum"],ans:3},
+  {q:"How many optical pins are used in the rectangular glass block experiment?",opts:["Two","Three","Four","Six"],ans:2},
+  {q:"In a refractive index experiment, a protractor is used to measure:",opts:["Length of the lateral displacement","The angles of incidence and refraction","The thickness of the glass block","The speed of light"],ans:1},
+  {q:"Perpendicular is equal to:",opts:["45°","90°","120°","180°"],ans:1},
+  {q:"What is the average value of readings 14°, 15.50°, 17°, 19°, 20°, and 22° of refractive angle?",opts:["16.92°","17.25°","17.58°","18.00°"],ans:1},
+  {q:"The refractive index of a glass block is typically:",opts:["1.0","1.5","2.0","0.5"],ans:1},
+  {q:"In a refractive index experiment, n = 1.33 and sin i = 0.5000. What is the value of r?",opts:["19.2°","22.1°","27.9°","30.0°"],ans:1},
+  {q:"Find the difference between sin i and sin r, when sin i = 0.5000 and sin r = 0.3256:",opts:["0.1744","0.2744","0.1544","0.8256"],ans:0},
+  {q:"If sin i = 0.3256, what is the angle of emergence e°?",opts:["14.0°","19.0°","26.0°","33.0°"],ans:1},
+  {q:"In a refractive index experiment using rectangular glass block, the line joining P3 and P4 represents the:",opts:["Incident ray","Normal","Emergent ray","Refracted ray inside the block"],ans:2},
+  {q:"A lens is used to:",opts:["Absorb light","Refract and focus light","Reflect light only","Polarize light"],ans:1},
+  {q:"The SI unit of focal length is:",opts:["Kilogram","Newton","Metre","Dioptre"],ans:2},
+  {q:"A convex lens is also called:",opts:["Diverging lens","Concave lens","Converging lens","Plano-concave lens"],ans:2},
+  {q:"A concave lens is also called:",opts:["Converging lens","Diverging lens","Biconvex lens","Plano-convex lens"],ans:1},
+  {q:"The optical centre of a lens is the point where:",opts:["Light is absorbed","Light passes without deviation","Total internal reflection occurs","Light is polarized"],ans:1},
+  {q:"The power of a lens is measured in:",opts:["Watts","Joules","Dioptres","Metres"],ans:2},
+  {q:"Power of a lens =",opts:["f × 100","1/f (in metres)","f²","f/n"],ans:1},
+  {q:"The focal length of a convex lens is:",opts:["Negative","Zero","Positive","Infinite"],ans:2},
+  {q:"The focal length of a concave lens is:",opts:["Positive","Zero","Negative","Infinite"],ans:2},
+  {q:"A convex lens forms a real image when the object is beyond focal length:",opts:["False","True","Only at 2F","Only at infinity"],ans:1},
+  {q:"A concave lens always forms:",opts:["A real, inverted image","A virtual, erect, and diminished image","A magnified image","An image at infinity"],ans:1},
+  {q:"The image formed by a convex lens at 2F is:",opts:["Magnified and virtual","Same size, real and inverted","Diminished and erect","At infinity"],ans:1},
+  {q:"The lens formula is:",opts:["1/f = 1/u − 1/v","1/f = 1/u + 1/v","f = u + v","f = u − v"],ans:1},
+  {q:"Magnification is:",opts:["m = u/v","m = f/u","m = v/u","m = u + v"],ans:2},
+  {q:"Hypermetropia (long-sightedness) is corrected by:",opts:["Concave lens","Plane mirror","Convex lens","Cylindrical lens"],ans:2},
+  {q:"Myopia (short-sightedness) is corrected using:",opts:["Convex lens","Plane mirror","Concave lens","Biconvex lens"],ans:2},
+  {q:"In an experiment to find the focal length of a convex lens, V = 53.50 cm and f = 15.89 cm. What is the object distance, U?",opts:["U = 22.30 cm","U = 24.17 cm","U = 30.00 cm","U = 37.61 cm"],ans:1}
+];
+
+const LABELS=['A','B','C','D'];
+const state=new Array(questions.length).fill(null);
+const chosen={};
+let current=0,drawerOpen=false;
+
+function counts(){return{correct:state.filter(s=>s==='correct').length,wrong:state.filter(s=>s==='wrong').length,skipped:state.filter(s=>s==='skipped').length,unanswered:state.filter(s=>s===null).length};}
+function buildDrawer(){const g=document.getElementById('drawer-grid');g.innerHTML='';questions.forEach((_,i)=>{const d=document.createElement('div');d.className='q-dot'+(i===current?' current':'')+(state[i]?' state-'+state[i]:'');d.textContent=i+1;d.onclick=()=>{jumpTo(i);closeDrawer();};g.appendChild(d);});}
+function toggleDrawer(){drawerOpen?closeDrawer():openDrawer();}
+function openDrawer(){buildDrawer();drawerOpen=true;document.getElementById('drawer').classList.add('open');document.getElementById('overlay').classList.add('open');}
+function closeDrawer(){drawerOpen=false;document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+
+function loadQuestion(idx){
+  current=idx;
+  const q=questions[idx],s=state[idx],done=s!==null;
+  const total=questions.length,pct=Math.round((idx/total)*100);
+  document.getElementById('q-num').textContent=`QUESTION ${idx+1} OF ${total}`;
+  document.getElementById('q-text').innerHTML=q.q;
+  document.getElementById('prog-text').textContent=`Question ${idx+1} of ${total}`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  const el=document.getElementById('q-options');
+  el.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const d=document.createElement('div');
+    d.className='option'+(done?' disabled':'');
+    d.innerHTML=`<span class="badge">${LABELS[i]}</span><span>${opt}</span>`;
+    if(!done)d.onclick=()=>selectAnswer(i);
+    el.appendChild(d);
+  });
+  const fb=document.getElementById('q-feedback');
+  if(done){
+    const opts=el.querySelectorAll('.option');
+    if(s==='correct'){opts[chosen[idx]].classList.add('correct');fb.className='feedback correct show';fb.textContent='✓ Correct!';}
+    else if(s==='wrong'){opts[chosen[idx]].classList.add('wrong');opts[q.ans].classList.add('correct');fb.className='feedback wrong show';fb.textContent=`✗ Wrong. The correct answer is ${LABELS[q.ans]}: ${q.opts[q.ans]}`;}
+    else{opts[q.ans].classList.add('correct');fb.className='feedback wrong show';fb.textContent=`Skipped. The correct answer was ${LABELS[q.ans]}: ${q.opts[q.ans]}`;}
+    document.getElementById('btn-next').disabled=false;
+    document.getElementById('btn-skip').style.display='none';
+  }else{
+    fb.className='feedback';fb.textContent='';
+    document.getElementById('btn-next').disabled=true;
+    document.getElementById('btn-skip').style.display='';
+  }
+  document.getElementById('btn-prev').disabled=idx===0;
+  updateStrip();
+}
+
+function selectAnswer(ch){
+  if(state[current]!==null)return;
+  const q=questions[current];
+  document.querySelectorAll('.option').forEach(o=>o.classList.add('disabled'));
+  chosen[current]=ch;
+  const fb=document.getElementById('q-feedback');
+  if(ch===q.ans){state[current]='correct';document.querySelectorAll('.option')[ch].classList.add('correct');fb.className='feedback correct show';fb.textContent='✓ Correct!';}
+  else{state[current]='wrong';document.querySelectorAll('.option')[ch].classList.add('wrong');document.querySelectorAll('.option')[q.ans].classList.add('correct');fb.className='feedback wrong show';fb.textContent=`✗ Wrong. The correct answer is ${LABELS[q.ans]}: ${q.opts[q.ans]}`;}
+  document.getElementById('btn-next').disabled=false;
+  document.getElementById('btn-skip').style.display='none';
+  updateStrip();
+}
+
+function nextQ(){if(current<questions.length-1)loadQuestion(current+1);else showResults();}
+function prevQ(){if(current>0)loadQuestion(current-1);}
+function skipQ(){if(state[current]===null)state[current]='skipped';if(current<questions.length-1)loadQuestion(current+1);else showResults();}
+function jumpTo(idx){loadQuestion(idx);}
+
+function updateStrip(){const c=counts();document.getElementById('sc-correct').textContent=c.correct;document.getElementById('sc-wrong').textContent=c.wrong;document.getElementById('sc-remain').textContent=c.unanswered;}
+
+function showResults(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('results').style.display='block';
+  const c=counts(),pct=Math.round((c.correct/questions.length)*100);
+  let emoji='😔',grade='Keep Studying';
+  if(pct>=90){emoji='🏆';grade='Outstanding!';}
+  else if(pct>=75){emoji='🎉';grade='Great Work!';}
+  else if(pct>=60){emoji='👍';grade='Good Effort!';}
+  else if(pct>=50){emoji='📚';grade='Keep Pushing!';}
+  document.getElementById('res-badge').textContent=emoji;
+  document.getElementById('res-badge').style.background=pct>=60?'#052e16':'#2d0f0f';
+  document.getElementById('res-score').textContent=pct+'%';
+  document.getElementById('res-label').textContent=grade;
+  document.getElementById('res-c').textContent=c.correct;
+  document.getElementById('res-w').textContent=c.wrong;
+  document.getElementById('res-s').textContent=c.skipped;
+  const bar=document.getElementById('res-bar');
+  bar.style.background=pct>=60?'var(--green)':'var(--red)';
+  setTimeout(()=>bar.style.width=pct+'%',100);
+  document.getElementById('review-btn').style.display=state.filter(s=>s==='wrong'||s==='skipped').length>0?'':'none';
+}
+
+function restartQuiz(){state.fill(null);Object.keys(chosen).forEach(k=>delete chosen[k]);document.getElementById('results').style.display='none';document.getElementById('quiz-area').style.display='block';loadQuestion(0);}
+
+function reviewMissed(){
+  const first=state.findIndex(s=>s==='wrong'||s==='skipped');
+  if(first===-1)return;
+  state.forEach((s,i)=>{if(s==='wrong'||s==='skipped'){state[i]=null;delete chosen[i];}});
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  loadQuestion(first);
+}
+
+loadQuestion(0);
+</script>
+</body>
+</html>
